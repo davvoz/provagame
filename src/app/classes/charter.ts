@@ -26,9 +26,7 @@ export abstract class Charter extends Square {
   counterAnimation = 0;
   spriteSheetCharterPath = '';
   spriteSheetImage = new Image();
-   
- 
-
+   livello = 1;
   lanciaAbilita() { }
 
   override draw() {
@@ -42,13 +40,8 @@ export abstract class Charter extends Square {
     
   }
 
-  drawCharter() { }
-
  setSprite() {
-    
-
     let riga = 0;
-
     switch (this.getDirection()) {
       case 'TOP': riga = this.spriteSheetImage.height / 4 * 3;//riga 4
         break;
@@ -65,6 +58,7 @@ export abstract class Charter extends Square {
     let colonna = this.spriteSheetImage.width / 4 * (this.counterAnimation + 1);
     this.ctx.drawImage(this.spriteSheetImage, colonna, riga, sw, sh, this.getX() * this.getZ(), this.getY() * this.getZ(), 60, 80)
   }
+
   drawLabel() {
     this.ctx.beginPath();
     this.ctx.fillStyle ='black';

@@ -1,28 +1,53 @@
-import { Component, ElementRef, NgZone, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, NgZone, ViewChild } from '@angular/core';
 import { Bonus } from './classes/bonus';
 import { direzione } from './classes/costants.enum';
 import { Guerriero } from './classes/guerriero';
 import { Mago } from './classes/mago';
 import { Square } from './classes/square';
-
+export enum KEY_CODE {
+  UP_ARROW = 38,
+  DOWN_ARROW = 40,
+  RIGHT_ARROW = 39,
+  LEFT_ARROW = 37,
+}
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  @HostListener('window:keydown', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    if (event.keyCode == KEY_CODE.DOWN_ARROW) {
+      this.player.setDirection('BOTTOM');
+    }
+    if (event.keyCode == KEY_CODE.UP_ARROW) {
+      this.player.setDirection('TOP');
+    }
+    if (event.keyCode == KEY_CODE.LEFT_ARROW) {
+      this.player.setDirection('LEFT');
+    }
+    if (event.keyCode == KEY_CODE.RIGHT_ARROW) {
+      this.player.setDirection('RIGHT');
+    }
+    if (event.keyCode == 32) {
+      this.player.setDirection('STAND');
+    }
+  }
   @ViewChild('canvasGui', { static: false })
   canvasGui!: ElementRef<HTMLCanvasElement>;
   ctx!: CanvasRenderingContext2D;
-  guerrieroUno!: Guerriero;
-  magoUno!: Mago;
+  nemico!: Guerriero;
+  player!: Mago;
   counterRoutine = 0;
   counterAnimation = 0;
   isCharterColliding = false;
   bonus: Bonus[] = [];
   isQualcunoMorto = false;
   constructor(private ngZone: NgZone) { }
-  ngOnInit(): void { }
+  ngOnInit(): void {
+
+   }
 
   reset() { }
 
@@ -54,67 +79,69 @@ export class AppComponent {
   animate(): void {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
-    if (!this.isCharterColliding) {
-      if (!this.guerrieroUno.isMorto) {
+    if (!this.isQualcunoMorto) {
+      for (let i = 0; i < this.bonus.length; i++) {
+        let isJustRimosso = false;
+        if (this.rectsColliding(this.player, this.bonus[i])) {
+          this.player[this.bonus[i].getTipoBonus()] += this.bonus[i].quantita;
+          this.bonus.pop();
+          isJustRimosso = true;
+        }
+        if (this.bonus.length > 0 && !isJustRimosso) {
+          if (this.rectsColliding(this.nemico, this.bonus[i])) {
+            this.nemico[this.bonus[i].getTipoBonus()] += this.bonus[i].quantita;
+            this.bonus.pop();
 
-        this.guerrieroUno.setDirection(this.getDirectionFromEnemy(this.guerrieroUno, this.magoUno));
-        this.directionToMoveSwitch(this.guerrieroUno);
-      } else {
-        this.directionToMoveSwitch(this.guerrieroUno);
+          }
+        }
       }
-      if (!this.magoUno.isMorto) {
-        this.magoUno.setDirection(this.getDirectionFromEnemy(this.magoUno, this.guerrieroUno));
-        this.directionToMoveSwitch(this.magoUno);
+    }
+
+    if (!this.isCharterColliding) {
+
+      if (!this.nemico.isMorto) {
+        this.nemico.setDirection(this.getDirectionFromEnemy({ cercatore: this.nemico, cercato: this.player }));
+        this.directionToMoveSwitch(this.nemico);
+      } else {
+        this.directionToMoveSwitch(this.nemico);
+      }
+      if (!this.player.isMorto) {
+        //this.player.setDirection(this.getDirectionFromEnemy({ cercatore: this.player, cercato: this.nemico }));
+        this.directionToMoveSwitch(this.player);
 
       } else {
-        this.charterMovmentRandomRoutine(this.guerrieroUno);
+        this.charterMovmentRandomRoutine(this.nemico);
       }
       if (
-        !this.magoUno.isMorto &&
-        !this.guerrieroUno.isMorto &&
-        this.rectsColliding(this.guerrieroUno, this.magoUno)
+        !this.player.isMorto &&
+        !this.nemico.isMorto &&
+        this.rectsColliding(this.nemico, this.player)
       ) {
         this.isCharterColliding = true;
       }
 
     } else {
-      //voglio VERAMENTE attacare ad ogni frame?
-      //sarebbe bello invece da lanciare un animazione ad hoc
-      this.guerrieroUno.attaccare(this.magoUno);
-      this.magoUno.attaccare(this.guerrieroUno);
-      this.guerrieroUno.stand();
-      this.magoUno.stand();
-      if (this.guerrieroUno.salute <= 0) {
-        this.guerrieroUno.isMorto = true;
-        this.magoUno.isWinner = true;
+      this.nemico.attaccare(this.player);
+      this.player.attaccare(this.nemico);
+      this.nemico.stand();
+      this.player.stand();
+      if (this.nemico.salute <= 0) {
+        this.nemico.isMorto = true;
+        this.player.isWinner = true;
         this.isCharterColliding = false;
         this.isQualcunoMorto = true;
       }
-      if (this.magoUno.salute <= 0) {
-        this.magoUno.isMorto = true;
-        this.guerrieroUno.isWinner = true;
+      if (this.player.salute <= 0) {
+        this.player.isMorto = true;
+        this.nemico.isWinner = true;
         this.isCharterColliding = false;
         this.isQualcunoMorto = true;
       }
     }
-    if (!this.isQualcunoMorto) {
-      for (let i = 0; i < this.bonus.length; i++) {
-        if (this.rectsColliding(this.magoUno, this.bonus[i])) {
-          this.magoUno[this.bonus[i].getTipoBonus()] += this.bonus[i].quantita;
-          this.bonus.pop();
-        }
-        if (this.bonus.length > 0) {
-          if (this.rectsColliding(this.guerrieroUno, this.bonus[i])) {
-            this.guerrieroUno[this.bonus[i].getTipoBonus()] += this.bonus[i].quantita;
-            this.bonus.pop();
-  
-          }
-        }
-      }
-    }
-    
 
-    if (!(this.magoUno.salute <= 0 || this.guerrieroUno.salute <= 0)) {
+
+
+    if (!(this.player.salute <= 0 || this.nemico.salute <= 0)) {
       for (let i = 0; i < this.bonus.length; i++) {
         this.charterMovmentRandomRoutine(this.bonus[i]);
       }
@@ -124,8 +151,8 @@ export class AppComponent {
         this.bonus[i].setY(9999);
       }
     }
-    this.guerrieroUno.counterAnimation = this.counterAnimation;
-    this.magoUno.counterAnimation = this.counterAnimation;
+    this.nemico.counterAnimation = this.counterAnimation;
+    this.player.counterAnimation = this.counterAnimation;
 
     //velocità animazione ogni 
     if (this.counterRoutine % 4 == 0) {
@@ -143,7 +170,7 @@ export class AppComponent {
   }
 
 
-  getDirectionFromEnemy(cercatore: Square, cercato: Square): direzione {
+  getDirectionFromEnemy({ cercatore, cercato }: { cercatore: Square; cercato: Square; }): direzione {
     let out: direzione = 'STAND';
 
     if (cercato.getX() > cercatore.getX()) {//cercato a sinisistra del Cercatore
@@ -151,26 +178,23 @@ export class AppComponent {
     } else if (cercato.getX() < cercatore.getX()) {//cercato a destra del cercatore
       out = 'LEFT';
     }
-    if (cercato.getX() - cercatore.getX() < 1) {//cercato e cercatore in linea
+
+     if (cercato.getX() - cercatore.getX() < 1 ) {//cercato e cercatore in linea
       if (cercato.getY() > cercatore.getY()) { //cercato sotto il cercatore
         out = 'BOTTOM';
       } else if (cercato.getY() < cercatore.getY()) {//cercato sopra il cercatore
         out = 'TOP';
-      } else if (cercato.getY() === cercatore.getY()) {//evidendemente stanno collidendo
-        out = 'STAND';
-      }
+      } 
     }
     return out;
   }
 
   direzionaRandomicamenteCharter(charter: Square) {
     const direzione: direzione[] = ["TOP", "BOTTOM", "LEFT", "RIGHT", "STAND"];
-
     const random = Math.floor(Math.random() * direzione.length);
     charter.setDirection(direzione[random]);
-
-
   }
+
   rectsColliding(r1: Square, r2: Square) {
     return !(
       r1.getX() > r2.getX() + 1 ||
@@ -181,38 +205,41 @@ export class AppComponent {
   }
 
   ngAfterViewInit(): void {
+
     const res = this.canvasGui.nativeElement.getContext('2d');
     if (!res || !(res instanceof CanvasRenderingContext2D)) {
       throw new Error('Failed to get 2d context');
     }
     this.ctx = res;
-    this.guerrieroUno = new Guerriero(this.ctx, 'green');
-    this.guerrieroUno.setX(Math.floor(Math.random() * 40));
-    this.guerrieroUno.setY(Math.floor(Math.random() * 40));
-    this.guerrieroUno.setZ(20);
-    this.guerrieroUno.setVelocita(0.4);
-    this.guerrieroUno.setSpazioInPiu(60);
-    this.guerrieroUno.name = 'Manduca';
-    this.guerrieroUno.posizioneInfoLabelX = 270;
-    this.guerrieroUno.posizioneInfoLabelY = 480;
-    this.guerrieroUno.numeriFortunati = [8, 9, 2, 3, 4, 5, 6, 7];
-    this.guerrieroUno.dannoCritico = 100;
-    this.guerrieroUno.counterForCriticoTreshold = 10;
-    this.guerrieroUno.stand();
+    this.nemico = new Guerriero(this.ctx, 'green');
+    this.nemico.setX(0);
+    this.nemico.setY(0);
+    this.nemico.setZ(20);
+    this.nemico.setVelocita(0.4);
+    this.nemico.spazioInPiuX=60;
+    this.nemico.spazioInPiuY=20;
+    this.nemico.name = 'Manduca';
+    this.nemico.posizioneInfoLabelX = 270;
+    this.nemico.posizioneInfoLabelY = 480;
+    this.nemico.numeriFortunati = [8, 9, 2, 3, 4, 5, 6, 7];
+    this.nemico.dannoCritico = 100;
+    this.nemico.counterForCriticoTreshold = 10;
+    this.nemico.stand();
 
-    this.magoUno = new Mago(this.ctx, 'blue');
-    this.magoUno.setX(Math.floor(Math.random() * 40));
-    this.magoUno.setY(Math.floor(Math.random() * 40));
-    this.magoUno.setZ(20);
-    this.magoUno.setVelocita(0.4);
-    this.magoUno.setSpazioInPiu(60);
-    this.magoUno.name = 'Tetramarco';
-    this.magoUno.posizioneInfoLabelX = 30;
-    this.magoUno.posizioneInfoLabelY = 480;
-    this.magoUno.numeriFortunati = [0, 1, 2, 3, 4, 5, 6, 7];
-    this.magoUno.dannoCritico = 5;
-    this.magoUno.counterForCriticoTreshold = 100;
-    this.magoUno.stand();
+    this.player = new Mago(this.ctx, 'blue');
+    this.player.setX(20);
+    this.player.setY(20);
+    this.player.setZ(20);
+    this.player.setVelocita(0.4);
+    this.player.spazioInPiuX=20;
+    this.player.spazioInPiuY=60;
+    this.player.name = 'Tetramarco';
+    this.player.posizioneInfoLabelX = 30;
+    this.player.posizioneInfoLabelY = 480;
+    this.player.numeriFortunati = [0, 1, 2, 3, 4, 5, 6, 7];
+    this.player.dannoCritico = 5;
+    this.player.counterForCriticoTreshold = 100;
+    this.player.stand();
 
     for (let i = 0; i < 9; i++) {
       let bonus: Bonus;

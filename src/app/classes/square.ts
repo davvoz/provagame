@@ -7,16 +7,12 @@ export class Square {
   private z = 50;
   private velocita = 1;
   private direction:direzione = 'STAND';
-  private spazioInPiu = 0;
+   spazioInPiuX = 0;
+   spazioInPiuY = 0;
   constructor(public ctx: CanvasRenderingContext2D, color: string) {
     this.color = color;
   }
-  getSpazioInPiu() {
-    return this.spazioInPiu;
-  }
-  setSpazioInPiu(spazioInPiu: number) {
-    this.spazioInPiu = spazioInPiu;
-  }
+
   getDirection() {
     return this.direction;
   }
@@ -28,28 +24,28 @@ export class Square {
   }
   moveRight() {
     this.direction = 'RIGHT';
-    if (this.x * this.z < this.ctx.canvas.width - this.z - this.spazioInPiu) {
+    if (this.x * this.z < this.ctx.canvas.width - this.z - this.spazioInPiuX) {
       this.x = this.x + this.velocita;
     }
     this.draw();
   }
   moveLeft() {
     this.direction = 'LEFT';
-    if (this.x * this.z > 0 + this.spazioInPiu) {
+    if (this.x * this.z > 0 + this.spazioInPiuX) {
       this.x = this.x - this.velocita;
     }
     this.draw();
   }
   moveTop() {
     this.direction = 'TOP';
-    if (this.y * this.z > 0 + this.spazioInPiu) {
+    if (this.y * this.z > 0 - this.spazioInPiuY) {
       this.y = this.y - this.velocita;
     }
     this.draw();
   }
   moveBottom() {
     this.direction = 'BOTTOM';
-    if (this.y * this.z < this.ctx.canvas.height - this.z - this.spazioInPiu) {
+    if (this.y * this.z < this.ctx.canvas.height - this.z - this.spazioInPiuY) {
       this.y = this.y + this.velocita ;
     }
     this.draw();
