@@ -1,9 +1,11 @@
 import { Component, ElementRef, HostListener, NgZone, ViewChild } from '@angular/core';
 import { Bonus } from './classes/bonus';
-import { direzione } from './classes/costants.enum';
+import { Bottone } from './classes/bottone';
+import { Charter } from './classes/charter';
 import { Guerriero } from './classes/guerriero';
 import { Mago } from './classes/mago';
 import { Square } from './classes/square';
+import { Utilities } from './classes/utilities';
 export enum KEY_CODE {
   UP_ARROW = 38,
   DOWN_ARROW = 40,
@@ -16,144 +18,143 @@ export enum KEY_CODE {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  isMagoScelto: boolean = false;
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
+    if (!this.player.isMorto) {
+      if (event.keyCode == KEY_CODE.DOWN_ARROW) {
+        this.player.setVelocita(0.1);
+        this.player.setDirection('BOTTOM');
+      }
+      if (event.keyCode == KEY_CODE.UP_ARROW) {
+        this.player.setVelocita(0.1);
+        this.player.setDirection('TOP');
+      }
+      if (event.keyCode == KEY_CODE.LEFT_ARROW) {
+        this.player.setVelocita(0.1);
+        this.player.setDirection('LEFT');
+      }
+      if (event.keyCode == KEY_CODE.RIGHT_ARROW) {
+        this.player.setVelocita(0.1);
+        this.player.setDirection('RIGHT');
+      }
+      if (event.keyCode == 32) {
+        if (this.player.money > 0) {
+          this.bonus = [];
+          this.bonus = Utilities.createBonusArray(3, this.ctx);
+          this.player.money -= 20;
+        }
+      }
+    }
+
+  }
+  @HostListener('window:keyup', ['$event'])
+  keyEventMu(event: KeyboardEvent) {
     if (event.keyCode == KEY_CODE.DOWN_ARROW) {
-      this.player.setDirection('BOTTOM');
+      this.player.setVelocita(0);
     }
     if (event.keyCode == KEY_CODE.UP_ARROW) {
-      this.player.setDirection('TOP');
+      this.player.setVelocita(0);
     }
     if (event.keyCode == KEY_CODE.LEFT_ARROW) {
-      this.player.setDirection('LEFT');
+      this.player.setVelocita(0);
     }
     if (event.keyCode == KEY_CODE.RIGHT_ARROW) {
-      this.player.setDirection('RIGHT');
+      this.player.setVelocita(0);
     }
     if (event.keyCode == 32) {
-      this.player.setDirection('STAND');
+      this.player.setVelocita(0);
     }
   }
   @ViewChild('canvasGui', { static: false })
   canvasGui!: ElementRef<HTMLCanvasElement>;
   ctx!: CanvasRenderingContext2D;
-  nemico!: Guerriero;
   player!: Mago;
   counterRoutine = 0;
   counterAnimation = 0;
   isCharterColliding = false;
+  enemies: Charter[] = [];
   bonus: Bonus[] = [];
-  isQualcunoMorto = false;
+  qtaInizialeNemici = 1;
+  bonusCount = 0;
+  startButton!: Bottone;
+  pauseButton!: Bottone;
+  compraBonus!: Bottone;
+  scegliGuerriero!: Bottone;
+  isStarted = false;
+  initLevel = 0;
   constructor(private ngZone: NgZone) { }
   ngOnInit(): void {
+  }
 
-   }
-
-  reset() { }
 
   charterMovmentRandomRoutine(charter: Square) {
-    if (this.counterRoutine % 10 == 0) {
-      this.direzionaRandomicamenteCharter(charter);
+    if (this.counterRoutine % 20 == 0) {
+      Utilities.direzionaRandomicamenteCharter(charter);
     }
-    this.directionToMoveSwitch(charter);
+    Utilities.directionToMoveSwitch(charter);
   }
-  private directionToMoveSwitch(charter: Square) {
-    switch (charter.getDirection()) {
-      case 'TOP':
-        charter.moveTop();
-        break;
-      case 'BOTTOM':
-        charter.moveBottom();
-        break;
-      case 'LEFT':
-        charter.moveLeft();
-        break;
-      case 'RIGHT':
-        charter.moveRight();
-        break;
-      default:
-        charter.stand();
-    }
-  }
+
 
   animate(): void {
+    requestAnimationFrame(this.animate.bind(this));
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.update();
+    Utilities.directionToMoveSwitch(this.player);
+    this.startButton.stand();
+    this.scegliGuerriero.stand();
+    this.compraBonus.stand();
+    this.collisionDetenction();
+  }
 
-    if (!this.isQualcunoMorto) {
-      for (let i = 0; i < this.bonus.length; i++) {
-        let isJustRimosso = false;
-        if (this.rectsColliding(this.player, this.bonus[i])) {
-          this.player[this.bonus[i].getTipoBonus()] += this.bonus[i].quantita;
-          this.bonus.pop();
-          isJustRimosso = true;
-        }
-        if (this.bonus.length > 0 && !isJustRimosso) {
-          if (this.rectsColliding(this.nemico, this.bonus[i])) {
-            this.nemico[this.bonus[i].getTipoBonus()] += this.bonus[i].quantita;
-            this.bonus.pop();
+  collisionDetenction() {
+    let dieCount = 0;
+    for (let i = 0; i < this.enemies.length; i++) {
 
-          }
-        }
-      }
-    }
-
-    if (!this.isCharterColliding) {
-
-      if (!this.nemico.isMorto) {
-        this.nemico.setDirection(this.getDirectionFromEnemy({ cercatore: this.nemico, cercato: this.player }));
-        this.directionToMoveSwitch(this.nemico);
+      this.enemies[i].counterAnimation = this.counterAnimation;
+      if (!this.player.isMorto && !this.enemies[i].isMorto && Utilities.rectsColliding(this.enemies[i], this.player)) {
+        this.enemies[i].attaccare(this.player);
+        this.player.attaccare(this.enemies[i]);
+        this.enemies[i].setDirection('STAND');
+        this.enemies[i].stand();
       } else {
-        this.directionToMoveSwitch(this.nemico);
+        if (!this.enemies[i].isMorto) {
+          this.charterMovmentRandomRoutine(this.enemies[i]);
+        }
       }
-      if (!this.player.isMorto) {
-        //this.player.setDirection(this.getDirectionFromEnemy({ cercatore: this.player, cercato: this.nemico }));
-        this.directionToMoveSwitch(this.player);
-
-      } else {
-        this.charterMovmentRandomRoutine(this.nemico);
-      }
-      if (
-        !this.player.isMorto &&
-        !this.nemico.isMorto &&
-        this.rectsColliding(this.nemico, this.player)
-      ) {
-        this.isCharterColliding = true;
-      }
-
-    } else {
-      this.nemico.attaccare(this.player);
-      this.player.attaccare(this.nemico);
-      this.nemico.stand();
-      this.player.stand();
-      if (this.nemico.salute <= 0) {
-        this.nemico.isMorto = true;
-        this.player.isWinner = true;
-        this.isCharterColliding = false;
-        this.isQualcunoMorto = true;
-      }
-      if (this.player.salute <= 0) {
-        this.player.isMorto = true;
-        this.nemico.isWinner = true;
-        this.isCharterColliding = false;
-        this.isQualcunoMorto = true;
+      if (this.enemies[i].isMorto) {
+        dieCount++;
       }
     }
 
+    this.bonusCount = 0;
+    for (let j = 0; j < this.bonus.length; j++) {
+      this.bonus[j].stand();
+      this.bonus[j].counterAnimation = this.counterAnimation;
+      if (this.bonus[j].getPlafond() > 0) {
+        if (Utilities.rectsColliding(this.bonus[j], this.player)) {
+          this.player[this.bonus[j].getTipoBonus()] += this.bonus[j].getQuantita() * this.player.livello *50;
+          this.bonus[j].setPlafond(this.bonus[j].getPlafond() - this.bonus[j].getQuantita());
+        }
 
-
-    if (!(this.player.salute <= 0 || this.nemico.salute <= 0)) {
-      for (let i = 0; i < this.bonus.length; i++) {
-        this.charterMovmentRandomRoutine(this.bonus[i]);
       }
-    } else {
-      for (let i = 0; i < this.bonus.length; i++) {
-        this.bonus[i].setX(9999);
-        this.bonus[i].setY(9999);
-      }
+      this.bonusCount += this.bonus[j].getPlafond();
     }
-    this.nemico.counterAnimation = this.counterAnimation;
+    if (dieCount == this.enemies.length || this.enemies.length <= 0) {
+      this.player.incrementaLivello();
+      this.qtaInizialeNemici++;
+      this.enemies = [];
+      this.enemies = Utilities.createEnemiesArray(this.qtaInizialeNemici, this.ctx, this.initLevel);
+      this.bonus = [];
+      this.bonus = Utilities.createBonusArray(this.qtaInizialeNemici, this.ctx);
+      this.initLevel++;
+    }
+  }
+
+  update() {
+
+    this.ctx.fillText('$' + this.player.money, 200, 40, 500);
     this.player.counterAnimation = this.counterAnimation;
-
     //velocità animazione ogni 
     if (this.counterRoutine % 4 == 0) {
       //step animazione 
@@ -164,104 +165,106 @@ export class AppComponent {
     this.counterRoutine === 399
       ? (this.counterRoutine = 0)
       : this.counterRoutine++;
-
-    requestAnimationFrame(this.animate.bind(this));
-
-  }
-
-
-  getDirectionFromEnemy({ cercatore, cercato }: { cercatore: Square; cercato: Square; }): direzione {
-    let out: direzione = 'STAND';
-
-    if (cercato.getX() > cercatore.getX()) {//cercato a sinisistra del Cercatore
-      out = 'RIGHT';
-    } else if (cercato.getX() < cercatore.getX()) {//cercato a destra del cercatore
-      out = 'LEFT';
-    }
-
-     if (cercato.getX() - cercatore.getX() < 1 ) {//cercato e cercatore in linea
-      if (cercato.getY() > cercatore.getY()) { //cercato sotto il cercatore
-        out = 'BOTTOM';
-      } else if (cercato.getY() < cercatore.getY()) {//cercato sopra il cercatore
-        out = 'TOP';
-      } 
-    }
-    return out;
-  }
-
-  direzionaRandomicamenteCharter(charter: Square) {
-    const direzione: direzione[] = ["TOP", "BOTTOM", "LEFT", "RIGHT", "STAND"];
-    const random = Math.floor(Math.random() * direzione.length);
-    charter.setDirection(direzione[random]);
-  }
-
-  rectsColliding(r1: Square, r2: Square) {
-    return !(
-      r1.getX() > r2.getX() + 1 ||
-      r1.getX() + 1 < r2.getX() ||
-      r1.getY() > r2.getY() + 1 ||
-      r1.getY() + 1 < r2.getY()
-    );
   }
 
   ngAfterViewInit(): void {
-
     const res = this.canvasGui.nativeElement.getContext('2d');
     if (!res || !(res instanceof CanvasRenderingContext2D)) {
       throw new Error('Failed to get 2d context');
     }
     this.ctx = res;
-    this.nemico = new Guerriero(this.ctx, 'green');
-    this.nemico.setX(0);
-    this.nemico.setY(0);
-    this.nemico.setZ(20);
-    this.nemico.setVelocita(0.4);
-    this.nemico.spazioInPiuX=60;
-    this.nemico.spazioInPiuY=20;
-    this.nemico.name = 'Manduca';
-    this.nemico.posizioneInfoLabelX = 270;
-    this.nemico.posizioneInfoLabelY = 480;
-    this.nemico.numeriFortunati = [8, 9, 2, 3, 4, 5, 6, 7];
-    this.nemico.dannoCritico = 100;
-    this.nemico.counterForCriticoTreshold = 10;
-    this.nemico.stand();
 
-    this.player = new Mago(this.ctx, 'blue');
-    this.player.setX(20);
-    this.player.setY(20);
-    this.player.setZ(20);
-    this.player.setVelocita(0.4);
-    this.player.spazioInPiuX=20;
-    this.player.spazioInPiuY=60;
+    this.startButton = new Bottone(this.ctx, 'yellow');
+    this.startButton.setX(0);
+    this.startButton.setY(0);
+    this.startButton.setText('START');
+    this.startButton.stand();
+
+    this.scegliGuerriero = new Bottone(this.ctx, 'yellow');
+    this.scegliGuerriero.setX(1);
+    this.scegliGuerriero.setY(0);
+    this.scegliGuerriero.setText('scegli Guerriero');
+    this.scegliGuerriero.stand();
+
+    this.compraBonus = new Bottone(this.ctx, 'yellow');
+    this.compraBonus.setX(2);
+    this.compraBonus.setY(0);
+    this.compraBonus.setText('BONUS 100$');
+    this.compraBonus.stand();
+
+
+    this.player = new Guerriero(this.ctx, 'blue', 1);
+    this.ctx.fillText('$' + this.player.money, 200, 40, 500);
+    this.player.money = 1000;
+    this.ctx.canvas.addEventListener(
+      'click',
+      (evt) => {
+        if (!this.isStarted) {
+          this.changeButtonState(evt, this.startButton);
+          if (this.startButton.state == 1) {
+            this.startGame();
+            this.isStarted = true;
+          }
+        }
+
+        // const scegliGuerrieroTouched = this.changeButtonState(evt, this.scegliGuerriero);
+        // if (this.scegliGuerriero.state == 1) {
+        //   this.isMagoScelto = false;
+        // }
+
+        const compraBonusTouched = this.changeButtonState(evt, this.compraBonus);
+        if (compraBonusTouched && this.player.money > 0) {
+          this.bonus = [];
+          this.bonus = Utilities.createBonusArray(3, this.ctx);
+          this.player.money -= 20;
+        }
+      },
+      false
+    );
+
+  }
+
+
+  private changeButtonState(evt: MouseEvent, button: Bottone): boolean {
+    const mousePos = Utilities.getMousePos(this.ctx.canvas, evt);
+    const rect = {
+      x: button.getX() * button.sideX,
+      y: button.getY() * button.sideY,
+      width: button.sideX,
+      height: button.sideY,
+    };
+    let out = false;
+    if (Utilities.isInside(mousePos, rect)) {
+      button.state == 0 ? button.state = 1 : button.state = 0;
+      out = true;
+    }
+    return out;
+  }
+
+  startGame() {
+    this.player.setX(10);
+    this.player.setY(10);
+    this.player.setVelocita(0.9);
     this.player.name = 'Tetramarco';
     this.player.posizioneInfoLabelX = 30;
-    this.player.posizioneInfoLabelY = 480;
+    this.player.posizioneInfoLabelY = 700;
     this.player.numeriFortunati = [0, 1, 2, 3, 4, 5, 6, 7];
-    this.player.dannoCritico = 5;
-    this.player.counterForCriticoTreshold = 100;
+    this.player.dannoCritico = 50;
+    this.player.counterForCriticoTreshold = 10;
+    this.player.isMorto = false;
     this.player.stand();
+    this.bonus = Utilities.createBonusArray(1, this.ctx);
+    this.enemies = Utilities.createEnemiesArray(this.qtaInizialeNemici, this.ctx, this.initLevel);
 
-    for (let i = 0; i < 9; i++) {
-      let bonus: Bonus;
-      bonus = new Bonus(this.ctx, 'red', 'forza', 10)
-      const a = i + 1;
-      switch (a % 3) {
-        case 0: bonus = new Bonus(this.ctx, 'red', 'forza', 50);
-          break;
-        case 1: bonus = new Bonus(this.ctx, 'green', 'intelligenza', 50);
-          break;
-        case 2: bonus = new Bonus(this.ctx, 'blue', 'salute', 1000);
-          break;
-      }
+    if (!this.isStarted) {
+      this.ngZone.runOutsideAngular(() => this.animate());
 
-      bonus.setX(Math.floor(Math.random() * 50));
-      bonus.setY(Math.floor(Math.random() * 20));
-      bonus.setZ(20);
-      bonus.setVelocita(0.3);
-      this.bonus.push(bonus);
     }
-    this.ngZone.runOutsideAngular(() => this.animate());
   }
+
+
+
+
 
 
 }

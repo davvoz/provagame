@@ -4,11 +4,24 @@ export class Square {
   private color = 'red';
   private x = 0;
   private y = 0;
-  private z = 50;
+  private _sideX = 50;
+  private _sideY = 70;
+  public get sideX() {
+    return this._sideX;
+  }
+  public set sideX(value) {
+    this._sideX = value;
+  }
+  public get sideY() {
+    return this._sideY;
+  }
+  public set sideY(value) {
+    this.sideY = value;
+  }
+
   private velocita = 1;
   private direction:direzione = 'STAND';
-   spazioInPiuX = 0;
-   spazioInPiuY = 0;
+
   constructor(public ctx: CanvasRenderingContext2D, color: string) {
     this.color = color;
   }
@@ -24,28 +37,28 @@ export class Square {
   }
   moveRight() {
     this.direction = 'RIGHT';
-    if (this.x * this.z < this.ctx.canvas.width - this.z - this.spazioInPiuX) {
+    if (this.x * this.sideX < this.ctx.canvas.width - this.sideX ) {//serve a non uscire dalla canvas senza collision detection
       this.x = this.x + this.velocita;
     }
     this.draw();
   }
   moveLeft() {
     this.direction = 'LEFT';
-    if (this.x * this.z > 0 + this.spazioInPiuX) {
+    if (this.x * this.sideX > 0 ) {
       this.x = this.x - this.velocita;
     }
     this.draw();
   }
   moveTop() {
     this.direction = 'TOP';
-    if (this.y * this.z > 0 - this.spazioInPiuY) {
+    if (this.y * this.sideX > 0 ) {
       this.y = this.y - this.velocita;
     }
     this.draw();
   }
   moveBottom() {
     this.direction = 'BOTTOM';
-    if (this.y * this.z < this.ctx.canvas.height - this.z - this.spazioInPiuY) {
+    if (this.y * this.sideY < this.ctx.canvas.height - this.sideY) {
       this.y = this.y + this.velocita ;
     }
     this.draw();
@@ -53,8 +66,8 @@ export class Square {
   draw() {
     this.ctx.fillStyle = this.color;
     this.ctx.lineWidth = 2;
-    this.ctx.fillRect(this.z * this.x, this.z * this.y, this.z, this.z);
-    this.ctx.strokeRect(this.z * this.x, this.z * this.y, this.z, this.z);
+    this.ctx.fillRect(this.sideX * this.x, this.sideY * this.y, this.sideX, this.sideY);
+    this.ctx.strokeRect(this.sideX * this.x, this.sideY * this.y, this.sideX, this.sideY);
   }
 
   getVelocita(): number {
@@ -81,10 +94,5 @@ export class Square {
   setColor(color: string) {
     this.color = color;
   }
-  getZ(): number {
-    return this.z;
-  }
-  setZ(z: number) {
-    this.z = z;
-  }
+  
 }
