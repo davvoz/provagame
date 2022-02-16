@@ -39,51 +39,26 @@ export class Utilities {
         }
     }
 
-    static getDirectionFromEnemy({ cercatore, cercato }: { cercatore: Square; cercato: Square; }): direzione {//todo non va
-        let out: direzione = 'STAND';
-        if (cercato.getX() > cercatore.getX()) {//cercato a sinisistra del Cercatore
-            out = 'RIGHT';
-        }
-        if (cercatore.getX() > cercato.getX()) {//cercato a destra del cercatore
-            out = 'LEFT';
-        }
-
-        if (cercato.getX() - cercatore.getX() < 1) {//cercato e cercatore in linea
-
-            if (cercato.getY() > cercatore.getY()) { //cercato sotto il cercatore
-                out = 'BOTTOM';
-            } else if (cercato.getY() < cercatore.getY()) {//cercato sopra il cercatore
-                out = 'TOP';
-            }
-            else if (cercato.getX() > cercatore.getX()) {//cercato a sinisistra del Cercatore
-                out = 'RIGHT';
-            }
-            if (cercatore.getX() > cercato.getX()) {//cercato a destra del cercatore
-                out = 'LEFT';
-            }
-        }
-        return out;
-    }
-
     static createBonusArray(j: number, ctx: CanvasRenderingContext2D): Bonus[] {
 
         const ba: Bonus[] = [];
         for (let i = 0; i < j; i++) {
             let bonus: Bonus;
             switch (Math.floor(Math.random() * 3)) {
-                case 0: bonus = new Bonus(ctx, 'red', 'forza', 2, Math.floor(Math.random() * 100));
+                case 0: bonus = new Bonus(ctx, 'red', 'forza', 2, Math.floor(Math.random()));
+                    bonus.setX(Math.floor(Math.random() * 10));
+                    bonus.setY(Math.floor(Math.random() * 10));
+                    bonus.setVelocita(0);
+
+                    ba.push(bonus);
+                    break;
+                case 1: bonus = new Bonus(ctx, 'green', 'intelligenza', 2, Math.floor(Math.random()));
                     bonus.setX(Math.floor(Math.random() * 10));
                     bonus.setY(Math.floor(Math.random() * 10));
                     bonus.setVelocita(0);
                     ba.push(bonus);
                     break;
-                case 1: bonus = new Bonus(ctx, 'green', 'intelligenza', 2, Math.floor(Math.random() * 100));
-                    bonus.setX(Math.floor(Math.random() * 10));
-                    bonus.setY(Math.floor(Math.random() * 10));
-                    bonus.setVelocita(0);
-                    ba.push(bonus);
-                    break;
-                case 2: bonus = new Bonus(ctx, 'blue', 'salute', 10, Math.floor(Math.random() * 4000));
+                case 2: bonus = new Bonus(ctx, 'blue', 'salute', 10, Math.floor(Math.random() * 40));
                     bonus.setX(Math.floor(Math.random() * 10));
                     bonus.setY(Math.floor(Math.random() * 10));
                     bonus.setVelocita(0);
@@ -94,34 +69,32 @@ export class Utilities {
         return ba
     }
 
-    static createEnemiesArray(n: number, ctx: CanvasRenderingContext2D, init: number): Charter[] {
+    static createEnemiesArray(n: number, ctx: CanvasRenderingContext2D, init: number,salutePlayer:number): Charter[] {
         const enemies: Charter[] = []
         for (let i = 0; i < n; i++) {
-            let bound: Charter;
+            let enemy: Charter;
             if (Math.floor(Math.random() * 2) == 1) {
-                bound = new Guerriero(ctx, 'rgb(66,100,100)', init);
+                enemy = new Guerriero(ctx, 'rgb(66,100,100)', init);
             } else {
-                bound = new Mago(ctx, 'rgb(254,66,10)', init)
+                enemy = new Mago(ctx, 'rgb(254,66,10)', init)
             }
 
-            bound.setX(Math.floor(Math.random() * 20));
-            bound.setY(Math.floor(Math.random() * i));
-            bound.setVelocita(0.1);
-            bound.name = i + '_ANNA_' + i;
-            bound.posizioneInfoLabelX = 370 + i * 120;
-            bound.posizioneInfoLabelY = 700;
-            bound.numeriFortunati = [8, 9, 2, 3, 4, 5, 6, 7];
-            bound.dannoCritico = 10 * init;
-            bound.counterForCriticoTreshold = 10;
-            bound.money = Math.floor(Math.random() * 20);
-            bound.stand();
-            enemies.push(bound);
+            enemy.setX(Math.floor(Math.random() * 20));
+            enemy.setY(Math.floor(Math.random() * i));
+            enemy.setVelocita(0.1);
+            enemy.name = i + '_ANNA_' + i;
+            enemy.posizioneInfoLabelX = 370 + i * 120;
+            enemy.posizioneInfoLabelY = 700;
+            enemy.numeriFortunati = [8, 9, 2, 3];
+            enemy.dannoCritico = 10 * init;
+            enemy.counterForCriticoTreshold = 10;
+            enemy.money = Math.floor(Math.random() * 10) * (init + 1);
+            enemy.salute = salutePlayer;
+            enemy.incrementaLivello();
+            enemy.stand();
+            enemies.push(enemy);
         }
-        enemies.forEach((enemy) => {
-            for (let i = 1; i < init; i++) {
-                enemy.incrementaLivello();
-            }
-        })
+
         return enemies;
     }
     static getMousePos(canvas: HTMLCanvasElement, event: MouseEvent) {

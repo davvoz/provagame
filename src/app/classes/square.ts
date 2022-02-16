@@ -4,20 +4,9 @@ export class Square {
   private color = 'red';
   private x = 0;
   private y = 0;
-  private _sideX = 50;
-  private _sideY = 70;
-  public get sideX() {
-    return this._sideX;
-  }
-  public set sideX(value) {
-    this._sideX = value;
-  }
-  public get sideY() {
-    return this._sideY;
-  }
-  public set sideY(value) {
-    this.sideY = value;
-  }
+  sideX = 50;
+  sideY = 70;
+
 
   private velocita = 1;
   private direction:direzione = 'STAND';
@@ -94,5 +83,5 @@ export class Square {
   setColor(color: string) {
     this.color = color;
   }
-  
+
 }

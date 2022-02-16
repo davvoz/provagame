@@ -80,7 +80,7 @@ export class AppComponent {
   startButton!: Bottone;
   pauseButton!: Bottone;
   compraBonus!: Bottone;
-  scegliGuerriero!: Bottone;
+  incrementaLivelloButton!: Bottone;
   isStarted = false;
   initLevel = 0;
   constructor(private ngZone: NgZone) { }
@@ -100,24 +100,34 @@ export class AppComponent {
     requestAnimationFrame(this.animate.bind(this));
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.update();
-    Utilities.directionToMoveSwitch(this.player);
-    this.startButton.stand();
-    this.scegliGuerriero.stand();
-    this.compraBonus.stand();
+
     this.collisionDetenction();
   }
 
   collisionDetenction() {
+
     let dieCount = 0;
     for (let i = 0; i < this.enemies.length; i++) {
 
       this.enemies[i].counterAnimation = this.counterAnimation;
       if (!this.player.isMorto && !this.enemies[i].isMorto && Utilities.rectsColliding(this.enemies[i], this.player)) {
         this.enemies[i].attaccare(this.player);
+        if(this.enemies[i].mana == this.enemies[i].maxMana){
+            this.enemies[i].mana = 0;
+            this.enemies[i].lanciaAbilita(this.player);
+        }
         this.player.attaccare(this.enemies[i]);
+        if(this.player.mana == this.enemies[i].maxMana){
+          this.player.mana = 0;
+          this.player.lanciaAbilita(this.enemies[i]);
+      }
+        this.player.isOnAttack = true;
         this.enemies[i].setDirection('STAND');
+        this.enemies[i].isOnAttack = true;
         this.enemies[i].stand();
       } else {
+        this.player.isOnAttack = false;
+        this.enemies[i].isOnAttack= false;
         if (!this.enemies[i].isMorto) {
           this.charterMovmentRandomRoutine(this.enemies[i]);
         }
@@ -133,7 +143,7 @@ export class AppComponent {
       this.bonus[j].counterAnimation = this.counterAnimation;
       if (this.bonus[j].getPlafond() > 0) {
         if (Utilities.rectsColliding(this.bonus[j], this.player)) {
-          this.player[this.bonus[j].getTipoBonus()] += this.bonus[j].getQuantita() * this.player.livello *50;
+          this.player[this.bonus[j].getTipoBonus()] += this.bonus[j].getQuantita() * this.player.livello * 50;
           this.bonus[j].setPlafond(this.bonus[j].getPlafond() - this.bonus[j].getQuantita());
         }
 
@@ -144,21 +154,25 @@ export class AppComponent {
       this.player.incrementaLivello();
       this.qtaInizialeNemici++;
       this.enemies = [];
-      this.enemies = Utilities.createEnemiesArray(this.qtaInizialeNemici, this.ctx, this.initLevel);
+      this.enemies = Utilities.createEnemiesArray(this.qtaInizialeNemici, this.ctx, this.initLevel,this.player.salute);
       this.bonus = [];
       this.bonus = Utilities.createBonusArray(this.qtaInizialeNemici, this.ctx);
       this.initLevel++;
     }
+    Utilities.directionToMoveSwitch(this.player);
+
   }
 
   update() {
-
+    this.startButton.stand();
+    this.incrementaLivelloButton.stand();
+    this.compraBonus.stand();
     this.ctx.fillText('$' + this.player.money, 200, 40, 500);
     this.player.counterAnimation = this.counterAnimation;
     //velocità animazione ogni 
     if (this.counterRoutine % 4 == 0) {
       //step animazione 
-      this.counterAnimation === 2
+      this.counterAnimation === 3
         ? (this.counterAnimation = 0)
         : this.counterAnimation++;
     }
@@ -180,16 +194,16 @@ export class AppComponent {
     this.startButton.setText('START');
     this.startButton.stand();
 
-    this.scegliGuerriero = new Bottone(this.ctx, 'yellow');
-    this.scegliGuerriero.setX(1);
-    this.scegliGuerriero.setY(0);
-    this.scegliGuerriero.setText('scegli Guerriero');
-    this.scegliGuerriero.stand();
+    this.incrementaLivelloButton = new Bottone(this.ctx, 'yellow');
+    this.incrementaLivelloButton.setX(1);
+    this.incrementaLivelloButton.setY(0);
+    this.incrementaLivelloButton.setText('LEVEL');
+    this.incrementaLivelloButton.stand();
 
     this.compraBonus = new Bottone(this.ctx, 'yellow');
     this.compraBonus.setX(2);
     this.compraBonus.setY(0);
-    this.compraBonus.setText('BONUS 100$');
+    this.compraBonus.setText('BONUS');
     this.compraBonus.stand();
 
 
@@ -207,10 +221,11 @@ export class AppComponent {
           }
         }
 
-        // const scegliGuerrieroTouched = this.changeButtonState(evt, this.scegliGuerriero);
-        // if (this.scegliGuerriero.state == 1) {
-        //   this.isMagoScelto = false;
-        // }
+        const incrementaLivelloButtonTouched = this.changeButtonState(evt, this.incrementaLivelloButton);
+        if (incrementaLivelloButtonTouched && this.player.money > 0) {
+          this.player.incrementaLivello();
+          this.player.money -= 200;
+        }
 
         const compraBonusTouched = this.changeButtonState(evt, this.compraBonus);
         if (compraBonusTouched && this.player.money > 0) {
@@ -254,7 +269,7 @@ export class AppComponent {
     this.player.isMorto = false;
     this.player.stand();
     this.bonus = Utilities.createBonusArray(1, this.ctx);
-    this.enemies = Utilities.createEnemiesArray(this.qtaInizialeNemici, this.ctx, this.initLevel);
+    this.enemies = Utilities.createEnemiesArray(this.qtaInizialeNemici, this.ctx, this.initLevel,this.player.salute);
 
     if (!this.isStarted) {
       this.ngZone.runOutsideAngular(() => this.animate());

@@ -12,18 +12,19 @@ export class Mago extends Charter {
   override counterAnimation = 0;
   override classe: classe = 'MAGO';
   override name = 'Mago default name';
-  override spriteSheetCharterPath = 'assets/images/discotraspoo.png';//src\assets\images\discotraspoo.png
-  constructor(public override ctx: CanvasRenderingContext2D, color: string,level:number) {
+  override spriteSheetCharterPath = 'assets/images/discotraspoo.png';//src\assets\images\discotraspooAtck.png
+  override spriteSheetAttackPath = 'assets/images/discotraspooAtck.png';
+  constructor(public override ctx: CanvasRenderingContext2D, color: string, level: number) {
     super(ctx, color);
     this.livello = level;
-    this.forza += Math.floor(Math.random() * 10)*this.livello;
-    this.resistenzaFisica += Math.floor(Math.random() * 10)*this.livello;
-    this.intelligenza += Math.floor(Math.random() * 50)*this.livello;
-    this.resistenzaMagica += Math.floor(Math.random() * 10)*this.livello;
+    this.forza += Math.floor(Math.random() * 10) * this.livello;
+    this.resistenzaFisica += Math.floor(Math.random() * 10) * this.livello;
+    this.intelligenza += Math.floor(Math.random() * 50) * this.livello;
+    this.resistenzaMagica += Math.floor(Math.random() * 10) * this.livello;
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
-
+    this.spriteSheetImageAttack.src = this.spriteSheetAttackPath;
 
   }
-  
+
 
 }

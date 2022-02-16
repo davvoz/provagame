@@ -29,11 +29,11 @@ export class Bonus extends Charter {
             this.ctx.fillStyle = baseColor;
             this.ctx.strokeStyle ='black';
             if(this.tipoBonus == 'salute'){
-                this.ctx.fillRect(this.sideX * this.getX(), this.sideY * this.getY(), this.sideX *this.plafond/1000, this.sideY);
-                this.ctx.strokeRect(this.sideX * this.getX(), this.sideY * this.getY(), this.sideX*this.plafond/1000, this.sideY);
+                this.ctx.fillRect(this.sideX * this.getX(), this.sideY * this.getY(), this.sideX *this.plafond/10, this.sideY);
+                this.ctx.strokeRect(this.sideX * this.getX(), this.sideY * this.getY(), this.sideX*this.plafond/10, this.sideY);
             }else{
-                this.ctx.fillRect(this.sideX * this.getX(), this.sideY * this.getY(), this.sideX *this.plafond/100, this.sideY);
-                this.ctx.strokeRect(this.sideX * this.getX(), this.sideY * this.getY(), this.sideX*this.plafond/100, this.sideY);
+                this.ctx.fillRect(this.sideX * this.getX(), this.sideY * this.getY(), this.sideX *this.plafond, this.sideY);
+                this.ctx.strokeRect(this.sideX * this.getX(), this.sideY * this.getY(), this.sideX*this.plafond, this.sideY);
             }
          
            
