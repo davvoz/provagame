@@ -4,6 +4,7 @@ import { Guerriero } from "./guerriero";
 import { Mago } from "./mago";
 import { Bonus } from "./bonus";
 import { Charter } from "./charter";
+import { Arcere } from "./arcere";
 
 export class Utilities {
 
@@ -44,7 +45,7 @@ export class Utilities {
         const ba: Bonus[] = [];
         for (let i = 0; i < j; i++) {
             let bonus: Bonus;
-            switch (Math.floor(Math.random() * 3)) {
+            switch (i % 3) {
                 case 0: bonus = new Bonus(ctx, 'red', 'forza', 2, Math.floor(Math.random()));
                     bonus.setX(Math.floor(Math.random() * 10));
                     bonus.setY(Math.floor(Math.random() * 10));
@@ -69,34 +70,47 @@ export class Utilities {
         return ba
     }
 
-    static createEnemiesArray(n: number, ctx: CanvasRenderingContext2D, init: number,salutePlayer:number): Charter[] {
+    static createEnemiesArray(n: number, ctx: CanvasRenderingContext2D, init: number, salutePlayer: number): Charter[] {
         const enemies: Charter[] = []
         for (let i = 0; i < n; i++) {
             let enemy: Charter;
-            if (Math.floor(Math.random() * 2) == 1) {
-                enemy = new Guerriero(ctx, 'rgb(66,100,100)', init);
-            } else {
-                enemy = new Mago(ctx, 'rgb(254,66,10)', init)
+            switch (i % 3) {
+                case 0: enemy = new Guerriero(ctx, 'rgb(66,100,100)', init);
+                    Utilities.setEnemiesArray(enemy, i, init, salutePlayer, enemies);
+                    break;
+                case 1:
+                    enemy = new Mago(ctx, 'rgb(254,66,10)', init);
+                    Utilities.setEnemiesArray(enemy, i, init, salutePlayer, enemies);
+                    break;
+                case 2:
+                    enemy = new Arcere(ctx, 'rgb(66,66,200)', init)
+                    Utilities.setEnemiesArray(enemy, i, init, salutePlayer, enemies);
+                    break;
             }
 
-            enemy.setX(Math.floor(Math.random() * 20));
-            enemy.setY(Math.floor(Math.random() * i));
-            enemy.setVelocita(0.1);
-            enemy.name = i + '_ANNA_' + i;
-            enemy.posizioneInfoLabelX = 370 + i * 120;
-            enemy.posizioneInfoLabelY = 700;
-            enemy.numeriFortunati = [8, 9, 2, 3];
-            enemy.dannoCritico = 10 * init;
-            enemy.counterForCriticoTreshold = 10;
-            enemy.money = Math.floor(Math.random() * 10) * (init + 1);
-            enemy.salute = salutePlayer;
-            enemy.incrementaLivello();
-            enemy.stand();
-            enemies.push(enemy);
+
+
         }
 
         return enemies;
     }
+    private static setEnemiesArray(enemy: Charter, i: number, init: number, salutePlayer: number, enemies: Charter[]) {
+        enemy.setX(Math.floor(Math.random() * 20));
+        enemy.setY(Math.floor(Math.random() * i));
+        enemy.setVelocita(0.1);
+        enemy.posizioneInfoLabelX = 370 + i * 120;
+        enemy.posizioneInfoLabelY = 700;
+        enemy.numeriFortunati = [8, 9, 2, 3];
+        enemy.dannoCritico = 10 * init;
+        enemy.counterForCriticoTreshold = 10;
+        enemy.name = this.nomeRandomico();
+        enemy.money = Math.floor(Math.random() * 10) * (init + 1);
+        enemy.salute = salutePlayer;
+        enemy.incrementaLivello();
+        enemy.stand();
+        enemies.push(enemy);
+    }
+
     static getMousePos(canvas: HTMLCanvasElement, event: MouseEvent) {
         var rect = canvas.getBoundingClientRect();
         return {
@@ -111,5 +125,10 @@ export class Utilities {
             mousePosition.y < rect.y + rect.height &&
             mousePosition.y > rect.y
         );
+    }
+    static nomeRandomico(): string {
+        const nomi = ['Piero', 'Luigi', 'Aleg', 'Pistolius', 'Agricanto', 'Tacimela', 'Rambaudo', 'Coletta', 'Rimarro', 'Sgrunf', 'Prux', 'Laida', 'Skyre', 'Pantone', 'Ramira', 'Astofele', 'Carima', 'Stangolo',
+            'Aldo', 'Maria', 'Marco', 'Derrer', 'Skutillo', 'Rafranco'];
+        return nomi[Math.floor(Math.random() * nomi.length)];
     }
 }

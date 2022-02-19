@@ -13,3 +13,4 @@ export interface Conditions {
     poisoned: Condition;
     fiery: Condition
 }
+export type stato ='attaccando'| 'difendendo'|'camminando'|'morendo';

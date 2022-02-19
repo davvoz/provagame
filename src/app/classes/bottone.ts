@@ -13,10 +13,10 @@ export class Bottone extends Square {
   override draw() {
     if (this.state == 0) {
 
-      this.ctx.fillStyle = 'grey';
+      this.ctx.fillStyle = 'rgb(200,40,40)';
     } else {
 
-      this.ctx.fillStyle = 'red';
+      this.ctx.fillStyle = 'rgb(200,40,40)';
     }
     this.ctx.lineWidth = 2;
     this.ctx.fillRect(

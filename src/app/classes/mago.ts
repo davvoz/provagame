@@ -2,7 +2,7 @@ import { Charter } from './charter';
 import { classe } from './costants.enum';
 
 export class Mago extends Charter {
-  override salute = 15000;
+  override salute = 30000;
   override agilita = 20;
   override forza = 20;
   override intelligenza = 100;
@@ -23,8 +23,17 @@ export class Mago extends Charter {
     this.resistenzaMagica += Math.floor(Math.random() * 10) * this.livello;
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
     this.spriteSheetImageAttack.src = this.spriteSheetAttackPath;
-
   }
-
+  override lanciaAbilita(charter:Charter): void {
+    console.log(this.name + ' lancia abilità a '+charter.name);
+    charter.updateSituazioneConditions(
+      {
+        conditionType:'VENO',
+        quantita:100,
+        totTurni:100*this.livello,
+        value:true
+      }
+    )
+  }
 
 }

@@ -19,23 +19,24 @@ export enum KEY_CODE {
 })
 export class AppComponent {
   isMagoScelto: boolean = false;
+  level = 0;
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
     if (!this.player.isMorto) {
       if (event.keyCode == KEY_CODE.DOWN_ARROW) {
-        this.player.setVelocita(0.1);
+        this.player.setVelocita(this.player.maxVelo);
         this.player.setDirection('BOTTOM');
       }
       if (event.keyCode == KEY_CODE.UP_ARROW) {
-        this.player.setVelocita(0.1);
+        this.player.setVelocita(this.player.maxVelo);
         this.player.setDirection('TOP');
       }
       if (event.keyCode == KEY_CODE.LEFT_ARROW) {
-        this.player.setVelocita(0.1);
+        this.player.setVelocita(this.player.maxVelo);
         this.player.setDirection('LEFT');
       }
       if (event.keyCode == KEY_CODE.RIGHT_ARROW) {
-        this.player.setVelocita(0.1);
+        this.player.setVelocita(this.player.maxVelo);
         this.player.setDirection('RIGHT');
       }
       if (event.keyCode == 32) {
@@ -89,7 +90,7 @@ export class AppComponent {
 
 
   charterMovmentRandomRoutine(charter: Square) {
-    if (this.counterRoutine % 20 == 0) {
+    if (this.counterRoutine % 40 == 0) {
       Utilities.direzionaRandomicamenteCharter(charter);
     }
     Utilities.directionToMoveSwitch(charter);
@@ -99,35 +100,39 @@ export class AppComponent {
   animate(): void {
     requestAnimationFrame(this.animate.bind(this));
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    if(this.player.isMorto){
+      this.startButton.state == 1;
+      
+    }
     this.update();
 
     this.collisionDetenction();
   }
 
   collisionDetenction() {
-
     let dieCount = 0;
     for (let i = 0; i < this.enemies.length; i++) {
-
       this.enemies[i].counterAnimation = this.counterAnimation;
       if (!this.player.isMorto && !this.enemies[i].isMorto && Utilities.rectsColliding(this.enemies[i], this.player)) {
         this.enemies[i].attaccare(this.player);
-        if(this.enemies[i].mana == this.enemies[i].maxMana){
-            this.enemies[i].mana = 0;
-            this.enemies[i].lanciaAbilita(this.player);
+        if (this.enemies[i].mana == this.enemies[i].maxMana) {
+          this.enemies[i].mana = 0;
+          this.enemies[i].lanciaAbilita(this.player);
         }
         this.player.attaccare(this.enemies[i]);
-        if(this.player.mana == this.enemies[i].maxMana){
+        if (this.player.mana == this.enemies[i].maxMana) {
           this.player.mana = 0;
           this.player.lanciaAbilita(this.enemies[i]);
-      }
+        }
         this.player.isOnAttack = true;
-        this.enemies[i].setDirection('STAND');
+        //this.enemies[i].setDirection('STAND');
         this.enemies[i].isOnAttack = true;
         this.enemies[i].stand();
       } else {
         this.player.isOnAttack = false;
-        this.enemies[i].isOnAttack= false;
+        this.player.stato = 'camminando';
+        this.enemies[i].isOnAttack = false;
+        this.enemies[i].stato = 'camminando';
         if (!this.enemies[i].isMorto) {
           this.charterMovmentRandomRoutine(this.enemies[i]);
         }
@@ -136,7 +141,6 @@ export class AppComponent {
         dieCount++;
       }
     }
-
     this.bonusCount = 0;
     for (let j = 0; j < this.bonus.length; j++) {
       this.bonus[j].stand();
@@ -146,7 +150,6 @@ export class AppComponent {
           this.player[this.bonus[j].getTipoBonus()] += this.bonus[j].getQuantita() * this.player.livello * 50;
           this.bonus[j].setPlafond(this.bonus[j].getPlafond() - this.bonus[j].getQuantita());
         }
-
       }
       this.bonusCount += this.bonus[j].getPlafond();
     }
@@ -154,13 +157,13 @@ export class AppComponent {
       this.player.incrementaLivello();
       this.qtaInizialeNemici++;
       this.enemies = [];
-      this.enemies = Utilities.createEnemiesArray(this.qtaInizialeNemici, this.ctx, this.initLevel,this.player.salute);
+      this.enemies = Utilities.createEnemiesArray(this.qtaInizialeNemici, this.ctx, this.initLevel, this.player.salute);
       this.bonus = [];
       this.bonus = Utilities.createBonusArray(this.qtaInizialeNemici, this.ctx);
       this.initLevel++;
+      this.level++;
     }
     Utilities.directionToMoveSwitch(this.player);
-
   }
 
   update() {
@@ -168,9 +171,10 @@ export class AppComponent {
     this.incrementaLivelloButton.stand();
     this.compraBonus.stand();
     this.ctx.fillText('$' + this.player.money, 200, 40, 500);
+    this.ctx.fillText('Livello ' + this.level, 350, 40, 500);
     this.player.counterAnimation = this.counterAnimation;
-    //velocità animazione ogni 
-    if (this.counterRoutine % 4 == 0) {
+    //velocità animazione ogni n frame
+    if (this.counterRoutine % 8 == 0) {
       //step animazione 
       this.counterAnimation === 3
         ? (this.counterAnimation = 0)
@@ -206,20 +210,18 @@ export class AppComponent {
     this.compraBonus.setText('BONUS');
     this.compraBonus.stand();
 
-
-    this.player = new Guerriero(this.ctx, 'blue', 1);
-    this.ctx.fillText('$' + this.player.money, 200, 40, 500);
-    this.player.money = 1000;
+    
     this.ctx.canvas.addEventListener(
       'click',
       (evt) => {
-        if (!this.isStarted) {
-          this.changeButtonState(evt, this.startButton);
-          if (this.startButton.state == 1) {
+
+        const startButtonTouched = this.changeButtonState(evt, this.startButton);
+          if (startButtonTouched) {
             this.startGame();
+            this.level = 0;
+            this.initLevel = 1;
             this.isStarted = true;
           }
-        }
 
         const incrementaLivelloButtonTouched = this.changeButtonState(evt, this.incrementaLivelloButton);
         if (incrementaLivelloButtonTouched && this.player.money > 0) {
@@ -257,6 +259,7 @@ export class AppComponent {
   }
 
   startGame() {
+    this.player = new Mago(this.ctx, 'blue', 1);
     this.player.setX(10);
     this.player.setY(10);
     this.player.setVelocita(0.9);
@@ -267,13 +270,15 @@ export class AppComponent {
     this.player.dannoCritico = 50;
     this.player.counterForCriticoTreshold = 10;
     this.player.isMorto = false;
+    this.player.salute += 10000;
+    this.player.money = 1000;
     this.player.stand();
-    this.bonus = Utilities.createBonusArray(1, this.ctx);
-    this.enemies = Utilities.createEnemiesArray(this.qtaInizialeNemici, this.ctx, this.initLevel,this.player.salute);
+    this.bonus = Utilities.createBonusArray(this.initLevel, this.ctx);
+    this.enemies = Utilities.createEnemiesArray(this.qtaInizialeNemici, this.ctx, this.initLevel, this.player.salute);
+    this.ctx.fillText('$' + this.player.money, 200, 40, 500);
 
     if (!this.isStarted) {
       this.ngZone.runOutsideAngular(() => this.animate());
-
     }
   }
 
