@@ -2,7 +2,7 @@ import { Charter } from './charter';
 import { classe } from './costants.enum';
 
 export class Mago extends Charter {
-  override salute = 30000;
+  override salute = 3000;
   override agilita = 20;
   override forza = 20;
   override intelligenza = 100;
@@ -29,7 +29,7 @@ export class Mago extends Charter {
     charter.updateSituazioneConditions(
       {
         conditionType:'VENO',
-        quantita:100,
+        quantita:200,
         totTurni:100*this.livello,
         value:true
       }

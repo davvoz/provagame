@@ -1,5 +1,5 @@
-import { ThisReceiver } from '@angular/compiler';
 import { classe, Condition, Conditions, stato } from './costants.enum';
+import { Pozione } from './pozione';
 import { Square } from './square';
 
 export abstract class Charter extends Square {
@@ -39,24 +39,26 @@ export abstract class Charter extends Square {
   velocitaIniziale = 0;
   isVelenoApplicato = false;
   maxVelo = 0.1;
-  //stati attaccando difendendo camminando
+  pozioni: Pozione[] = [];
+  pozioneAntiCambioStati = false;
+  turniPozioneAntiCambiaStati = 1000;
   stato: stato = 'camminando';
   situazione: Conditions = {
     stunned:
     {
-      conditionType: 'STUN',//aggiunge danni 
+      conditionType: 'STUN',
       value: false,
       quantita: 0,
       totTurni: 0,
     },
     poisoned: {
-      conditionType: 'VENO',//non attacca
+      conditionType: 'VENO',
       value: false,
       quantita: 0,
       totTurni: 0
     },
     fiery: {
-      conditionType: 'FIRE',//molto rallentato
+      conditionType: 'FIRE',
       value: false,
       quantita: 0,
       totTurni: 0
@@ -66,36 +68,35 @@ export abstract class Charter extends Square {
 
   updateSituazioneConditions(condition: Condition) {
     console.error(this.name + ' riceve condition', condition);
-
-    switch (condition.conditionType) {
-      case 'STUN':
-        this.situazione.stunned = condition;
-        break;
-      case 'VENO':
-        this.situazione.poisoned = condition;
-        break;
-      case 'FIRE':
-        this.situazione.fiery = condition;
-        break;
+    if (!this.pozioneAntiCambioStati) {
+      switch (condition.conditionType) {
+        case 'STUN':
+          this.situazione.stunned = condition;
+          break;
+        case 'VENO':
+          this.situazione.poisoned = condition;
+          break;
+        case 'FIRE':
+          this.situazione.fiery = condition;
+          break;
+      }
     }
+
   }
 
   lanciaAbilita(charter: Charter): void { console.error('abilita abstrtact') }
 
   override draw() {
-    if(this.salute <= 0 ){
+    if (this.salute <= 0) {
       this.isMorto = true
       this.stato = 'morendo';
-    }else{
+    } else {
       this.isMorto = false
     }
     this.drawLabel();
     this.drawBarraEnergia();
-    //this.drawDannoCritico();
-    // this.drawCritico();
-
-    this.ctx.strokeStyle = this.getColor();
-    this.ctx.strokeRect(this.getX() * this.sideX, this.getY() * this.sideY, this.sideX, this.sideY);
+    this.drawPozioneAntivelenoState();
+    
 
     if (!this.isMorto) {
 
@@ -114,34 +115,51 @@ export abstract class Charter extends Square {
 
 
   }
+  drawPozioneAntivelenoState() {
+    if (this.pozioneAntiCambioStati) {
+      this.ctx.strokeStyle = 'rgb(0,200,0)';
+      this.ctx.strokeRect(this.getX() * this.sideX - 10, this.getY() * this.sideY + 10, this.sideX + 10, this.sideY + 10);
+      this.ctx.strokeRect(this.getX() * this.sideX - 9, this.getY() * this.sideY + 9, this.sideX + 9, this.sideY + 9);
+      this.ctx.strokeRect(this.getX() * this.sideX - 8, this.getY() * this.sideY + 8, this.sideX + 8, this.sideY + 8);
+      this.ctx.strokeRect(this.getX() * this.sideX - 7, this.getY() * this.sideY + 7, this.sideX + 7, this.sideY + 7);
+   
+      this.ctx.fillStyle = 'rgb(0,200,0)';
+      this.ctx.fillRect( this.getX() * this.sideX,
+      this.getY() * this.sideY - 20,
+      this.turniPozioneAntiCambiaStati/10, 10);
+    }
+
+  }
 
   setSprite() {
     let riga = 0;
     if (this.situazione.fiery.value && this.situazione.fiery.totTurni > 0) {
-      console.log('danni da ' + this.situazione.fiery.conditionType + ' : ' + this.situazione.fiery.quantita);
+      console.log(this.name+' riceve danni da ' + this.situazione.fiery.conditionType + ' : ' + this.situazione.fiery.quantita);
       this.situazione.fiery.totTurni--;
       this.ctx.fillStyle = 'red';
       this.ctx.fillRect(this.getX() * this.sideX - 20, this.getY() * this.sideY + 40, 30, 30);
       this.ctx.font = "20px Impact";
       this.ctx.fillText('ON FIRE !!!', this.getX() * this.sideX - 70, this.getY() * this.sideY, 300)
-      this.salute -= this.situazione.fiery.quantita;
+      if (this.counterAnimation == 3) {
+        this.salute -= this.situazione.fiery.quantita;
+      }
     }
     if (this.situazione.poisoned.value && this.situazione.poisoned.totTurni > 0) {
-      console.log('danni da ' + this.situazione.poisoned.conditionType + ' : ' + this.situazione.poisoned.quantita);
-
+      console.log(this.name+' riceve danni da ' + this.situazione.poisoned.conditionType + ' : ' + this.situazione.poisoned.quantita);
       this.situazione.poisoned.totTurni--;
       this.ctx.fillStyle = 'green';
       this.ctx.fillRect(this.getX() * this.sideX - 20, this.getY() * this.sideY + 60, 30, 30);
       this.ctx.font = "20px Impact";
       this.ctx.fillText('POISONED', this.getX() * this.sideX - 70, this.getY() * this.sideY + 60, 300)
-      this.salute -= this.situazione.poisoned.quantita / 2;
+      if (this.counterAnimation == 3) {
+        this.salute -= this.situazione.poisoned.quantita;
+      }
       if (!this.isVelenoApplicato) {
         this.isVelenoApplicato = true;
       }
     } else {
       this.isVelenoApplicato = false;
     }
-    //decido che animazione mandare in base allo satato
     let colonna;
     switch (this.stato) {
 
@@ -190,7 +208,7 @@ export abstract class Charter extends Square {
         break;
 
       case 'morendo':
-        this.ctx.fillText('morto', this.getX() * this.sideX, this.getY() * this.sideY,300);
+        this.ctx.fillText('morto', this.getX() * this.sideX, this.getY() * this.sideY, 300);
         break;
     }
   }
@@ -199,18 +217,6 @@ export abstract class Charter extends Square {
     this.ctx.beginPath();
     this.ctx.fillStyle = 'black';
     this.ctx.font = '15px Impact';
-    // this.ctx.fillText(
-    //   this.classe,
-    //   this.getX() * this.sideX,
-    //   this.getY() * this.sideY,
-    //   300
-    // );
-    // this.ctx.fillText(
-    //   this.name,
-    //   this.getX() * this.sideX,
-    //   this.getY() * this.sideY - 8,
-    //   300
-    // );
     this.ctx.fillText(
       this.name + ' : ' + this.salute.toFixed(0),
       this.posizioneInfoLabelX,
@@ -338,7 +344,7 @@ export abstract class Charter extends Square {
     this.ctx.fillRect(
       this.getX() * this.sideX,
       this.getY() * this.sideY - 30,
-      this.salute / 1000, 10
+      this.salute / 1000 * this.livello, 10
     )
     this.ctx.fillStyle = 'blue';
     this.ctx.fillRect(
@@ -352,17 +358,9 @@ export abstract class Charter extends Square {
     this.ctx.fillText(
       this.classe + ' - ' + this.name + ' - Livello ' + this.livello + ' - $ ' + this.money,
       this.getX() * this.sideX,
-      this.getY() * this.sideY - 60, 500
+      this.getY() * this.sideY - 40, 500
     );
   }
-  // drawCritico() {
-  //   if (this.isCritico && this.counterForCriticoAnimation < 8 ) {
-  //     this.ctx.fillStyle = 'red';
-  //     this.ctx.fillRect(this.getX() * this.sideX, this.getY() * this.sideY, this.sideX + 10, this.sideY + 10);
-  //   }
-  //   this.counterForCriticoAnimation < 9 ? this.counterForCriticoAnimation++ : this.counterForCriticoAnimation = 0;
-  // }
-
   attaccare(charter: Charter) {
     if (!this.isVelenoApplicato) {
       this.stato = 'attaccando';
@@ -447,8 +445,6 @@ export abstract class Charter extends Square {
     }
   }
 
-  muori() { }
-
   incrementaLivello() {
     this.livello++;
     this.salute = this.salute + this.livello;
@@ -460,4 +456,3 @@ export abstract class Charter extends Square {
   }
 
 }
-//quando attacca ogni charter fa danno magico e danno fisico in base alla sua forza  e alla sua intelligenza .

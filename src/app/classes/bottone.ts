@@ -25,7 +25,7 @@ export class Bottone extends Square {
       this.sideX,
       this.sideY
     );
-    this.ctx.strokeStyle='black';
+    this.ctx.strokeStyle = 'black';
 
     this.ctx.strokeRect(
       this.sideX * this.getX(),
@@ -38,7 +38,7 @@ export class Bottone extends Square {
     this.ctx.fillText(
       this.text,
       this.getX() * this.sideX,
-      this.getY() * this.sideY + this.sideY/2,
+      this.getY() * this.sideY + this.sideY / 2,
       this.sideX
     );
   }

@@ -2,7 +2,7 @@ import { Charter } from './charter';
 import { classe } from './costants.enum';
 
 export class Arcere extends Charter {
-  override salute = 30000;
+  override salute = 3000;
   override agilita = 20;
   override forza = 20;
   override intelligenza = 100;
@@ -17,9 +17,9 @@ export class Arcere extends Charter {
   constructor(public override ctx: CanvasRenderingContext2D, color: string, level: number) {
     super(ctx, color);
     this.livello = level;
-    this.forza += Math.floor(Math.random() * 10) * this.livello;
-    this.resistenzaFisica += Math.floor(Math.random() * 10) * this.livello;
-    this.intelligenza += Math.floor(Math.random() * 50) * this.livello;
+    this.forza += Math.floor(Math.random() * 8) * this.livello;
+    this.resistenzaFisica += Math.floor(Math.random() * 8) * this.livello;
+    this.intelligenza += Math.floor(Math.random() * 20) * this.livello;
     this.resistenzaMagica += Math.floor(Math.random() * 10) * this.livello;
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
     this.spriteSheetImageAttack.src = this.spriteSheetAttackPath;

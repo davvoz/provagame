@@ -43,55 +43,58 @@ export class Utilities {
     static createBonusArray(j: number, ctx: CanvasRenderingContext2D): Bonus[] {
 
         const ba: Bonus[] = [];
-        for (let i = 0; i < j; i++) {
-            let bonus: Bonus;
-            switch (i % 3) {
-                case 0: bonus = new Bonus(ctx, 'red', 'forza', 2, Math.floor(Math.random()));
-                    bonus.setX(Math.floor(Math.random() * 10));
-                    bonus.setY(Math.floor(Math.random() * 10));
-                    bonus.setVelocita(0);
 
-                    ba.push(bonus);
-                    break;
-                case 1: bonus = new Bonus(ctx, 'green', 'intelligenza', 2, Math.floor(Math.random()));
-                    bonus.setX(Math.floor(Math.random() * 10));
-                    bonus.setY(Math.floor(Math.random() * 10));
-                    bonus.setVelocita(0);
-                    ba.push(bonus);
-                    break;
-                case 2: bonus = new Bonus(ctx, 'blue', 'salute', 10, Math.floor(Math.random() * 40));
-                    bonus.setX(Math.floor(Math.random() * 10));
-                    bonus.setY(Math.floor(Math.random() * 10));
-                    bonus.setVelocita(0);
-                    ba.push(bonus);
-                    break;
-            }
-        }
+        const bonus1 = new Bonus(ctx, 'red', 'salute', 100, 100);
+        //bonus1.spriteSheetCharterPath ='assets/images/polloo.png';
+        bonus1.spriteSheetImage.src = 'assets/images/polloo.png';
+        bonus1.setX(Math.floor(Math.random()*19)+1);
+        bonus1.setY(Math.floor(Math.random()*10)+1);
+        bonus1.setVelocita(0);
+        bonus1.stand();
+        ba.push(bonus1);
+        const bonus2 = new Bonus(ctx, 'red', 'salute',200, 200);
+        bonus2.spriteSheetImage.src  ='assets/images/panino.png';
+        bonus2.setX(Math.floor(Math.random()*19)+1);
+        bonus2.setY(Math.floor(Math.random()*10)+1);
+        bonus2.setVelocita(0);
+        bonus2.stand();
+        ba.push(bonus2);
+        const bonus3 = new Bonus(ctx, 'red', 'salute',300, 300);
+        bonus3.spriteSheetImage.src  ='assets/images/formaggio.png';
+        bonus3.setX(Math.floor(Math.random()*10)+1);
+        bonus3.setY(Math.floor(Math.random()*10)+1);
+        bonus3.setVelocita(0);
+        bonus3.stand();
+        ba.push(bonus3);
+        const bonus4 = new Bonus(ctx, 'red', 'salute',400, 400);
+        bonus4.spriteSheetImage.src  ='assets/images/uovo.png';
+        bonus4.setX(Math.floor(Math.random()*10)+1);
+        bonus4.setY(Math.floor(Math.random()*10)+1);
+        bonus4.setVelocita(0);
+        bonus4.stand();
+        ba.push(bonus4);
+        console.log(ba);
         return ba
     }
 
-    static createEnemiesArray(n: number, ctx: CanvasRenderingContext2D, init: number, salutePlayer: number): Charter[] {
+    static createEnemiesArray(quantitaDiNemici: number, ctx: CanvasRenderingContext2D, livelloNemici: number, salutePlayer: number): Charter[] {
         const enemies: Charter[] = []
-        for (let i = 0; i < n; i++) {
+        for (let i = 0; i < quantitaDiNemici; i++) {
             let enemy: Charter;
             switch (i % 3) {
-                case 0: enemy = new Guerriero(ctx, 'rgb(66,100,100)', init);
-                    Utilities.setEnemiesArray(enemy, i, init, salutePlayer, enemies);
+                case 0: enemy = new Guerriero(ctx, 'rgb(66,100,100)', livelloNemici);
+                    Utilities.setEnemiesArray(enemy, i, livelloNemici, salutePlayer, enemies);
                     break;
                 case 1:
-                    enemy = new Mago(ctx, 'rgb(254,66,10)', init);
-                    Utilities.setEnemiesArray(enemy, i, init, salutePlayer, enemies);
+                    enemy = new Mago(ctx, 'rgb(254,66,10)', livelloNemici);
+                    Utilities.setEnemiesArray(enemy, i, livelloNemici, salutePlayer, enemies);
                     break;
                 case 2:
-                    enemy = new Arcere(ctx, 'rgb(66,66,200)', init)
-                    Utilities.setEnemiesArray(enemy, i, init, salutePlayer, enemies);
+                    enemy = new Arcere(ctx, 'rgb(66,66,200)', livelloNemici)
+                    Utilities.setEnemiesArray(enemy, i, livelloNemici, salutePlayer, enemies);
                     break;
             }
-
-
-
         }
-
         return enemies;
     }
     private static setEnemiesArray(enemy: Charter, i: number, init: number, salutePlayer: number, enemies: Charter[]) {
@@ -104,7 +107,7 @@ export class Utilities {
         enemy.dannoCritico = 10 * init;
         enemy.counterForCriticoTreshold = 10;
         enemy.name = this.nomeRandomico();
-        enemy.money = Math.floor(Math.random() * 10) * (init + 1);
+        enemy.money = Math.floor(Math.random() * 100) ;
         enemy.salute = salutePlayer;
         enemy.incrementaLivello();
         enemy.stand();

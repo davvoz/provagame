@@ -1,7 +1,7 @@
 import { direzione } from "./costants.enum";
 
 export class Square {
-  private color = 'red';
+  private color = 'black';
   private x = 0;
   private y = 0;
   sideX = 50;
@@ -40,7 +40,7 @@ export class Square {
   }
   moveTop() {
     this.direction = 'TOP';
-    if (this.y * this.sideX > 0 ) {
+    if (this.y * this.sideX > 50 ) {
       this.y = this.y - this.velocita;
     }
     this.draw();

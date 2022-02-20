@@ -2,7 +2,7 @@ import { Charter } from './charter';
 import { classe } from './costants.enum';
 
 export class Guerriero extends Charter {
-  override salute = 50000;
+  override salute = 5000;
   override agilita = 20;
   override forza = 100;
   override intelligenza = 20;
