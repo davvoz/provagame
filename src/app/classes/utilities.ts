@@ -99,7 +99,7 @@ export class Utilities {
     }
     private static setEnemiesArray(enemy: Charter, i: number, init: number, salutePlayer: number, enemies: Charter[]) {
         enemy.setX(Math.floor(Math.random() * 20));
-        enemy.setY(Math.floor(Math.random() * i));
+        enemy.setY(Math.floor(Math.random() * i)+1);
         enemy.setVelocita(0.1);
         enemy.posizioneInfoLabelX = 370 + i * 120;
         enemy.posizioneInfoLabelY = 700;

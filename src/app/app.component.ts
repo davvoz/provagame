@@ -1,5 +1,4 @@
-import { ThisReceiver } from '@angular/compiler';
-import { Component, ElementRef, HostListener, NgZone, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, NgZone, ViewChild } from '@angular/core';
 import { Bonus } from './classes/bonus';
 import { Bottone } from './classes/bottone';
 import { BottonePozione } from './classes/bottonePozione';
@@ -22,36 +21,58 @@ export enum KEY_CODE {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
   isMagoScelto: boolean = false;
   level = 1;
   numeroNemici: number = 0;
   livelloSchema: number = 0;
   aggiungiPozioneAdArray = false;
+  dieCount: number = 0;
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
-    if (!this.player.isMorto) {
-      if (event.keyCode == KEY_CODE.DOWN_ARROW) {
+    if (!this.player.isMorto && !this.isJustColliding) {
+      if (event.keyCode == KEY_CODE.DOWN_ARROW || event.keyCode == 40) {
         this.player.setVelocita(this.player.maxVelo);
         this.player.setDirection('BOTTOM');
       }
-      if (event.keyCode == KEY_CODE.UP_ARROW) {
+      if (event.keyCode == KEY_CODE.UP_ARROW || event.keyCode == 38) {
         this.player.setVelocita(this.player.maxVelo);
         this.player.setDirection('TOP');
       }
-      if (event.keyCode == KEY_CODE.LEFT_ARROW) {
+      if (event.keyCode == KEY_CODE.LEFT_ARROW || event.keyCode == 37) {
         this.player.setVelocita(this.player.maxVelo);
         this.player.setDirection('LEFT');
       }
-      if (event.keyCode == KEY_CODE.RIGHT_ARROW) {
+      if (event.keyCode == KEY_CODE.RIGHT_ARROW || event.keyCode == 39) {
         this.player.setVelocita(this.player.maxVelo);
         this.player.setDirection('RIGHT');
       }
-      if (event.keyCode == 32) {
+      if (event.keyCode == 32) {//space compra bonus
         if (this.player.money > 0) {
           this.bonus = [];
           this.bonus = Utilities.createBonusArray(3, this.ctx);
           this.player.money -= 20;
+        }
+      }
+      if (event.keyCode == 49) {//1 consuma pozione 1
+        this.player.pozioneAntiCambioStati = true;
+        this.player.pozioni.pop();
+        this.pozioniBottoni[0].svuotaCasella();
+      }
+      if (event.keyCode == 50) {//2 consuma pozione 2
+        this.player.pozioneAntiCambioStati = true;
+        this.player.pozioni.pop();
+        this.pozioniBottoni[1].svuotaCasella();
+      }
+      if (event.keyCode == 51) {//2 consuma pozione 3
+        this.player.pozioneAntiCambioStati = true;
+        this.player.pozioni.pop();
+        this.pozioniBottoni[2].svuotaCasella();
+      }
+      if (event.keyCode == 13) {//invio aumenta livello
+        if (this.player.money > 0) {
+          this.player.incrementaLivello();
+          this.player.money -= 200;
         }
       }
     }
@@ -59,19 +80,16 @@ export class AppComponent {
   }
   @HostListener('window:keyup', ['$event'])
   keyEventMu(event: KeyboardEvent) {
-    if (event.keyCode == KEY_CODE.DOWN_ARROW) {
+    if (event.keyCode == KEY_CODE.DOWN_ARROW || event.keyCode == 40) {
       this.player.setVelocita(0);
     }
-    if (event.keyCode == KEY_CODE.UP_ARROW) {
+    if (event.keyCode == KEY_CODE.UP_ARROW || event.keyCode == 38) {
       this.player.setVelocita(0);
     }
-    if (event.keyCode == KEY_CODE.LEFT_ARROW) {
+    if (event.keyCode == KEY_CODE.LEFT_ARROW || event.keyCode == 37) {
       this.player.setVelocita(0);
     }
-    if (event.keyCode == KEY_CODE.RIGHT_ARROW) {
-      this.player.setVelocita(0);
-    }
-    if (event.keyCode == 32) {
+    if (event.keyCode == KEY_CODE.RIGHT_ARROW || event.keyCode == 39) {
       this.player.setVelocita(0);
     }
   }
@@ -94,11 +112,9 @@ export class AppComponent {
   pozione!: Pozione;
   mura!: Mura;
   isJustColliding = false;
+  counterAnimationDieText = 0;
+  counterAnimationDieTextThO = 1000;
   constructor(private ngZone: NgZone) { }
-
-  ngOnInit(): void {
-  }
-
 
   charterMovmentRandomRoutine(charter: Square) {
     if (this.counterRoutine % 40 == 0) {
@@ -110,23 +126,25 @@ export class AppComponent {
 
   animate(): void {
     requestAnimationFrame(this.animate.bind(this));
-    this.ctx.fillStyle = 'rgb(200,200,200)';
 
 
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     if (this.player.isMorto) {
       this.startButton.state == 1;
     }
+    this.ctx.fillStyle = 'grey';
     this.ctx.fillRect(0, 90, this.ctx.canvas.width, 700);
+    this.ctx.fillStyle = 'rgb(26, 233, 252)';
+    this.ctx.fillRect(0, 0, this.ctx.canvas.width, 100);
+
     this.collisionDetenction();
     this.update();
 
   }
 
   collisionDetenction() {
-    let dieCount = 0;
-
-
+    this.dieCount = 0;
+    //rilevo collisione player vs enemies[]
     for (let i = 0; i < this.enemies.length; i++) {
       this.enemies[i].counterAnimation = this.counterAnimation;
       if (!this.player.isMorto && !this.enemies[i].isMorto && Utilities.rectsColliding(this.enemies[i], this.player)) {
@@ -152,14 +170,13 @@ export class AppComponent {
           this.charterMovmentRandomRoutine(this.enemies[i]);
         }
       }
-    
       if (this.enemies[i].isMorto) {
-        dieCount++;
+        this.dieCount++;
       }
     }
 
-
     this.bonusCount = 0;
+    //rilevo collisione player vs bonus[]
     for (let j = 0; j < this.bonus.length; j++) {
       this.bonus[j].stand();
       if (this.bonus[j].getPlafond() > 0) {
@@ -169,15 +186,6 @@ export class AppComponent {
         }
       }
       this.bonusCount += this.bonus[j].getPlafond();
-    }
-    if (dieCount == this.enemies.length) {//sono finiti i nemici , nuovo livello
-      this.player.incrementaLivello();
-      this.enemies = [];
-      this.bonus = [];
-      this.bonus = Utilities.createBonusArray(this.level, this.ctx);
-      this.livelloSchema++;
-      this.numeroNemici = this.livelloSchema;
-      this.enemies = Utilities.createEnemiesArray(this.numeroNemici, this.ctx, this.livelloSchema, this.player.salute);
     }
 
     if (Utilities.rectsColliding(this.player, this.pozione)) {
@@ -194,12 +202,21 @@ export class AppComponent {
     } else {
       this.aggiungiPozioneAdArray = false;
     }
-
-
     Utilities.directionToMoveSwitch(this.player);
   }
 
   update() {
+    //sono finiti i nemici , nuovo livello
+    if (this.dieCount == this.enemies.length && !this.player.isMorto) {
+      this.player.incrementaLivello();
+      this.enemies = [];
+      this.bonus = [];
+      this.bonus = Utilities.createBonusArray(this.level, this.ctx);
+      this.livelloSchema++;
+      this.numeroNemici = this.livelloSchema;
+      this.enemies = Utilities.createEnemiesArray(this.numeroNemici, this.ctx, this.livelloSchema, this.player.salute);
+    }
+
     if (this.player.pozioneAntiCambioStati) {
       if (this.player.turniPozioneAntiCambiaStati == 0) {
         this.player.turniPozioneAntiCambiaStati = 1000;
@@ -212,13 +229,59 @@ export class AppComponent {
     this.startButton.stand();
     this.incrementaLivelloButton.stand();
     this.compraBonus.stand();
+
+
     for (let i = 0; i < this.pozioniBottoni.length; i++) {
       this.pozioniBottoni[i].stand();
     }
-    this.ctx.font = '40px Impact';
-    this.ctx.fillStyle = 'rgb(130,150,10)';
-    this.ctx.fillText('$' + this.player.money, 200, 40, 500);
-    this.ctx.fillText('Livello ' + this.livelloSchema, 350, 40, 500);
+    this.ctx.font = 'italic bolder 45px Orbitron';
+    this.ctx.fillStyle = 'grey';
+
+    this.ctx.fillText('Livello ' + this.livelloSchema, 555, 55, 500);
+    this.ctx.fillText('$' + this.player.money, 355, 55, 500);
+
+    this.ctx.fillStyle = 'rgb(200,150,10)';
+    this.ctx.strokeStyle = 'black';
+    this.ctx.fillText('$' + this.player.money, 350, 50, 500);
+    this.ctx.strokeText('$' + this.player.money, 350, 50, 500);
+    this.ctx.fillText('Livello ' + this.livelloSchema, 550, 50, 500);
+    this.ctx.strokeText('Livello ' + this.livelloSchema, 550, 50, 500);
+
+    if (this.player.isMorto) {
+      this.ctx.font = 'normal bolder 115px Orbitron';
+      this.ctx.fillStyle = 'rgb(200,150,10)';
+      this.ctx.fillText('YOU ARE DEAD', 5, this.ctx.canvas.width / 2 + 5, this.counterAnimationDieText * 100);
+
+      this.ctx.fillStyle = 'black';
+      this.ctx.strokeStyle = 'black';
+      this.ctx.strokeText('YOU ARE DEAD', 0, this.ctx.canvas.width / 2, this.counterAnimationDieText * 100);
+      this.ctx.fillText('YOU ARE DEAD', 0, this.ctx.canvas.width / 2, this.counterAnimationDieText * 100);
+
+      this.ctx.fillStyle = 'rgb(200,150,10)';
+      this.ctx.fillText('Game - Over', 100 + 5, 350 + 5, this.counterAnimationDieText * 100);
+      this.ctx.fillStyle = 'black';
+      this.ctx.strokeStyle = 'black';
+      this.ctx.strokeText('Game - Over', 100, 350, this.counterAnimationDieText * 100);
+      this.ctx.fillText('Game - Over', 100, 350, this.counterAnimationDieText * 100);
+
+      this.ctx.save();
+      this.ctx.translate(10, 19);
+      this.ctx.rotate(-Math.PI / 4);
+      this.ctx.font = 'normal bolder 115px Orbitron';
+
+      this.ctx.textAlign = "center";
+      this.ctx.fillStyle = 'rgb(20,100,70)';
+
+      this.ctx.fillRect(-100, 1020, 1000, 110);
+      this.ctx.fillStyle = 'rgb(252, 101, 23)';
+      this.ctx.strokeStyle = 'black';
+      this.ctx.strokeText("FAiL", 200, 1120, 1500);
+      this.ctx.fillText("FAiL", 200, 1120, 1500);
+      this.ctx.restore();
+      this.counterAnimationDieText < this.counterAnimationDieTextThO ? this.counterAnimationDieText++ : this.counterAnimationDieTextThO = 0;
+
+    }
+
 
     this.player.counterAnimation = this.counterAnimation;
     //velocità animazione ogni n frame
@@ -260,7 +323,9 @@ export class AppComponent {
 
     for (let i = 0; i < 3; i++) {
       let poszione = new BottonePozione(this.ctx, 'green');
-      poszione.setX(i + 20);
+
+      poszione.setX(i + 30);
+
       poszione.setY(0);
       poszione.stand();
       this.pozioniBottoni.push(poszione);
@@ -347,9 +412,10 @@ export class AppComponent {
   }
 
   startGame() {
+    this.counterAnimationDieText = 0;
     this.level = 0;
     this.livelloSchema = 0;
-    this.player = new Guerriero(this.ctx, 'blue', 1);
+    this.player = new Guerriero(this.ctx, 'rgb(90, 201, 200)', 1);
     this.player.setX(10);
     this.player.setY(10);
     this.player.setVelocita(0.9);
@@ -362,8 +428,9 @@ export class AppComponent {
     this.player.isMorto = false;
     this.player.salute += 10000;
     this.player.money = 1000;
+    this.player.salute = 1;
     this.player.stand();
-    this.enemies = Utilities.createEnemiesArray(this.numeroNemici + 1, this.ctx, 1, this.player.salute);
+    this.enemies = Utilities.createEnemiesArray(0, this.ctx, 1, this.player.salute);
     this.ctx.fillText('$' + this.player.money, 200, 40, 500);
     this.ctx.fillStyle = 'rgb(100,20,200)';
     this.ctx.fillRect(0, 300, 500, 300);

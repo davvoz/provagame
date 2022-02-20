@@ -354,11 +354,18 @@ export abstract class Charter extends Square {
     )
 
     this.ctx.fillStyle = this.getColor();
+    this.ctx.strokeStyle = 'black';
+
     this.ctx.font = '18px Impact';
+    this.ctx.strokeText(
+      this.classe + ' - ' + this.name + ' - Livello ' + this.livello + ' - $ ' + this.money,
+      this.getX() * this.sideX,
+      this.getY() * this.sideY - 45, 500
+    );
     this.ctx.fillText(
       this.classe + ' - ' + this.name + ' - Livello ' + this.livello + ' - $ ' + this.money,
       this.getX() * this.sideX,
-      this.getY() * this.sideY - 40, 500
+      this.getY() * this.sideY - 45, 500
     );
   }
   attaccare(charter: Charter) {
