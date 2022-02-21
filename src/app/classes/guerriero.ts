@@ -11,8 +11,8 @@ export class Guerriero extends Charter {
   override resistenzaMagica = 2;
   override name = 'Guerriero default name';
   override classe: classe = 'GUERRIERO';
-  override spriteSheetCharterPath = 'assets/images/biondotraspo.png';//src\assets\images\biondotraspo.pngsrc\assets\images\spredtraso.png
-  override spriteSheetAttackPath = 'assets/images/biondotraspoAtck_1.png';//src\assets\images\Sensitolos.pngsrc\assets\images\biondotraspoAtck_1.png
+  override spriteSheetCharterPath = 'assets/images/biondotraspoAtck_1.png';//src\assets\images\biondotraspo.pngsrc\assets\images\spredtraso.png
+  override spriteSheetAttackPath = 'assets/images/biondotraspoAtck_1.png';//src\assets\images\Sensitolos.pngsrc\assets\images\biondotraspoAtck_1.pngsrc\assets\images\edward.png
   constructor(public override ctx: CanvasRenderingContext2D, color: string, level: number) {
     super(ctx, color);
     this.livello = level;
@@ -29,8 +29,8 @@ export class Guerriero extends Charter {
     charter.updateSituazioneConditions(
       {
         conditionType:'FIRE',
-        quantita:100,
-        totTurni:100*this.livello,
+        quantita:60*this.livello,
+        totTurni:50,
         value:true
       }
     )

@@ -93,7 +93,7 @@ export abstract class Charter extends Square {
     } else {
       this.isMorto = false
     }
-    this.drawLabel();
+   // this.drawLabel();
     this.drawBarraEnergia();
     this.drawPozioneAntivelenoState();
     
@@ -128,7 +128,6 @@ export abstract class Charter extends Square {
       this.getY() * this.sideY - 20,
       this.turniPozioneAntiCambiaStati/10, 10);
     }
-
   }
 
   setSprite() {
@@ -175,7 +174,7 @@ export abstract class Charter extends Square {
             break;
         }
         colonna = this.spriteSheetImage.width / 4 * this.counterAnimation;
-        this.ctx.drawImage(this.spriteSheetImage, colonna, riga, this.spriteSheetImage.width / 4, this.spriteSheetImage.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 60, 80)
+        this.ctx.drawImage(this.spriteSheetImage, colonna, riga, this.spriteSheetImage.width / 4, this.spriteSheetImage.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90)
         break;
       case 'attaccando':
         switch (this.getDirection()) {
@@ -189,7 +188,7 @@ export abstract class Charter extends Square {
             break;
         }
         colonna = this.spriteSheetImageAttack.width / 4 * this.counterAnimation;
-        this.ctx.drawImage(this.spriteSheetImageAttack, colonna, riga, this.spriteSheetImageAttack.width / 4, this.spriteSheetImageAttack.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 60, 80)
+        this.ctx.drawImage(this.spriteSheetImageAttack, colonna, riga, this.spriteSheetImageAttack.width / 4, this.spriteSheetImageAttack.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90)
         break;
 
       case 'difendendo':
@@ -204,7 +203,7 @@ export abstract class Charter extends Square {
             break;
         }
         colonna = this.spriteSheetImageAttack.width / 4 * this.counterAnimation;
-        this.ctx.drawImage(this.spriteSheetImageAttack, colonna, riga, this.spriteSheetImageAttack.width / 4, this.spriteSheetImageAttack.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 60, 80)
+        this.ctx.drawImage(this.spriteSheetImageAttack, colonna, riga, this.spriteSheetImageAttack.width / 4, this.spriteSheetImageAttack.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90)
         break;
 
       case 'morendo':

@@ -13,17 +13,21 @@ export class BottonePozione extends Bottone {
         this.sideX = 30;
         this.sideY = 80;
     }
-    override draw(): void {
-        this.ctx.drawImage(this.image, this.sideX * this.getX(), this.sideY * this.getY(), 50, 80)
-       // this.ctx.strokeRect(this.sideX * this.getX(), this.sideY * this.getY(), 30, 80);
+    override disegnaMe(): void {
+        this.ctx.drawImage(this.image,
+            0, 0,
+            this.image.width, this.image.height,
+            this.sideX * this.getX() , this.sideY * this.getY(),
+            50, 75);
+    }
 
-    }
-    riempiCasella(){
+    riempiCasella() {
         this.isCasellaPiena = true;
-        this.image.src ='assets/images/pozioneverde.png'//src\assets\images\.png
+        this.image.src = 'assets/images/pozioneverde.png'//src\assets\images\.png
     }
-    svuotaCasella(){
+
+    svuotaCasella() {
         this.isCasellaPiena = false;
-        this.image.src ='assets/images/pozionevuota.png'//src\assets\images\.png
+        this.image.src = 'assets/images/pozionevuota.png'//src\assets\images\.png
     }
 }

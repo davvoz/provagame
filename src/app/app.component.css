@@ -1,13 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap");
 div#container {
     height: 100%;
     width: 100%;
     display: table;
-    }
-    div#content {
+}
+div#content {
     background: whitesmoke;
-    display:table-cell;
-    vertical-align:middle; 
+    display: table-cell;
+    vertical-align: middle;
     height: 100%;
     width: 100%;
-    }
+    font-family: "Orbitron";
+}

@@ -12,8 +12,8 @@ export class Arcere extends Charter {
   override counterAnimation = 0;
   override classe: classe = 'ARCERE';
   override name = 'Arcere default name';
-  override spriteSheetCharterPath = 'assets/images/spredtraso.png';//src\assets\images\spredtraso.png
-  override spriteSheetAttackPath = 'assets/images/spredtraso.png';
+  override spriteSheetCharterPath = 'assets/images/edwardAtk.png';//src\assets\images\spredtraso.png
+  override spriteSheetAttackPath = 'assets/images/edwardAtk.png';
   constructor(public override ctx: CanvasRenderingContext2D, color: string, level: number) {
     super(ctx, color);
     this.livello = level;
@@ -29,8 +29,8 @@ export class Arcere extends Charter {
     charter.updateSituazioneConditions(
       {
         conditionType:'VENO',
-        quantita:100,
-        totTurni:100*this.livello,
+        quantita:200*this.livello,
+        totTurni:20,
         value:true
       }
     )

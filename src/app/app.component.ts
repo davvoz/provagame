@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, NgZone, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, destroyPlatform, ElementRef, HostListener, NgZone, ViewChild } from '@angular/core';
 import { Bonus } from './classes/bonus';
 import { Bottone } from './classes/bottone';
 import { BottonePozione } from './classes/bottonePozione';
@@ -10,6 +10,9 @@ import { Muro } from './classes/muro';
 import { Pozione } from './classes/pozione';
 import { Square } from './classes/square';
 import { Utilities } from './classes/utilities';
+import { FinalState } from './classes/costants.enum';
+import { Treasure } from './classes/treasure';
+import { Sfondo } from './classes/sfondo';
 export enum KEY_CODE {
   UP_ARROW = 87,
   DOWN_ARROW = 83,
@@ -54,17 +57,17 @@ export class AppComponent implements AfterViewInit {
           this.player.money -= 20;
         }
       }
-      if (event.keyCode == 49) {//1 consuma pozione 1
+      if (event.keyCode == 49 && this.player.pozioni.length > 0) {//1 consuma pozione 1
         this.player.pozioneAntiCambioStati = true;
         this.player.pozioni.pop();
         this.pozioniBottoni[0].svuotaCasella();
       }
-      if (event.keyCode == 50) {//2 consuma pozione 2
+      if (event.keyCode == 50 && this.player.pozioni.length > 0) {//2 consuma pozione 2
         this.player.pozioneAntiCambioStati = true;
         this.player.pozioni.pop();
         this.pozioniBottoni[1].svuotaCasella();
       }
-      if (event.keyCode == 51) {//2 consuma pozione 3
+      if (event.keyCode == 51 && this.player.pozioni.length > 0) {//2 consuma pozione 3
         this.player.pozioneAntiCambioStati = true;
         this.player.pozioni.pop();
         this.pozioniBottoni[2].svuotaCasella();
@@ -113,11 +116,17 @@ export class AppComponent implements AfterViewInit {
   mura!: Mura;
   isJustColliding = false;
   counterAnimationDieText = 0;
-  counterAnimationDieTextThO = 1000;
+  counterAnimationDieTextThO = 200;
+  sfondo!: Sfondo;
+  finalStates: FinalState[] = [];
+  isfinalStatesInc = false;
+  tesoro!: Treasure;
+  isTesoroRAccolto = false;
+
   constructor(private ngZone: NgZone) { }
 
   charterMovmentRandomRoutine(charter: Square) {
-    if (this.counterRoutine % 40 == 0) {
+    if (this.counterRoutine % 80 == 0) {
       Utilities.direzionaRandomicamenteCharter(charter);
     }
     Utilities.directionToMoveSwitch(charter);
@@ -126,17 +135,11 @@ export class AppComponent implements AfterViewInit {
 
   animate(): void {
     requestAnimationFrame(this.animate.bind(this));
-
-
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-    if (this.player.isMorto) {
-      this.startButton.state == 1;
-    }
-    this.ctx.fillStyle = 'grey';
-    this.ctx.fillRect(0, 90, this.ctx.canvas.width, 700);
-    this.ctx.fillStyle = 'rgb(26, 233, 252)';
-    this.ctx.fillRect(0, 0, this.ctx.canvas.width, 100);
-
+    
+    this.sfondo.stand();
+    this.ctx.fillStyle = 'rgba(200,200,200,0.01)';
+    this.ctx.fillRect(0, 650, this.ctx.canvas.width, 100);
     this.collisionDetenction();
     this.update();
 
@@ -194,18 +197,45 @@ export class AppComponent implements AfterViewInit {
         if (!this.pozioniBottoni[i].isCasellaPiena && !this.aggiungiPozioneAdArray) {
           this.pozioniBottoni[i].riempiCasella();
           this.aggiungiPozioneAdArray = true;
-          this.pozione.setX(Math.floor(Math.random() * 19) + 1);
-          this.pozione.setY(Math.floor(Math.random() * 10) + 1);
+          this.pozione.setX(Math.floor(Math.random() * 10) + 1);
+          this.pozione.setY(Math.floor(Math.random() * 5) + 1);
           break;
         }
       }
     } else {
       this.aggiungiPozioneAdArray = false;
     }
+    if ((!this.isTesoroRAccolto && Utilities.rectsColliding(this.player, this.tesoro)) && //
+      ((this.livelloSchema % 2 == 0 && (this.livelloSchema % 2 == 0 || this.isTesoroRAccolto == false)))) {
+      this.player.money += this.tesoro.money;
+      this.isTesoroRAccolto = true;
+
+    }
+    if (this.livelloSchema % 2 != 0) {
+      this.isTesoroRAccolto = false;
+    }
     Utilities.directionToMoveSwitch(this.player);
   }
 
   update() {
+    if (this.player.isMorto) {
+      this.startButton.state == 1;
+
+    }
+    if (!this.isfinalStatesInc && this.player.isMorto) {
+      this.finalStates.push(
+        {
+          livelloPersonaggio: this.player.livello,
+          livelloSchema: this.livelloSchema,
+          money: this.player.money
+        }
+      );
+      
+      this.isfinalStatesInc = true;
+    }
+    if (this.livelloSchema % 2 == 0 && (this.livelloSchema % 2 == 0 || this.isTesoroRAccolto == false)) {
+      !this.isTesoroRAccolto ? this.tesoro.stand() : null;
+    }
     //sono finiti i nemici , nuovo livello
     if (this.dieCount == this.enemies.length && !this.player.isMorto) {
       this.player.incrementaLivello();
@@ -215,6 +245,7 @@ export class AppComponent implements AfterViewInit {
       this.livelloSchema++;
       this.numeroNemici = this.livelloSchema;
       this.enemies = Utilities.createEnemiesArray(this.numeroNemici, this.ctx, this.livelloSchema, this.player.salute);
+
     }
 
     if (this.player.pozioneAntiCambioStati) {
@@ -229,26 +260,28 @@ export class AppComponent implements AfterViewInit {
     this.startButton.stand();
     this.incrementaLivelloButton.stand();
     this.compraBonus.stand();
-
-
+    //#region GUI
     for (let i = 0; i < this.pozioniBottoni.length; i++) {
       this.pozioniBottoni[i].stand();
     }
     this.ctx.font = 'italic bolder 45px Orbitron';
-    this.ctx.fillStyle = 'grey';
-
-    this.ctx.fillText('Livello ' + this.livelloSchema, 555, 55, 500);
-    this.ctx.fillText('$' + this.player.money, 355, 55, 500);
-
-    this.ctx.fillStyle = 'rgb(200,150,10)';
+    this.ctx.fillStyle = 'rgb(200,200,200)';
+    this.ctx.fillText('Livello ' + this.livelloSchema, 753, 53, 500);
+    this.ctx.fillText('$' + this.player.money, 23, 53, 500);
+    this.ctx.fillStyle = 'rgb(250,150,10)';
     this.ctx.strokeStyle = 'black';
-    this.ctx.fillText('$' + this.player.money, 350, 50, 500);
-    this.ctx.strokeText('$' + this.player.money, 350, 50, 500);
-    this.ctx.fillText('Livello ' + this.livelloSchema, 550, 50, 500);
-    this.ctx.strokeText('Livello ' + this.livelloSchema, 550, 50, 500);
+    this.ctx.fillText('$' + this.player.money, 20, 50, 500);
+    this.ctx.strokeText('$' + this.player.money, 20, 50, 500);
+    this.ctx.fillText('Livello ' + this.livelloSchema, 750, 50, 500);
+    this.ctx.strokeText('Livello ' + this.livelloSchema, 750, 50, 500);
+    //#endregion
 
+    //#region scritte game over
     if (this.player.isMorto) {
       this.ctx.font = 'normal bolder 115px Orbitron';
+      this.ctx.save();
+      this.ctx.translate(0, 19);
+      this.ctx.rotate(-Math.PI / -this.counterAnimationDieText);
       this.ctx.fillStyle = 'rgb(200,150,10)';
       this.ctx.fillText('YOU ARE DEAD', 5, this.ctx.canvas.width / 2 + 5, this.counterAnimationDieText * 100);
 
@@ -256,13 +289,18 @@ export class AppComponent implements AfterViewInit {
       this.ctx.strokeStyle = 'black';
       this.ctx.strokeText('YOU ARE DEAD', 0, this.ctx.canvas.width / 2, this.counterAnimationDieText * 100);
       this.ctx.fillText('YOU ARE DEAD', 0, this.ctx.canvas.width / 2, this.counterAnimationDieText * 100);
+      this.ctx.restore();
 
+      this.ctx.save();
+      this.ctx.translate(0, 19);
+      this.ctx.rotate(-Math.PI / this.counterAnimationDieText);
       this.ctx.fillStyle = 'rgb(200,150,10)';
       this.ctx.fillText('Game - Over', 100 + 5, 350 + 5, this.counterAnimationDieText * 100);
       this.ctx.fillStyle = 'black';
       this.ctx.strokeStyle = 'black';
       this.ctx.strokeText('Game - Over', 100, 350, this.counterAnimationDieText * 100);
       this.ctx.fillText('Game - Over', 100, 350, this.counterAnimationDieText * 100);
+      this.ctx.restore();
 
       this.ctx.save();
       this.ctx.translate(10, 19);
@@ -278,11 +316,19 @@ export class AppComponent implements AfterViewInit {
       this.ctx.strokeText("FAiL", 200, 1120, 1500);
       this.ctx.fillText("FAiL", 200, 1120, 1500);
       this.ctx.restore();
-      this.counterAnimationDieText < this.counterAnimationDieTextThO ? this.counterAnimationDieText++ : this.counterAnimationDieTextThO = 0;
+      if (this.counterAnimationDieText < this.counterAnimationDieTextThO) {
+        this.counterAnimationDieText++;
+      } else {
+        this.counterAnimationDieText = this.counterAnimationDieTextThO + 1;
+      }
+
 
     }
+    //#endregion
 
+    this.sfondo.livello = this.livelloSchema;
 
+    //#region counters
     this.player.counterAnimation = this.counterAnimation;
     //velocità animazione ogni n frame
     if (this.counterRoutine % 8 == 0) {
@@ -294,6 +340,7 @@ export class AppComponent implements AfterViewInit {
     this.counterRoutine === 399
       ? (this.counterRoutine = 0)
       : this.counterRoutine++;
+    //#endregion
   }
 
   ngAfterViewInit(): void {
@@ -302,41 +349,55 @@ export class AppComponent implements AfterViewInit {
       throw new Error('Failed to get 2d context');
     }
     this.ctx = res;
-
+    this.ctx.fillStyle = 'black';
+    this.ctx.fillRect(0, 650, this.ctx.canvas.width, 100);
+    //#region inizializza bottoni 
     this.startButton = new Bottone(this.ctx, 'yellow');
-    this.startButton.setX(0);
-    this.startButton.setY(0);
+    this.startButton.setX(1);
+    this.startButton.setY(9);
     this.startButton.setText('START');
+    this.startButton.secondText = ' -> click';
+
     this.startButton.stand();
 
     this.incrementaLivelloButton = new Bottone(this.ctx, 'yellow');
-    this.incrementaLivelloButton.setX(1);
-    this.incrementaLivelloButton.setY(0);
+    this.incrementaLivelloButton.setX(2);
+    this.incrementaLivelloButton.setY(9);
     this.incrementaLivelloButton.setText('LEVEL');
+    this.incrementaLivelloButton.secondText = ' -> enter';
+    this.incrementaLivelloButton.terzoText = '$ 200';
     this.incrementaLivelloButton.stand();
 
     this.compraBonus = new Bottone(this.ctx, 'yellow');
-    this.compraBonus.setX(2);
-    this.compraBonus.setY(0);
-    this.compraBonus.setText('BONUS');
+    this.compraBonus.setX(3);
+    this.compraBonus.setY(9);
+    this.compraBonus.setText('FOOD');
+    this.compraBonus.secondText = ' -> space';
+    this.compraBonus.terzoText = '$ 10';
     this.compraBonus.stand();
 
+
     for (let i = 0; i < 3; i++) {
-      let poszione = new BottonePozione(this.ctx, 'green');
+      let pozione = new BottonePozione(this.ctx, 'green');
+      pozione.setX(i + 30);
+      pozione.setY(8);
+      pozione.secondText = ' -> ' + (i + 1);
+      pozione.terzoText ='free';
+      pozione.stand();
 
-      poszione.setX(i + 30);
-
-      poszione.setY(0);
-      poszione.stand();
-      this.pozioniBottoni.push(poszione);
+      this.pozioniBottoni.push(pozione);
     }
+    //#endregion
 
+    //#region inizializza pozione
     this.pozione = new Pozione(this.ctx, 'green');
     this.pozione.setX(2);
     this.pozione.setY(2);
     this.pozione.setVelocita(0);
     this.pozione.stand();
+    //#endregion
 
+    //#region inizializza mura
     this.mura = new Mura();
     const muri: Muro[] = [
       new Muro(this.ctx, '', 1, 2),
@@ -355,7 +416,9 @@ export class AppComponent implements AfterViewInit {
       new Muro(this.ctx, '', 8, 8)
     ];
     this.mura.setMuri(muri);
+    //#endregion
 
+    //#region Eventi click canvas
     this.ctx.canvas.addEventListener(
       'click',
       (evt) => {
@@ -387,13 +450,11 @@ export class AppComponent implements AfterViewInit {
             this.pozioniBottoni[i].svuotaCasella();
           }
         }
-
       },
       false
     );
-
+    //#endregion
   }
-
 
   private changeButtonState(evt: MouseEvent, button: Bottone): boolean {
     const mousePos = Utilities.getMousePos(this.ctx.canvas, evt);
@@ -416,8 +477,8 @@ export class AppComponent implements AfterViewInit {
     this.level = 0;
     this.livelloSchema = 0;
     this.player = new Guerriero(this.ctx, 'rgb(90, 201, 200)', 1);
-    this.player.setX(10);
-    this.player.setY(10);
+    this.player.setX(2);
+    this.player.setY(2);
     this.player.setVelocita(0.9);
     this.player.name = 'Tetramarco';
     this.player.posizioneInfoLabelX = 30;
@@ -427,13 +488,22 @@ export class AppComponent implements AfterViewInit {
     this.player.counterForCriticoTreshold = 10;
     this.player.isMorto = false;
     this.player.salute += 10000;
-    this.player.money = 1000;
-    this.player.salute = 1;
+    this.player.money = 0;
     this.player.stand();
     this.enemies = Utilities.createEnemiesArray(0, this.ctx, 1, this.player.salute);
     this.ctx.fillText('$' + this.player.money, 200, 40, 500);
     this.ctx.fillStyle = 'rgb(100,20,200)';
     this.ctx.fillRect(0, 300, 500, 300);
+    this.sfondo = new Sfondo(this.ctx, '');
+    this.sfondo.setX(0);
+    this.sfondo.setY(1);
+    this.sfondo.setVelocita(0);
+    this.tesoro = new Treasure(this.ctx, '');
+    this.tesoro.setX(5);
+    this.tesoro.setY(5);
+    this.tesoro.setVelocita(0);
+    this.tesoro.stand();
+    this.isfinalStatesInc = false;
     if (!this.isStarted) {
       this.ngZone.runOutsideAngular(() => this.animate());
     }

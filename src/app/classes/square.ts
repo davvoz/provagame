@@ -26,7 +26,7 @@ export class Square {
   }
   moveRight() {
     this.direction = 'RIGHT';
-    if (this.x * this.sideX < this.ctx.canvas.width - this.sideX ) {//serve a non uscire dalla canvas senza collision detection
+    if (this.x * this.sideX < this.ctx.canvas.width - this.sideX ) {
       this.x = this.x + this.velocita;
     }
     this.draw();
@@ -47,7 +47,7 @@ export class Square {
   }
   moveBottom() {
     this.direction = 'BOTTOM';
-    if (this.y * this.sideY < this.ctx.canvas.height - this.sideY) {
+    if (this.y * this.sideY < 550) {
       this.y = this.y + this.velocita ;
     }
     this.draw();

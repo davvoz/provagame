@@ -1,18 +1,20 @@
 <div id="container">
   <div id="content">
-    <canvas
-  #canvasGui
-  width="1050"
-  height="750"
-  class="bg-layer"
-  style="background-color: whitesmoke;
+    <canvas #canvasGui width="1050" height="750" class="bg-layer" style="background-color: whitesmoke;
   padding-left: 0;
     padding-right: 0;
     margin-left: auto;
     margin-right: auto;
-    display: block;"
-></canvas>
-{{counterAnimationDieText}}
+    display: block;"></canvas>
+    <div *ngFor="let finalState of finalStates;let i = index" style="float: left;">
+      <ul>
+        <li>Match N°: {{i+1}}</li>
+        <li>$ : {{finalState.money}}</li>
+        <li>Livello schema : {{finalState.livelloSchema}}</li>
+        <li>Livello personaggio : {{finalState.livelloPersonaggio}}</li>
+        <li>Point:
+          {{finalState.livelloPersonaggio*finalState.livelloSchema*(finalState.money > 0 ? finalState.money:1)}}</li>
+      </ul>
+    </div>
   </div>
 </div>
-

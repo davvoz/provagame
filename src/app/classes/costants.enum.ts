@@ -13,4 +13,15 @@ export interface Conditions {
     poisoned: Condition;
     fiery: Condition
 }
-export type stato ='attaccando'| 'difendendo'|'camminando'|'morendo';
+export type stato = 'attaccando' | 'difendendo' | 'camminando' | 'morendo';
+export interface FinalState {
+    money: number;
+    livelloSchema: number;
+    livelloPersonaggio: number
+}
+export interface DrawSquareParam {
+    x: number;
+    y: number;
+    sideX: number;
+    sideY: number
+}

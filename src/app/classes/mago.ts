@@ -29,8 +29,8 @@ export class Mago extends Charter {
     charter.updateSituazioneConditions(
       {
         conditionType:'VENO',
-        quantita:200,
-        totTurni:100*this.livello,
+        quantita:50 *this.livello,
+        totTurni:100,
         value:true
       }
     )
