@@ -1,4 +1,4 @@
-export type classe = 'MAGO' | 'GUERRIERO' | 'ARCERE' | 'ABSTRACT';
+export type classe = 'MAGO' | 'GUERRIERO' | 'ARCERE' |'SAMURAI' |'ABSTRACT';
 export type tipoBonus = 'salute' | 'forza' | 'intelligenza';
 export type direzione = 'TOP' | 'BOTTOM' | 'RIGHT' | 'LEFT' | 'STAND';
 export type conditionType = 'STUN' | 'VENO' | 'FIRE';

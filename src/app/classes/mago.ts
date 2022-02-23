@@ -2,11 +2,13 @@ import { Charter } from './charter';
 import { classe } from './costants.enum';
 
 export class Mago extends Charter {
-  override salute = 3000;
+  override salute = 2000;
   override agilita = 20;
   override forza = 20;
   override intelligenza = 100;
-  override mana = 10;
+  override mana = 1;
+  override maxMana = 10;
+  override counterManaTreshold = 5;
   override resistenzaFisica = 5;
   override resistenzaMagica = 8;
   override counterAnimation = 0;
@@ -24,14 +26,14 @@ export class Mago extends Charter {
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
     this.spriteSheetImageAttack.src = this.spriteSheetAttackPath;
   }
-  override lanciaAbilita(charter:Charter): void {
-    console.log(this.name + ' lancia abilità a '+charter.name);
+  override lanciaAbilita(charter: Charter): void {
+    console.log(this.name + ' lancia abilità a ' + charter.name);
     charter.updateSituazioneConditions(
       {
-        conditionType:'VENO',
-        quantita:50 *this.livello,
-        totTurni:100,
-        value:true
+        conditionType: 'VENO',
+        quantita: 3 * this.livello,
+        totTurni: 100 + this.livello,
+        value: true
       }
     )
   }

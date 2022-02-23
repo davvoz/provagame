@@ -4,10 +4,7 @@ export class BottonePozione extends Bottone {
     spriteSheetCharterPath = 'assets/images/pozionevuota.png';//src\assets\images\treasure.pngsrc\assets\images\src\assets\images\pozioneverde.png.jpg
     image = new Image();
     isCasellaPiena = false;
-    constructor(
-        public override ctx: CanvasRenderingContext2D,
-        color: string,
-    ) {
+    constructor(public override ctx: CanvasRenderingContext2D, color: string,) {
         super(ctx, color);
         this.image.src = this.spriteSheetCharterPath;
         this.sideX = 30;
@@ -17,7 +14,7 @@ export class BottonePozione extends Bottone {
         this.ctx.drawImage(this.image,
             0, 0,
             this.image.width, this.image.height,
-            this.sideX * this.getX() , this.sideY * this.getY(),
+            this.sideX * this.getX(), this.sideY * this.getY(),
             50, 75);
     }
 

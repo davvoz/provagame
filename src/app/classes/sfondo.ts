@@ -69,7 +69,7 @@ export class Sfondo extends Square {
                 0, 0,
                 this.image.width, this.image.height,
                 230, 3,
-                400, 100);
+                400, 80);
             this.ctx.drawImage(this.imageCloud1,
                 0, 0,
                 this.image.width, this.image.height,

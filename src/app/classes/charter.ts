@@ -35,7 +35,7 @@ export abstract class Charter extends Square {
   isOnAttack: boolean = false;
   counterMana = 0;
   counterManaTreshold = 10
-  maxMana = 100;
+  maxMana = 30;
   velocitaIniziale = 0;
   isVelenoApplicato = false;
   maxVelo = 0.1;
@@ -43,6 +43,9 @@ export abstract class Charter extends Square {
   pozioneAntiCambioStati = false;
   turniPozioneAntiCambiaStati = 1000;
   stato: stato = 'camminando';
+  genereSprite = 0;//se = 0 then SX = 1 dx = 2 ; se = 1 SX = 2 DX = 1
+  exp = 0;
+  nextExp = 200;
   situazione: Conditions = {
     stunned:
     {
@@ -67,7 +70,7 @@ export abstract class Charter extends Square {
   }
 
   updateSituazioneConditions(condition: Condition) {
-    console.error(this.name + ' riceve condition', condition);
+    // console.error(this.name + ' riceve condition', condition);
     if (!this.pozioneAntiCambioStati) {
       switch (condition.conditionType) {
         case 'STUN':
@@ -93,17 +96,14 @@ export abstract class Charter extends Square {
     } else {
       this.isMorto = false
     }
-   // this.drawLabel();
+    // this.drawLabel();
     this.drawBarraEnergia();
     this.drawPozioneAntivelenoState();
-    
-
     if (!this.isMorto) {
-
       this.setSprite();
     }
     if (this.counterAnimation == 3) {
-      if (this.counterMana <= this.counterManaTreshold) {
+      if (this.counterMana <= this.maxMana) {
         if ((this.mana < this.maxMana)) {
           this.mana++;
         }
@@ -119,21 +119,24 @@ export abstract class Charter extends Square {
     if (this.pozioneAntiCambioStati) {
       this.ctx.strokeStyle = 'rgb(0,200,0)';
       this.ctx.strokeRect(this.getX() * this.sideX - 10, this.getY() * this.sideY + 10, this.sideX + 10, this.sideY + 10);
+      this.ctx.strokeStyle = 'rgb(0,180,0)';
       this.ctx.strokeRect(this.getX() * this.sideX - 9, this.getY() * this.sideY + 9, this.sideX + 9, this.sideY + 9);
+      this.ctx.strokeStyle = 'rgb(0,160,0)';
       this.ctx.strokeRect(this.getX() * this.sideX - 8, this.getY() * this.sideY + 8, this.sideX + 8, this.sideY + 8);
+      this.ctx.strokeStyle = 'rgb(0,140,0)';
       this.ctx.strokeRect(this.getX() * this.sideX - 7, this.getY() * this.sideY + 7, this.sideX + 7, this.sideY + 7);
-   
+
       this.ctx.fillStyle = 'rgb(0,200,0)';
-      this.ctx.fillRect( this.getX() * this.sideX,
-      this.getY() * this.sideY - 20,
-      this.turniPozioneAntiCambiaStati/10, 10);
+      this.ctx.fillRect(this.getX() * this.sideX,
+        this.getY() * this.sideY - 20,
+        this.turniPozioneAntiCambiaStati / 10, 10);
     }
   }
 
   setSprite() {
     let riga = 0;
     if (this.situazione.fiery.value && this.situazione.fiery.totTurni > 0) {
-      console.log(this.name+' riceve danni da ' + this.situazione.fiery.conditionType + ' : ' + this.situazione.fiery.quantita);
+      console.log(this.name + ' riceve danni da ' + this.situazione.fiery.conditionType + ' : ' + this.situazione.fiery.quantita);
       this.situazione.fiery.totTurni--;
       this.ctx.fillStyle = 'red';
       this.ctx.fillRect(this.getX() * this.sideX - 20, this.getY() * this.sideY + 40, 30, 30);
@@ -144,7 +147,7 @@ export abstract class Charter extends Square {
       }
     }
     if (this.situazione.poisoned.value && this.situazione.poisoned.totTurni > 0) {
-      console.log(this.name+' riceve danni da ' + this.situazione.poisoned.conditionType + ' : ' + this.situazione.poisoned.quantita);
+      console.log(this.name + ' riceve danni da ' + this.situazione.poisoned.conditionType + ' : ' + this.situazione.poisoned.quantita);
       this.situazione.poisoned.totTurni--;
       this.ctx.fillStyle = 'green';
       this.ctx.fillRect(this.getX() * this.sideX - 20, this.getY() * this.sideY + 60, 30, 30);
@@ -168,9 +171,22 @@ export abstract class Charter extends Square {
             break;
           case 'BOTTOM': riga = 0;//riga 1
             break;
-          case 'LEFT': riga = this.spriteSheetImage.height / 4 * 2;//riga 2
+          case 'LEFT': ;//riga 2
+            //se = 0 then SX = 1; se = 1 SX = 2 
+            if (this.genereSprite === 0) {
+              riga = this.spriteSheetImage.height / 4 * 2
+
+            } else {
+              riga = this.spriteSheetImage.height / 4
+            }
             break;
-          case 'RIGHT': riga = this.spriteSheetImage.height / 4;//riga 3
+          case 'RIGHT': ;//riga 3
+            //se = 0  dx = 2 ; se = 1 DX = 1
+            if (this.genereSprite === 0) {
+              riga = this.spriteSheetImage.height / 4
+            } else {
+              riga = this.spriteSheetImage.height / 4 * 2
+            }
             break;
         }
         colonna = this.spriteSheetImage.width / 4 * this.counterAnimation;
@@ -182,9 +198,22 @@ export abstract class Charter extends Square {
             break;
           case 'BOTTOM': riga = 0;//riga 1
             break;
-          case 'LEFT': riga = this.spriteSheetImageAttack.height / 4 * 2;//riga 2
+          case 'LEFT': ;//riga 2
+            //se = 0 then SX = 1; se = 1 SX = 2 
+            if (this.genereSprite === 0) {
+              riga = this.spriteSheetImageAttack.height / 4 * 2
+
+            } else {
+              riga = this.spriteSheetImageAttack.height / 4
+            }
             break;
-          case 'RIGHT': riga = this.spriteSheetImageAttack.height / 4;//riga 
+          case 'RIGHT': ;//riga 3
+            //se = 0  dx = 2 ; se = 1 DX = 1
+            if (this.genereSprite === 0) {
+              riga = this.spriteSheetImageAttack.height / 4
+            } else {
+              riga = this.spriteSheetImageAttack.height / 4 * 2
+            }
             break;
         }
         colonna = this.spriteSheetImageAttack.width / 4 * this.counterAnimation;
@@ -197,9 +226,22 @@ export abstract class Charter extends Square {
             break;
           case 'BOTTOM': riga = 0;//riga 1
             break;
-          case 'LEFT': riga = this.spriteSheetImageAttack.height / 4 * 2;//riga 2
+          case 'LEFT': ;//riga 2
+            //se = 0 then SX = 1; se = 1 SX = 2 
+            if (this.genereSprite === 0) {
+              riga = this.spriteSheetImageAttack.height / 4 * 2
+
+            } else {
+              riga = this.spriteSheetImageAttack.height / 4
+            }
             break;
-          case 'RIGHT': riga = this.spriteSheetImageAttack.height / 4;//riga 
+          case 'RIGHT': ;//riga 3
+            //se = 0  dx = 2 ; se = 1 DX = 1
+            if (this.genereSprite === 0) {
+              riga = this.spriteSheetImageAttack.height / 4
+            } else {
+              riga = this.spriteSheetImageAttack.height / 4 * 2
+            }
             break;
         }
         colonna = this.spriteSheetImageAttack.width / 4 * this.counterAnimation;
@@ -343,7 +385,7 @@ export abstract class Charter extends Square {
     this.ctx.fillRect(
       this.getX() * this.sideX,
       this.getY() * this.sideY - 30,
-      this.salute / 1000 * this.livello, 10
+      this.salute / 100 * this.livello, 10
     )
     this.ctx.fillStyle = 'blue';
     this.ctx.fillRect(
@@ -351,24 +393,36 @@ export abstract class Charter extends Square {
       this.getY() * this.sideY - 40,
       this.mana, 10
     )
+    this.ctx.fillStyle = 'white';
+    this.ctx.fillRect(
+      this.getX() * this.sideX + this.maxMana,
+      this.getY() * this.sideY - 40,
+      5, 10
+    )
 
     this.ctx.fillStyle = this.getColor();
     this.ctx.strokeStyle = 'black';
 
     this.ctx.font = '18px Impact';
     this.ctx.strokeText(
-      this.classe + ' - ' + this.name + ' - Livello ' + this.livello + ' - $ ' + this.money,
+      this.classe + ' - ' + this.name + ' - Level ' + this.livello + ' - $ ' + this.money,
       this.getX() * this.sideX,
       this.getY() * this.sideY - 45, 500
     );
     this.ctx.fillText(
-      this.classe + ' - ' + this.name + ' - Livello ' + this.livello + ' - $ ' + this.money,
+      this.classe + ' - ' + this.name + ' - Level ' + this.livello + ' - $ ' + this.money,
       this.getX() * this.sideX,
       this.getY() * this.sideY - 45, 500
     );
   }
   attaccare(charter: Charter) {
     if (!this.isVelenoApplicato) {
+      if (this.exp >= this.nextExp) {
+        this.exp = 0;
+        this.nextExp = 100 * this.livello;
+        this.incrementaLivello();
+      }
+      this.exp++;
       this.stato = 'attaccando';
       this.isOnAttack = true;
       if (this.counterAnimation == 3) {
