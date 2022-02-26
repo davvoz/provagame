@@ -128,7 +128,7 @@ export class AppComponent implements AfterViewInit {
       this.collisionDetenction();
       this.update();
     }
-    if(this.camion){
+    if (this.camion && !this.gui.isRestartTouched) {
       this.setCamion();
     }
     //velocità animazione ogni n frame
@@ -310,10 +310,9 @@ export class AppComponent implements AfterViewInit {
         for (let i = 0; i < this.gui.sceltaCharter.length; i++) {
           const scegliCharterButtonTouched = Utilities.changeButtonState(evt, this.gui.sceltaCharter[i], this.ctx);
           if (scegliCharterButtonTouched) {
-            console.log('ciao', this.gui.sceltaCharter[i]);
             this.gui.classeCharterScelto = this.gui.sceltaCharter[i].typeOfCharter;
           }
-          if (this.gui.classeCharterScelto) {
+          if (this.gui.classeCharterScelto && !this.isStarted) {
             const startButtonTouched = Utilities.changeButtonState(evt, this.gui.startButton, this.ctx);
             if (startButtonTouched) {
               switch (this.gui.classeCharterScelto) {
@@ -324,10 +323,23 @@ export class AppComponent implements AfterViewInit {
               }
               this.level = 0;
               this.isStarted = true;
+              this.gui.classeCharterScelto = 'ABSTRACT';
             }
           }
         }
-
+        if (this.player) {
+          if (this.player.isMorto) {
+            const restartButtonTouched = Utilities.changeButtonState(evt, this.gui.restartButton, this.ctx);
+            if (restartButtonTouched) {
+              this.isFaseScelta = true;
+              this.gui.isRestartTouched = true;
+              this.gui.classeCharterScelto = 'ABSTRACT';
+              this.livelloSchema = 0;
+              this.player.money = 0;
+              this.isStarted = false;
+            }
+          }
+        }
         if (!this.isFaseScelta) {//se non sono nella prima fase non servono gli handler ai bottoni di gioco
 
           const incrementaLivelloButtonTouched = Utilities.changeButtonState(evt, this.gui.incrementaLivelloButton, this.ctx);
@@ -367,6 +379,7 @@ export class AppComponent implements AfterViewInit {
 
   startGame(playerHero: Charter) {
     this.isFaseScelta = false;
+    this.gui.isRestartTouched = false;
     this.gui.counterAnimationDieText = 0;
 
     this.level = 0;

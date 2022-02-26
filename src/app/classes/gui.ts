@@ -7,12 +7,14 @@ import { classe } from "./costants.enum";
 export class Gui {
     startButton!: Bottone;
     compraBonus!: Bottone;
+    restartButton!: Bottone;
     incrementaLivelloButton!: Bottone;
     pozioniBottoni: BottonePozione[] = [];
     counterAnimationDieText = 0;
     counterAnimationDieTextThO = 200;
     sceltaCharter: BottoneSceltaCharter[] = [];
-    classeCharterScelto!: classe;
+    classeCharterScelto: classe = 'ABSTRACT';
+    isRestartTouched = false;
 
     constructor(public ctx: CanvasRenderingContext2D) {
         this.startButton = new Bottone(this.ctx, 'yellow');
@@ -21,6 +23,12 @@ export class Gui {
         this.startButton.setText('START');
         this.startButton.secondText = ' -> click';
         this.startButton.stand();
+        this.restartButton = new Bottone(this.ctx, 'orangered');
+        this.restartButton.setX(4);
+        this.restartButton.setY(8);
+        this.restartButton.setText('RESTART');
+        this.restartButton.secondText = ' -> click';
+        this.restartButton.stand();
         this.incrementaLivelloButton = new Bottone(this.ctx, 'yellow');
         this.incrementaLivelloButton.setX(0);
         this.incrementaLivelloButton.setY(9);
@@ -80,7 +88,7 @@ export class Gui {
         this.ctx.fillRect(0, 650, this.ctx.canvas.width, 100);
 
         if (isFaseScelta) {
-            if (!player) {
+            if (!player || this.isRestartTouched) {
                 this.ctx.font = 'italic bolder 75px Orbitron';
                 this.ctx.fillStyle = 'black';
                 this.ctx.fillText('CHIAPPARELLO - alfa', 0, 250, 3000);
@@ -92,13 +100,14 @@ export class Gui {
                     this.sceltaCharter[i].index = i;
                     this.sceltaCharter[i].stand();
                 }
-                if (this.classeCharterScelto) {
+                if ( this.classeCharterScelto !== 'ABSTRACT') {
                     this.ctx.fillText('Ur hero is a ', 0, 450, 3000);
                     this.ctx.fillText(this.classeCharterScelto, 400, 450, 3000);
                     this.startButton.stand();
                 } else {
                     this.ctx.fillText('Choose ur hero', 0, 450, 3000);
                 }
+
             }
 
         } else {
@@ -131,7 +140,7 @@ export class Gui {
             this.ctx.strokeText('$' + player.money, 20, 50, 500);
             this.ctx.fillText('Mondo  ' + livelloSchema, 750, 50, 500);
             this.ctx.strokeText('Mondo  ' + livelloSchema, 750, 50, 500);
-            if (player.isMorto) {
+            if (player.isMorto && !this.isRestartTouched) {
                 this.ctx.font = 'normal bolder 115px Orbitron';
                 this.ctx.save();
                 this.ctx.translate(0, 19);
@@ -165,6 +174,7 @@ export class Gui {
                 this.ctx.strokeText("FAiL", 200, 1120, 1500);
                 this.ctx.fillText("FAiL", 200, 1120, 1500);
                 this.ctx.restore();
+                this.restartButton.stand();
                 if (this.counterAnimationDieText < this.counterAnimationDieTextThO) {
                     this.counterAnimationDieText++;
                 } else {
