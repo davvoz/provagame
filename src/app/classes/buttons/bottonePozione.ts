@@ -1,4 +1,4 @@
-import { Bottone } from "./bottone";
+import { Bottone } from "../elements/bottone";
 
 export class BottonePozione extends Bottone {
     spriteSheetCharterPath = 'assets/images/pozionevuota.png';//src\assets\images\treasure.pngsrc\assets\images\src\assets\images\pozioneverde.png.jpg

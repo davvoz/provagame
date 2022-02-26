@@ -1,8 +1,8 @@
 import { Bottone } from "./bottone";
-import { BottonePozione } from "./bottonePozione";
-import { Charter } from "./charter";
-import { BottoneSceltaCharter } from "./bottoneSceltaCharter";
-import { classe } from "./costants.enum";
+import { BottonePozione } from "../buttons/bottonePozione";
+import { Charter } from "../abstract/charter";
+import { BottoneSceltaCharter } from "../buttons/bottoneSceltaCharter";
+import { classe } from "../utils/costants.enum";
 
 export class Gui {
     startButton!: Bottone;
@@ -21,24 +21,24 @@ export class Gui {
         this.startButton.setX(4);
         this.startButton.setY(8);
         this.startButton.setText('START');
-        this.startButton.secondText = ' -> click';
+        //this.startButton.secondText = ' -> click';
         this.startButton.stand();
         this.restartButton = new Bottone(this.ctx, 'orangered');
         this.restartButton.setX(4);
         this.restartButton.setY(8);
         this.restartButton.setText('RESTART');
-        this.restartButton.secondText = ' -> click';
+        //this.restartButton.secondText = ' -> click';
         this.restartButton.stand();
         this.incrementaLivelloButton = new Bottone(this.ctx, 'yellow');
         this.incrementaLivelloButton.setX(0);
         this.incrementaLivelloButton.setY(9);
         this.incrementaLivelloButton.setText('LEVEL');
-        this.incrementaLivelloButton.secondText = ' -> enter';
+        this.incrementaLivelloButton.secondText = ' key enter';
         this.compraBonus = new Bottone(this.ctx, 'yellow');
         this.compraBonus.setX(1);
         this.compraBonus.setY(9);
         this.compraBonus.setText('FOOD');
-        this.compraBonus.secondText = ' -> space';
+        this.compraBonus.secondText = ' key space';
         this.compraBonus.terzoText = '$ 10';
         this.ctx.strokeStyle = 'red';
         this.ctx.lineWidth = 1;
@@ -51,7 +51,7 @@ export class Gui {
             let pozione = new BottonePozione(this.ctx, 'green');
             pozione.setX(i + 30);
             pozione.setY(8);
-            pozione.secondText = ' -> ' + (i + 1);
+            pozione.secondText = ' key ' + (i + 1);
             pozione.terzoText = 'free';
             pozione.stand();
             this.pozioniBottoni.push(pozione);
@@ -122,14 +122,6 @@ export class Gui {
         }
 
         if (player) {
-            if (!player.isMorto) {
-                this.ctx.fillStyle = 'green';
-                this.ctx.fillRect(300, 650, player.exp / this.ctx.canvas.width, 10);
-                this.ctx.fillStyle = 'red';
-                this.ctx.fillRect(player.nextExp / this.ctx.canvas.width, 650, 10, 10);
-                this.ctx.fillText('NOW  ' + player.exp + ' NEXT ' + player.nextExp, player.nextExp / this.ctx.canvas.width + 15, 650 + 10, 500);
-            }
-
             this.ctx.font = 'italic bolder 45px Orbitron';
             this.ctx.fillStyle = 'rgb(200,200,200)';
             this.ctx.fillText('Mondo  ' + livelloSchema, 753, 53, 500);
@@ -140,6 +132,15 @@ export class Gui {
             this.ctx.strokeText('$' + player.money, 20, 50, 500);
             this.ctx.fillText('Mondo  ' + livelloSchema, 750, 50, 500);
             this.ctx.strokeText('Mondo  ' + livelloSchema, 750, 50, 500);
+            if (!player.isMorto) {
+                this.ctx.fillStyle = 'green';
+                this.ctx.fillRect(300, 650,player.exp , 10);
+                this.ctx.fillStyle = 'red';
+                this.ctx.fillRect(500+player.nextExp / this.ctx.canvas.width, 650, 10, 10);
+                this.ctx.font = 'italic bolder 25px Orbitron';
+                this.ctx.fillStyle = 'rgb(60,60,60)';
+                this.ctx.fillText('EXP '+player.classe+' '+player.livello+'- NOW  ' + player.exp + ' NEXT ' + player.nextExp, player.nextExp / this.ctx.canvas.width +300, 690 + 10, 500);
+            }
             if (player.isMorto && !this.isRestartTouched) {
                 this.ctx.font = 'normal bolder 115px Orbitron';
                 this.ctx.save();

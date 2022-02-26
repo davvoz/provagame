@@ -1,4 +1,4 @@
-import { tipoBonus } from "./costants.enum";
+import { tipoBonus } from "../utils/costants.enum";
 import { Square } from "./square";
 
 export class Bonus extends Square {

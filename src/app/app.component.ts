@@ -1,17 +1,17 @@
 import { AfterViewInit, Component, ElementRef, HostListener, NgZone, ViewChild } from '@angular/core';
-import { Bonus } from './classes/bonus';
-import { Charter } from './classes/charter';
-import { Mago } from './classes/mago';
-import { Pozione } from './classes/pozione';
-import { Utilities } from './classes/utilities';
-import { classe, FinalState } from './classes/costants.enum';
-import { Treasure } from './classes/treasure';
-import { Camion } from './classes/camion';
-import { Gui } from './classes/gui';
-import { Mondo } from './classes/mondo';
-import { Guerriero } from './classes/guerriero';
-import { Arcere } from './classes/arcere';
-import { Samurai } from './classes/samurai';
+import { Bonus } from './classes/elements/bonus';
+import { Charter } from './classes/abstract/charter';
+import { Mago } from './classes/charters/mago';
+import { Pozione } from './classes/elements/pozione';
+import { Utilities } from './classes/utils/utilities';
+import { classe, FinalState } from './classes/utils/costants.enum';
+import { Treasure } from './classes/elements/treasure';
+import { Camion } from './classes/elements/camion';
+import { Gui } from './classes/elements/gui';
+import { Mondo } from './classes/elements/mondo';
+import { Guerriero } from './classes/charters/guerriero';
+import { Arcere } from './classes/charters/arcere';
+import { Samurai } from './classes/charters/samurai';
 export enum KEY_CODE {
   UP_ARROW = 87,
   DOWN_ARROW = 83,
@@ -128,7 +128,7 @@ export class AppComponent implements AfterViewInit {
       this.collisionDetenction();
       this.update();
     }
-    if (this.camion && !this.gui.isRestartTouched) {
+    if (this.camion && this.isStarted) {
       this.setCamion();
     }
     //velocità animazione ogni n frame
@@ -154,6 +154,16 @@ export class AppComponent implements AfterViewInit {
         this.camion.setY(Utilities.arrayRandomicoNumerico([1, 4]));
       }
     }
+
+
+    if (this.camion.getX() * this.camion.sideX + this.camion.image.width > 0) {
+      this.camion.setDirection('LEFT');
+      Utilities.directionToMoveSwitch(this.camion);
+    } else {
+      this.camion.setX(49);
+      this.camion.setY(Utilities.arrayRandomicoNumerico([1, 4]));
+    }
+
   }
 
   collisionDetenction() {
@@ -258,7 +268,8 @@ export class AppComponent implements AfterViewInit {
         {
           livelloPersonaggio: this.player.livello,
           livelloSchema: this.livelloSchema,
-          money: this.player.money
+          money: this.player.money,
+          classe:this.player.classe
         }
       );
 
@@ -296,6 +307,7 @@ export class AppComponent implements AfterViewInit {
     this.ctx = res;
     this.gui = new Gui(this.ctx);
     this.mondo = new Mondo(this.ctx);
+    
     this.pozione = new Pozione(this.ctx, 'green');
     this.pozione.setX(2);
     this.pozione.setY(2);

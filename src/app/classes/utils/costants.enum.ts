@@ -17,7 +17,8 @@ export type stato = 'attaccando' | 'difendendo' | 'camminando' | 'morendo';
 export interface FinalState {
     money: number;
     livelloSchema: number;
-    livelloPersonaggio: number
+    livelloPersonaggio: number;
+    classe:classe
 }
 export interface DrawSquareParam {
     x: number;

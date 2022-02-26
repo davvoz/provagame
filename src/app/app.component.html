@@ -11,7 +11,7 @@
         <li>Match N°: {{i+1}}</li>
         <li>$ : {{finalState.money}}</li>
         <li>Livello schema : {{finalState.livelloSchema}}</li>
-        <li>Livello personaggio : {{finalState.livelloPersonaggio}}</li>
+        <li>{{finalState.classe}}  {{finalState.livelloPersonaggio}}</li>
         <li>Point:
           {{finalState.livelloPersonaggio*finalState.livelloSchema*(finalState.money > 0 ? finalState.money:1)}}</li>
       </ul>

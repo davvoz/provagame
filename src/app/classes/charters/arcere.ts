@@ -1,5 +1,5 @@
-import { Charter } from './charter';
-import { classe } from './costants.enum';
+import { Charter } from '../abstract/charter';
+import { classe } from '../utils/costants.enum';
 
 export class Arcere extends Charter {
   override salute = 3000;

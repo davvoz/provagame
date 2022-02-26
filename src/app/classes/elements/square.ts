@@ -1,4 +1,4 @@
-import { direzione } from "./costants.enum";
+import { direzione } from "../utils/costants.enum";
 
 export class Square {
   private color = 'black';

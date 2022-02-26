@@ -1,4 +1,4 @@
-import { DrawSquareParam } from "./costants.enum";
+import { DrawSquareParam } from "../utils/costants.enum";
 import { Square } from "./square";
 
 export class Sfondo extends Square {

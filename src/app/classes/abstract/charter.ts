@@ -1,6 +1,6 @@
-import { classe, Condition, Conditions, stato } from './costants.enum';
-import { Pozione } from './pozione';
-import { Square } from './square';
+import { classe, Condition, Conditions, stato } from '../utils/costants.enum';
+import { Pozione } from '../elements/pozione';
+import { Square } from '../elements/square';
 
 export abstract class Charter extends Square {
   salute = 0; //salute totale
@@ -117,12 +117,16 @@ export abstract class Charter extends Square {
   drawPozioneAntivelenoState() {
     if (this.pozioneAntiCambioStati) {
       this.ctx.strokeStyle = 'rgb(0,200,0)';
+      this.ctx.lineWidth = 6;
       this.ctx.strokeRect(this.getX() * this.sideX - 10, this.getY() * this.sideY + 10, this.sideX + 10, this.sideY + 10);
       this.ctx.strokeStyle = 'rgb(0,180,0)';
+      this.ctx.lineWidth = 4;
       this.ctx.strokeRect(this.getX() * this.sideX - 9, this.getY() * this.sideY + 9, this.sideX + 9, this.sideY + 9);
       this.ctx.strokeStyle = 'rgb(0,160,0)';
+      this.ctx.lineWidth = 2;
       this.ctx.strokeRect(this.getX() * this.sideX - 8, this.getY() * this.sideY + 8, this.sideX + 8, this.sideY + 8);
       this.ctx.strokeStyle = 'rgb(0,140,0)';
+      this.ctx.lineWidth = 1;
       this.ctx.strokeRect(this.getX() * this.sideX - 7, this.getY() * this.sideY + 7, this.sideX + 7, this.sideY + 7);
       this.ctx.fillStyle = 'rgb(0,200,0)';
       this.ctx.fillRect(this.getX() * this.sideX,
@@ -505,10 +509,10 @@ export abstract class Charter extends Square {
 
   incrementaLivello() {
     this.livello++;
-    this.salute = this.salute + this.livello;
-    this.forza += this.livello;
-    this.intelligenza += this.livello;
-    this.resistenzaFisica += this.livello;
-    this.resistenzaMagica += this.livello;
+    this.salute = this.salute + this.livello/4;
+    this.forza += this.livello/4;
+    this.intelligenza += this.livello/4;
+    this.resistenzaFisica += this.livello/4;
+    this.resistenzaMagica += this.livello/4;
   }
 }

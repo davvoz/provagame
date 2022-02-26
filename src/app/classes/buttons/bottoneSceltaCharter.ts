@@ -1,5 +1,5 @@
-import { Bottone } from "./bottone";
-import { classe } from "./costants.enum";
+import { Bottone } from "../elements/bottone";
+import { classe } from "../utils/costants.enum";
 
 export class BottoneSceltaCharter extends Bottone {
     typeOfCharter: classe= 'ABSTRACT';

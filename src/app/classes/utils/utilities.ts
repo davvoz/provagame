@@ -1,12 +1,12 @@
-import { Square } from "./square";
-import { direzione } from '../classes/costants.enum';
-import { Guerriero } from "./guerriero";
-import { Mago } from "./mago";
-import { Bonus } from "./bonus";
-import { Charter } from "./charter";
-import { Arcere } from "./arcere";
-import { Bottone } from "./bottone";
-import { Samurai } from "./samurai";
+import { Square } from "../elements/square";
+import { direzione } from './costants.enum';
+import { Guerriero } from "../charters/guerriero";
+import { Mago } from "../charters/mago";
+import { Bonus } from "../elements/bonus";
+import { Charter } from "../abstract/charter";
+import { Arcere } from "../charters/arcere";
+import { Bottone } from "../elements/bottone";
+import { Samurai } from "../charters/samurai";
 
 export class Utilities {
     static arrayRandomicoNumerico(array: number[]): number {
@@ -98,7 +98,7 @@ export class Utilities {
                     enemy = new Arcere(ctx, 'rgb(66,66,200)', livelloNemici)
                     Utilities.setEnemiesArray(enemy, i, livelloNemici, salutePlayer, enemies);
                     break;
-                    case 3:
+                case 3:
                     enemy = new Samurai(ctx, 'rgb(190,190,200)', livelloNemici)
                     Utilities.setEnemiesArray(enemy, i, livelloNemici, salutePlayer, enemies);
                     break;
@@ -112,7 +112,7 @@ export class Utilities {
         enemy.setVelocita(0.1);
         enemy.posizioneInfoLabelX = 370 + i * 120;
         enemy.posizioneInfoLabelY = 700;
-        enemy.numeriFortunati = [8, 9, 2, 3];
+        enemy.numeriFortunati = [8, 9, 2, 3, 1, 0];
         enemy.dannoCritico = 10 * init;
         enemy.counterForCriticoTreshold = 10;
         enemy.name = this.nomeRandomico();
@@ -146,7 +146,7 @@ export class Utilities {
         return array[Math.floor(Math.random() * array.length)];
     }
     static changeButtonState(evt: MouseEvent, button: Bottone, ctx: CanvasRenderingContext2D): boolean {
-        
+
         const mousePos = Utilities.getMousePos(ctx.canvas, evt);
         const rect = {
             x: button.getX() * button.sideX,
