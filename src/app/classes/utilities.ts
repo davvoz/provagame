@@ -146,6 +146,7 @@ export class Utilities {
         return array[Math.floor(Math.random() * array.length)];
     }
     static changeButtonState(evt: MouseEvent, button: Bottone, ctx: CanvasRenderingContext2D): boolean {
+        
         const mousePos = Utilities.getMousePos(ctx.canvas, evt);
         const rect = {
             x: button.getX() * button.sideX,
@@ -158,6 +159,7 @@ export class Utilities {
             button.state == 0 ? button.state = 1 : button.state = 0;
             out = true;
         }
+
         return out;
     }
     static charterMovmentRandomRoutine(charter: Square, counterRoutine: number, treshold: number) {

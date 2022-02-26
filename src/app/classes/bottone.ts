@@ -16,7 +16,6 @@ export class Bottone extends Square {
   override draw() {
     this.disegnaMe();
     this.scriviAltriTesti();
-
   }
   disegnaMe() {
     this.ctx.fillStyle= this.getColor();

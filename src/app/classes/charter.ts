@@ -112,9 +112,8 @@ export abstract class Charter extends Square {
         this.counterMana = 0
       }
     }
-
-
   }
+
   drawPozioneAntivelenoState() {
     if (this.pozioneAntiCambioStati) {
       this.ctx.strokeStyle = 'rgb(0,200,0)';
@@ -125,7 +124,6 @@ export abstract class Charter extends Square {
       this.ctx.strokeRect(this.getX() * this.sideX - 8, this.getY() * this.sideY + 8, this.sideX + 8, this.sideY + 8);
       this.ctx.strokeStyle = 'rgb(0,140,0)';
       this.ctx.strokeRect(this.getX() * this.sideX - 7, this.getY() * this.sideY + 7, this.sideX + 7, this.sideY + 7);
-
       this.ctx.fillStyle = 'rgb(0,200,0)';
       this.ctx.fillRect(this.getX() * this.sideX,
         this.getY() * this.sideY - 20,
@@ -512,7 +510,5 @@ export abstract class Charter extends Square {
     this.intelligenza += this.livello;
     this.resistenzaFisica += this.livello;
     this.resistenzaMagica += this.livello;
-
   }
-
 }
