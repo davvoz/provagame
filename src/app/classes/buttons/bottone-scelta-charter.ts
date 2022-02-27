@@ -34,12 +34,6 @@ export class BottoneSceltaCharter extends Bottone {
     }
 
     override scriviAltriTesti() {
-        // this.ctx.fillText(
-        //     this.secondText,
-        //     this.getX() * this.sideX,
-        //     this.getY() * this.sideY + this.sideY / 2 ,
-        //     this.sideX
-        // );
         this.ctx.fillText(
             this.terzoText,
             this.getX() * this.sideX,

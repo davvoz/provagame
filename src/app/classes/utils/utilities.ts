@@ -82,43 +82,41 @@ export class Utilities {
         return ba
     }
 
-    static createEnemiesArray(quantitaDiNemici: number, ctx: CanvasRenderingContext2D, livelloNemici: number, salutePlayer: number): Charter[] {
+    static createEnemiesArray(quantitaDiNemici: number, ctx: CanvasRenderingContext2D, livelloNemici: number): Charter[] {
         const enemies: Charter[] = []
         for (let i = 0; i < quantitaDiNemici; i++) {
             let enemy: Charter;
             switch (i % 4) {
-                case 0: enemy = new Guerriero(ctx, 'rgb(255, 155, 124)', livelloNemici);
-                    Utilities.setEnemiesArray(enemy, i, livelloNemici, salutePlayer, enemies);
+                case 0: enemy = new Guerriero(ctx, 'rgb(255, 155, 124)', livelloNemici - 1);
+                    Utilities.setEnemiesArray(enemy, i, livelloNemici, enemies);
                     break;
                 case 1:
-                    enemy = new Mago(ctx, 'rgb(254,66,10)', livelloNemici);
-                    Utilities.setEnemiesArray(enemy, i, livelloNemici, salutePlayer, enemies);
+                    enemy = new Mago(ctx, 'rgb(254,66,10)', livelloNemici - 1);
+                    Utilities.setEnemiesArray(enemy, i, livelloNemici, enemies);
                     break;
                 case 2:
                     enemy = new Arcere(ctx, 'rgb(66,66,200)', livelloNemici)
-                    Utilities.setEnemiesArray(enemy, i, livelloNemici, salutePlayer, enemies);
+                    Utilities.setEnemiesArray(enemy, i, livelloNemici, enemies);
                     break;
                 case 3:
-                    enemy = new Samurai(ctx, 'rgb(190,190,200)', livelloNemici)
-                    Utilities.setEnemiesArray(enemy, i, livelloNemici, salutePlayer, enemies);
+                    enemy = new Samurai(ctx, 'rgb(190,190,200)', livelloNemici - 1)
+                    Utilities.setEnemiesArray(enemy, i, livelloNemici, enemies);
                     break;
             }
         }
         return enemies;
     }
-    private static setEnemiesArray(enemy: Charter, i: number, init: number, salutePlayer: number, enemies: Charter[]) {
+    private static setEnemiesArray(enemy: Charter, i: number, init: number, enemies: Charter[]) {
+        enemy.incrementaLivello();
         enemy.setX(Math.floor(Math.random() * 20));
         enemy.setY(Math.floor(Math.random() * i) + 1);
         enemy.setVelocita(0.1);
         enemy.posizioneInfoLabelX = 370 + i * 120;
         enemy.posizioneInfoLabelY = 700;
-        enemy.numeriFortunati = [8, 9, 2, 3, 1, 0];
         enemy.dannoCritico = 10 * init;
         enemy.counterForCriticoTreshold = 10;
         enemy.name = this.nomeRandomico();
         enemy.money = Math.floor(Math.random() * 100);
-        //enemy.incrementaLivello();
-        //enemy.salute = salutePlayer;
         enemy.stand();
         enemies.push(enemy);
     }
@@ -130,6 +128,7 @@ export class Utilities {
             y: event.clientY - rect.top,
         };
     }
+
     static isInside(mousePosition: { x: any; y: any; }, rect: { x: any; y: any; width: any; height: any; }) {
         return (
             mousePosition.x > rect.x &&
@@ -167,5 +166,13 @@ export class Utilities {
             Utilities.direzionaRandomicamenteCharter(charter);
         }
         Utilities.directionToMoveSwitch(charter);
+    }
+
+    static algoAttack(atatccante: Charter, difensore: Charter) {
+        atatccante.attaccare(difensore);
+        if (atatccante.mana >= atatccante.maxMana) {
+            atatccante.mana = 0;
+            atatccante.lanciaAbilita(difensore);
+        }
     }
 }

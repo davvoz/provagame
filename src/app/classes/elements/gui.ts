@@ -1,7 +1,7 @@
 import { Bottone } from "./bottone";
-import { BottonePozione } from "../buttons/bottonePozione";
+import { BottonePozione } from "../buttons/bottone-pozione";
 import { Charter } from "../abstract/charter";
-import { BottoneSceltaCharter } from "../buttons/bottoneSceltaCharter";
+import { BottoneSceltaCharter } from "../buttons/bottone-scelta-charter";
 import { classe } from "../utils/costants.enum";
 
 export class Gui {
@@ -15,7 +15,7 @@ export class Gui {
     sceltaCharter: BottoneSceltaCharter[] = [];
     classeCharterScelto: classe = 'ABSTRACT';
     isRestartTouched = false;
-
+    private selectedImage = new Image();
     constructor(public ctx: CanvasRenderingContext2D) {
         this.startButton = new Bottone(this.ctx, 'yellow');
         this.startButton.setX(4);
@@ -100,14 +100,31 @@ export class Gui {
                     this.sceltaCharter[i].index = i;
                     this.sceltaCharter[i].stand();
                 }
-                if ( this.classeCharterScelto !== 'ABSTRACT') {
-                    this.ctx.fillText('Ur hero is a ', 0, 450, 3000);
+                if (this.classeCharterScelto !== 'ABSTRACT') {
+                    //this.ctx.fillText('Hai scelto il ', 0, 450, 3000);
                     this.ctx.fillText(this.classeCharterScelto, 400, 450, 3000);
+                    switch (this.classeCharterScelto) {
+                        case 'SAMURAI':this.selectedImage.src ='assets/images/samuraiAtk2.png';
+                            break;//samurai
+                        case 'MAGO':this.selectedImage.src ='assets/images/discotraspooAtck.png';
+                            break;//mago
+                        case 'GUERRIERO':this.selectedImage.src ='assets/images/biondotraspoAtck_1.png';
+                            break;//guerriero
+                        case 'ARCERE':this.selectedImage.src = 'assets/images/edwardAtk.png';
+                            break;//arcere
+                    }
+                    this.ctx.drawImage(this.selectedImage,
+                        this.selectedImage.width / 4 * counterAnimation,//colonna ws
+                        0,//riga hs
+                        this.selectedImage.width / 4, //ws
+                        this.selectedImage.height / 4,//hs
+                        500,500,
+                       100,
+                       140);
                     this.startButton.stand();
                 } else {
-                    this.ctx.fillText('Choose ur hero', 0, 450, 3000);
+                    this.ctx.fillText('Scegliere eroe', 0, 450, 3000);
                 }
-
             }
 
         } else {
@@ -118,7 +135,6 @@ export class Gui {
                     this.pozioniBottoni[i].stand();
                 }
             }
-
         }
 
         if (player) {
@@ -134,12 +150,12 @@ export class Gui {
             this.ctx.strokeText('Mondo  ' + livelloSchema, 750, 50, 500);
             if (!player.isMorto) {
                 this.ctx.fillStyle = 'green';
-                this.ctx.fillRect(300, 650,player.exp , 10);
+                this.ctx.fillRect(300, 650, player.exp, 10);
                 this.ctx.fillStyle = 'red';
-                this.ctx.fillRect(500+player.nextExp / this.ctx.canvas.width, 650, 10, 10);
+                this.ctx.fillRect(500 + player.nextExp / this.ctx.canvas.width, 650, 10, 10);
                 this.ctx.font = 'italic bolder 25px Orbitron';
                 this.ctx.fillStyle = 'rgb(60,60,60)';
-                this.ctx.fillText('EXP '+player.classe+' '+player.livello+'- NOW  ' + player.exp + ' NEXT ' + player.nextExp, player.nextExp / this.ctx.canvas.width +300, 690 + 10, 500);
+                this.ctx.fillText('EXP ' + player.classe + ' ' + player.livello + '- NOW  ' + player.exp + ' NEXT ' + player.nextExp, player.nextExp / this.ctx.canvas.width + 300, 690 + 10, 500);
             }
             if (player.isMorto && !this.isRestartTouched) {
                 this.ctx.font = 'normal bolder 115px Orbitron';

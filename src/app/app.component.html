@@ -11,9 +11,12 @@
         <li>Match N°: {{i+1}}</li>
         <li>$ : {{finalState.money}}</li>
         <li>Livello schema : {{finalState.livelloSchema}}</li>
-        <li>{{finalState.classe}}  {{finalState.livelloPersonaggio}}</li>
+        <li>{{finalState.classe}} {{finalState.livelloPersonaggio}}</li>
+        <li>Schivate {{finalState.numeroSchivate}}</li>
+        <li>Attacchi {{finalState.numeroAttacchi}}</li>
+        <li> Ratio {{finalState.ratio + '' | slice:0:6}}</li>
         <li>Point:
-          {{finalState.livelloPersonaggio*finalState.livelloSchema*(finalState.money > 0 ? finalState.money:1)}}</li>
+          {{finalState.livelloPersonaggio*finalState.livelloSchema*(finalState.money > 0 ? finalState.money:1)/1000}}</li>
       </ul>
     </div>
   </div>

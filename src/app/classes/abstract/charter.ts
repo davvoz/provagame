@@ -1,9 +1,11 @@
 import { classe, Condition, Conditions, stato } from '../utils/costants.enum';
 import { Pozione } from '../elements/pozione';
 import { Square } from '../elements/square';
+import { ThisReceiver } from '@angular/compiler';
 
 export abstract class Charter extends Square {
-  salute = 0; //salute totale
+  private salute = 10000; //salute totale
+
   mana = 0; //mana totale
   forza = 0; // quanta hp togli in un attacco
   agilita = 0; //quanti attacchi al secondo TODO
@@ -43,6 +45,8 @@ export abstract class Charter extends Square {
   pozioneAntiCambioStati = false;
   turniPozioneAntiCambiaStati = 1000;
   stato: stato = 'camminando';
+  numeroSchivate = 0;
+  numeroAttacchi = 0;
   genereSprite = 0;//se = 0 then SX = 1 dx = 2 ; se = 1 SX = 2 DX = 1
   exp = 0;
   nextExp = 200;
@@ -67,6 +71,16 @@ export abstract class Charter extends Square {
       totTurni: 0
     }
 
+  }
+  counterOfCounterAnimation = 0;
+  private maxSalute = 10000 * this.livello;
+  aggiornaCaratteristiche() { }
+  getSalute(): number {
+    return this.salute;
+  }
+
+  incrementaSalute(addendum: number) {
+    this.salute + addendum > this.maxSalute ? this.salute = this.maxSalute : this.salute = this.salute + addendum;
   }
 
   updateSituazioneConditions(condition: Condition) {
@@ -96,7 +110,7 @@ export abstract class Charter extends Square {
     } else {
       this.isMorto = false
     }
-    // this.drawLabel();
+   // this.drawLabel();
     this.drawBarraEnergia();
     this.drawPozioneAntivelenoState();
     if (!this.isMorto) {
@@ -138,24 +152,24 @@ export abstract class Charter extends Square {
   setSprite() {
     let riga = 0;
     if (this.situazione.fiery.value && this.situazione.fiery.totTurni > 0) {
-      console.log(this.name + ' riceve danni da ' + this.situazione.fiery.conditionType + ' : ' + this.situazione.fiery.quantita);
       this.situazione.fiery.totTurni--;
       this.ctx.fillStyle = 'red';
       this.ctx.fillRect(this.getX() * this.sideX - 20, this.getY() * this.sideY + 40, 30, 30);
       this.ctx.font = "20px Impact";
       this.ctx.fillText('ON FIRE !!!', this.getX() * this.sideX - 70, this.getY() * this.sideY, 300)
       if (this.counterAnimation == 3) {
+        console.log(this.name + ' riceve danni da ' + this.situazione.fiery.conditionType + ' : ' + this.situazione.fiery.quantita);
         this.salute -= this.situazione.fiery.quantita;
       }
     }
     if (this.situazione.poisoned.value && this.situazione.poisoned.totTurni > 0) {
-      console.log(this.name + ' riceve danni da ' + this.situazione.poisoned.conditionType + ' : ' + this.situazione.poisoned.quantita);
       this.situazione.poisoned.totTurni--;
       this.ctx.fillStyle = 'green';
       this.ctx.fillRect(this.getX() * this.sideX - 20, this.getY() * this.sideY + 60, 30, 30);
       this.ctx.font = "20px Impact";
       this.ctx.fillText('POISONED', this.getX() * this.sideX - 70, this.getY() * this.sideY + 60, 300)
       if (this.counterAnimation == 3) {
+        console.log(this.name + ' riceve danni da ' + this.situazione.poisoned.conditionType + ' : ' + this.situazione.poisoned.quantita);
         this.salute -= this.situazione.poisoned.quantita;
       }
       if (!this.isVelenoApplicato) {
@@ -387,7 +401,13 @@ export abstract class Charter extends Square {
     this.ctx.fillRect(
       this.getX() * this.sideX,
       this.getY() * this.sideY - 30,
-      this.salute / 100 * this.livello, 10
+      this.salute / 100 , 10
+    )
+    this.ctx.fillStyle = 'white';
+    this.ctx.fillRect(
+      this.getX() * this.sideX + this.maxSalute/100,
+      this.getY() * this.sideY - 30,
+      5, 10
     )
     this.ctx.fillStyle = 'blue';
     this.ctx.fillRect(
@@ -401,13 +421,12 @@ export abstract class Charter extends Square {
       this.getY() * this.sideY - 40,
       5, 10
     )
-
     this.ctx.fillStyle = this.getColor();
     this.ctx.strokeStyle = 'black';
 
     this.ctx.font = '18px Impact';
     this.ctx.strokeText(
-      this.classe + ' - ' + this.name + ' - Level ' + this.livello + ' - $ ' + this.money,
+      this.classe + ' - ' + this.name + ' - Level ' + this.livello + ' - $ ' + this.money + '     ' + this.salute+ '     ' + this.maxSalute,
       this.getX() * this.sideX,
       this.getY() * this.sideY - 45, 500
     );
@@ -417,6 +436,7 @@ export abstract class Charter extends Square {
       this.getY() * this.sideY - 45, 500
     );
   }
+
   attaccare(charter: Charter) {
     if (!this.isVelenoApplicato) {
       if (this.exp >= this.nextExp) {
@@ -428,6 +448,7 @@ export abstract class Charter extends Square {
       this.stato = 'attaccando';
       this.isOnAttack = true;
       if (this.counterAnimation == 3) {
+        this.numeroAttacchi++;
         console.log('** ATTACCA ' + this.classe + ' ' + this.name)
         if (!this.isMorto) {
           let critico = 0;
@@ -448,6 +469,9 @@ export abstract class Charter extends Square {
           }
         }
         console.log('** FINE ATTACCO ' + this.classe + ' ' + this.name)
+        this.counterOfCounterAnimation = 0;
+      } else {
+        this.counterOfCounterAnimation++;
       }
     }
   }
@@ -462,6 +486,7 @@ export abstract class Charter extends Square {
       for (let a of this.numeriFortunati) {
         if (schiva == a) {
           schivata = true;
+          this.numeroSchivate++;
           console.log('******** schiva');
           break;
         }
@@ -497,7 +522,6 @@ export abstract class Charter extends Square {
       console.log('******** danni magici ricevuti ' + dannoMagicoEffettivo);
       console.log('******** danni fisici ricevuti ' + dannoFisicoEffettivo);
     }
-
     console.log('**** FINE DIFESA ' + this.classe + ' ' + this.name)
     if (this.salute <= 0) {
       this.isMorto = true
@@ -509,10 +533,7 @@ export abstract class Charter extends Square {
 
   incrementaLivello() {
     this.livello++;
-    this.salute = this.salute + this.livello/4;
-    this.forza += this.livello/4;
-    this.intelligenza += this.livello/4;
-    this.resistenzaFisica += this.livello/4;
-    this.resistenzaMagica += this.livello/4;
+    this.maxSalute = this.livello * 10000;
+    this.aggiornaCaratteristiche();
   }
 }

@@ -18,7 +18,10 @@ export interface FinalState {
     money: number;
     livelloSchema: number;
     livelloPersonaggio: number;
-    classe:classe
+    classe:classe,
+    numeroSchivate:number,
+    numeroAttacchi:number,
+    ratio:number
 }
 export interface DrawSquareParam {
     x: number;

@@ -34,49 +34,51 @@ export class AppComponent implements AfterViewInit {
   typeOfPersonaggioSCelto !: classe;
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
-    if (!this.player.isMorto && !this.isJustColliding) {
-      if (event.keyCode == KEY_CODE.DOWN_ARROW || event.keyCode == 40) {
-        this.player.setVelocita(this.player.maxVelo);
-        this.player.setDirection('BOTTOM');
-      }
-      if (event.keyCode == KEY_CODE.UP_ARROW || event.keyCode == 38) {
-        this.player.setVelocita(this.player.maxVelo);
-        this.player.setDirection('TOP');
-      }
-      if (event.keyCode == KEY_CODE.LEFT_ARROW || event.keyCode == 37) {
-        this.player.setVelocita(this.player.maxVelo);
-        this.player.setDirection('LEFT');
-      }
-      if (event.keyCode == KEY_CODE.RIGHT_ARROW || event.keyCode == 39) {
-        this.player.setVelocita(this.player.maxVelo);
-        this.player.setDirection('RIGHT');
-      }
-      if (event.keyCode == 32) {//space compra bonus
-        if (this.player.money > 0) {
-          this.bonus = [];
-          this.bonus = Utilities.createBonusArray(3, this.ctx);
-          this.player.money -= 20;
+    if (this.player) {
+      if (!this.player.isMorto && !this.isJustColliding) {
+        if (event.keyCode == KEY_CODE.DOWN_ARROW || event.keyCode == 40) {
+          this.player.setVelocita(this.player.maxVelo);
+          this.player.setDirection('BOTTOM');
         }
-      }
-      if (event.keyCode == 49 && this.player.pozioni.length > 0) {//1 consuma pozione 1
-        this.player.pozioneAntiCambioStati = true;
-        this.player.pozioni.pop();
-        this.gui.pozioniBottoni[0].svuotaCasella();
-      }
-      if (event.keyCode == 50 && this.player.pozioni.length > 0) {//2 consuma pozione 2
-        this.player.pozioneAntiCambioStati = true;
-        this.player.pozioni.pop();
-        this.gui.pozioniBottoni[1].svuotaCasella();
-      }
-      if (event.keyCode == 51 && this.player.pozioni.length > 0) {//2 consuma pozione 3
-        this.player.pozioneAntiCambioStati = true;
-        this.player.pozioni.pop();
-        this.gui.pozioniBottoni[2].svuotaCasella();
-      }
-      if (event.keyCode == 13) {//invio aumenta livello
-        if (this.player.money > 500 * this.player.livello) {
-          this.player.incrementaLivello();
-          this.player.money -= 500 * this.player.livello;
+        if (event.keyCode == KEY_CODE.UP_ARROW || event.keyCode == 38) {
+          this.player.setVelocita(this.player.maxVelo);
+          this.player.setDirection('TOP');
+        }
+        if (event.keyCode == KEY_CODE.LEFT_ARROW || event.keyCode == 37) {
+          this.player.setVelocita(this.player.maxVelo);
+          this.player.setDirection('LEFT');
+        }
+        if (event.keyCode == KEY_CODE.RIGHT_ARROW || event.keyCode == 39) {
+          this.player.setVelocita(this.player.maxVelo);
+          this.player.setDirection('RIGHT');
+        }
+        if (event.keyCode == 32) {//space compra bonus
+          if (this.player.money > 0) {
+            this.bonus = [];
+            this.bonus = Utilities.createBonusArray(3, this.ctx);
+            this.player.money -= 20;
+          }
+        }
+        if (event.keyCode == 49 && this.player.pozioni.length > 0) {//1 consuma pozione 1
+          this.player.pozioneAntiCambioStati = true;
+          this.player.pozioni.pop();
+          this.gui.pozioniBottoni[0].svuotaCasella();
+        }
+        if (event.keyCode == 50 && this.player.pozioni.length > 0) {//2 consuma pozione 2
+          this.player.pozioneAntiCambioStati = true;
+          this.player.pozioni.pop();
+          this.gui.pozioniBottoni[1].svuotaCasella();
+        }
+        if (event.keyCode == 51 && this.player.pozioni.length > 0) {//2 consuma pozione 3
+          this.player.pozioneAntiCambioStati = true;
+          this.player.pozioni.pop();
+          this.gui.pozioniBottoni[2].svuotaCasella();
+        }
+        if (event.keyCode == 13) {//invio aumenta livello
+          if (this.player.money > 500 * this.player.livello) {
+            this.player.incrementaLivello();
+            this.player.money -= 500 * this.player.livello;
+          }
         }
       }
     }
@@ -84,19 +86,22 @@ export class AppComponent implements AfterViewInit {
   }
   @HostListener('window:keyup', ['$event'])
   keyEventMu(event: KeyboardEvent) {
-    if (event.keyCode == KEY_CODE.DOWN_ARROW || event.keyCode == 40) {
-      this.player.setVelocita(0);
-    }
-    if (event.keyCode == KEY_CODE.UP_ARROW || event.keyCode == 38) {
-      this.player.setVelocita(0);
-    }
-    if (event.keyCode == KEY_CODE.LEFT_ARROW || event.keyCode == 37) {
-      this.player.setVelocita(0);
-    }
-    if (event.keyCode == KEY_CODE.RIGHT_ARROW || event.keyCode == 39) {
-      this.player.setVelocita(0);
+    if (this.player) {
+      if (event.keyCode == KEY_CODE.DOWN_ARROW || event.keyCode == 40) {
+        this.player.setVelocita(0);
+      }
+      if (event.keyCode == KEY_CODE.UP_ARROW || event.keyCode == 38) {
+        this.player.setVelocita(0);
+      }
+      if (event.keyCode == KEY_CODE.LEFT_ARROW || event.keyCode == 37) {
+        this.player.setVelocita(0);
+      }
+      if (event.keyCode == KEY_CODE.RIGHT_ARROW || event.keyCode == 39) {
+        this.player.setVelocita(0);
+      }
     }
   }
+
   @ViewChild('canvasGui', { static: false })
   canvasGui!: ElementRef<HTMLCanvasElement>;
   ctx!: CanvasRenderingContext2D;
@@ -117,8 +122,8 @@ export class AppComponent implements AfterViewInit {
   isTesoroRaccolto = false;
   camion!: Camion;
   isFaseScelta = true;
-  constructor(private ngZone: NgZone) { }
 
+  constructor(private ngZone: NgZone) { }
 
   animate(): void {
     requestAnimationFrame(this.animate.bind(this));
@@ -172,15 +177,12 @@ export class AppComponent implements AfterViewInit {
     for (let i = 0; i < this.enemies.length; i++) {
       this.enemies[i].counterAnimation = this.counterAnimation;
       if (!this.player.isMorto && !this.enemies[i].isMorto && Utilities.rectsColliding(this.enemies[i], this.player)) {
-        this.enemies[i].attaccare(this.player);
-        if (this.enemies[i].mana == this.enemies[i].maxMana) {
-          this.enemies[i].mana = 0;
-          this.enemies[i].lanciaAbilita(this.player);
-        }
-        this.player.attaccare(this.enemies[i]);
-        if (this.player.mana == this.enemies[i].maxMana) {
-          this.player.mana = 0;
-          this.player.lanciaAbilita(this.enemies[i]);
+        if (this.player.agilita >= this.enemies[i].agilita) {
+          Utilities.algoAttack(this.player,this.enemies[i] );
+          Utilities.algoAttack(this.enemies[i], this.player);
+        } else {
+          Utilities.algoAttack(this.enemies[i], this.player);
+          Utilities.algoAttack(this.player,this.enemies[i] );
         }
         this.player.isOnAttack = true;
         this.enemies[i].isOnAttack = true;
@@ -194,7 +196,7 @@ export class AppComponent implements AfterViewInit {
           Utilities.charterMovmentRandomRoutine(this.enemies[i], this.counterRoutine, 20);
         }
       }
-      //rilevo collisione this.enemies[i] vs camion
+      //rilevo collisione this.enemies[i] vs camion...o qualcosaltro ??buahahahaah magari di piu letale BUAHAHAHAHAH ah ah   ah     ah
       // if (Utilities.rectsColliding(this.enemies[i], this.camion)) {
       //   this.enemies[i].salute -= 500 * this.livelloSchema;
       //   if (this.enemies[i].salute <= 0) {
@@ -207,8 +209,8 @@ export class AppComponent implements AfterViewInit {
     }
     //rilevo collisione player vs camion
     if (Utilities.rectsColliding(this.player, this.camion)) {
-      this.player.salute -= 100 * this.livelloSchema;
-      if (this.player.salute <= 0) {
+      this.player.incrementaSalute(-(500 * this.livelloSchema));
+      if (this.player.getSalute() <= 0) {
         this.player.isMorto
       }
     }
@@ -218,7 +220,9 @@ export class AppComponent implements AfterViewInit {
       this.bonus[j].stand();
       if (this.bonus[j].getPlafond() > 0) {
         if (Utilities.rectsColliding(this.bonus[j], this.player)) {
-          this.player[this.bonus[j].getTipoBonus()] += this.bonus[j].getQuantita() * this.player.livello;
+          //solo bonus salute per ora 
+          // this.player[this.bonus[j].getTipoBonus()] += this.bonus[j].getQuantita() * this.player.livello;
+          this.player.incrementaSalute(this.bonus[j].getQuantita() * this.player.livello);
           this.bonus[j].setPlafond(this.bonus[j].getPlafond() - this.bonus[j].getQuantita());
         }
       }
@@ -269,7 +273,10 @@ export class AppComponent implements AfterViewInit {
           livelloPersonaggio: this.player.livello,
           livelloSchema: this.livelloSchema,
           money: this.player.money,
-          classe:this.player.classe
+          classe: this.player.classe,
+          numeroSchivate: this.player.numeroSchivate,
+          numeroAttacchi: this.player.numeroAttacchi,
+          ratio: this.player.numeroAttacchi / this.player.numeroSchivate
         }
       );
 
@@ -286,7 +293,7 @@ export class AppComponent implements AfterViewInit {
       this.livelloSchema++;
       this.numeroNemici = this.livelloSchema;
       this.mondo.aggiornaLivello();
-      this.enemies = Utilities.createEnemiesArray(this.numeroNemici, this.ctx, this.livelloSchema, this.player.salute);
+      this.enemies = Utilities.createEnemiesArray(this.numeroNemici, this.ctx, this.livelloSchema);
     }
     if (this.player.pozioneAntiCambioStati) {
       if (this.player.turniPozioneAntiCambiaStati == 0) {
@@ -307,7 +314,7 @@ export class AppComponent implements AfterViewInit {
     this.ctx = res;
     this.gui = new Gui(this.ctx);
     this.mondo = new Mondo(this.ctx);
-    
+
     this.pozione = new Pozione(this.ctx, 'green');
     this.pozione.setX(2);
     this.pozione.setY(2);
@@ -412,7 +419,7 @@ export class AppComponent implements AfterViewInit {
     this.mondo.startSchema();
     this.gui.incrementaLivelloButton.terzoText = '$' + (100 * this.player.livello);
 
-    this.enemies = Utilities.createEnemiesArray(0, this.ctx, 1, this.player.salute);
+    this.enemies = Utilities.createEnemiesArray(0, this.ctx, 1);
 
     this.tesoro = new Treasure(this.ctx, '');
     this.tesoro.setX(5);
@@ -423,7 +430,7 @@ export class AppComponent implements AfterViewInit {
     this.camion = new Camion(this.ctx, 'red');
     this.camion.setX(19);
     this.camion.setY(3);
-    this.camion.setVelocita(0.1);
+    this.camion.setVelocita(0.05);
     this.camion.stand();
     this.isfinalStatesInc = false;
 
