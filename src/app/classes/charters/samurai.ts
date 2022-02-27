@@ -19,16 +19,18 @@ export class Samurai extends Charter {
   constructor(public override ctx: CanvasRenderingContext2D, color: string, level: number) {
     super(ctx, color);
     this.livello = level;
-    this.numeriFortunati = [0, 1, 2, 3, 4];
+    this.numeriFortunati = [0, 1, 2, 3, 4,5,6];
     this.aggiornaCaratteristiche()
   }
   
   override aggiornaCaratteristiche() {
-    this.incrementaSalute( Math.floor(Math.random() * 1000) * this.livello);
+    this.incrementaSalute( Math.floor(Math.random() * 50) * this.livello);
     this.forza += Math.floor(Math.random() * 50) * this.livello;
-    this.resistenzaFisica += Math.floor(Math.random() * 20) * this.livello;
-    this.intelligenza += Math.floor(Math.random() * 10) * this.livello;
-    this.resistenzaMagica += Math.floor(Math.random() * 10) * this.livello;
+    this.resistenzaFisica += Math.floor(Math.random() * 30) * this.livello;
+    this.intelligenza += Math.floor(Math.random() * 40) * this.livello;
+    this.resistenzaMagica += Math.floor(Math.random() * 40) * this.livello;
+    this.agilita += Math.floor(Math.random() * 15) * this.livello;
+
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
     this.spriteSheetImageAttack.src = this.spriteSheetAttackPath;
   }

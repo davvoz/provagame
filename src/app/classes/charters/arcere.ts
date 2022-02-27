@@ -24,10 +24,12 @@ export class Arcere extends Charter {
   }
   
   override aggiornaCaratteristiche() {
-    this.forza += Math.floor(Math.random() * 8) * this.livello;
-    this.resistenzaFisica += Math.floor(Math.random() * 8) * this.livello;
-    this.intelligenza += Math.floor(Math.random() * 25) * this.livello;
+    this.forza += Math.floor(Math.random() * 20) * this.livello;
+    this.resistenzaFisica += Math.floor(Math.random() * 50) * this.livello;
+    this.intelligenza += Math.floor(Math.random() * 55) * this.livello;
     this.resistenzaMagica += Math.floor(Math.random() * 20) * this.livello;
+    this.agilita += Math.floor(Math.random() * 50) * this.livello;
+
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
     this.spriteSheetImageAttack.src = this.spriteSheetAttackPath;
     this.incrementaSalute(Math.floor(Math.random() * 50) * this.livello);

@@ -20,7 +20,6 @@ export class Mago extends Charter {
     this.livello = level;
     this.aggiornaCaratteristiche()
     this.numeriFortunati = [0, 1, 2, 3, 4];
-
   }
 
   override aggiornaCaratteristiche() {

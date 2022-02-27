@@ -74,7 +74,13 @@ export abstract class Charter extends Square {
   }
   counterOfCounterAnimation = 0;
   private maxSalute = 10000 * this.livello;
-  aggiornaCaratteristiche() { }
+  isScudoAttivato = false;
+  scudoAttivatoCounter = 500;
+  scudoIcon = new Image();
+  pozioneIcon = new Image();
+
+  aggiornaCaratteristiche() { console.error('aggiornaCaratteristiche') }
+
   getSalute(): number {
     return this.salute;
   }
@@ -109,12 +115,20 @@ export abstract class Charter extends Square {
       this.stato = 'morendo';
     } else {
       this.isMorto = false
-    }
-   // this.drawLabel();
-    this.drawBarraEnergia();
-    this.drawPozioneAntivelenoState();
+    }    //this.drawPozioneAntivelenoState();
     if (!this.isMorto) {
       this.setSprite();
+      this.drawBarraEnergia();
+    }
+    // this.drawLabel();
+
+    if (this.isScudoAttivato) {
+      if (this.scudoAttivatoCounter <= 0) {
+        this.isScudoAttivato = false;
+      }
+      this.scudoAttivatoCounter--;
+    } else {
+      this.scudoAttivatoCounter = 500;
     }
     if (this.counterAnimation == 3) {
       if (this.counterMana <= this.maxMana) {
@@ -133,141 +147,196 @@ export abstract class Charter extends Square {
       this.ctx.strokeStyle = 'rgb(0,200,0)';
       this.ctx.lineWidth = 6;
       this.ctx.strokeRect(this.getX() * this.sideX - 10, this.getY() * this.sideY + 10, this.sideX + 10, this.sideY + 10);
-      this.ctx.strokeStyle = 'rgb(0,180,0)';
-      this.ctx.lineWidth = 4;
-      this.ctx.strokeRect(this.getX() * this.sideX - 9, this.getY() * this.sideY + 9, this.sideX + 9, this.sideY + 9);
-      this.ctx.strokeStyle = 'rgb(0,160,0)';
-      this.ctx.lineWidth = 2;
-      this.ctx.strokeRect(this.getX() * this.sideX - 8, this.getY() * this.sideY + 8, this.sideX + 8, this.sideY + 8);
-      this.ctx.strokeStyle = 'rgb(0,140,0)';
-      this.ctx.lineWidth = 1;
-      this.ctx.strokeRect(this.getX() * this.sideX - 7, this.getY() * this.sideY + 7, this.sideX + 7, this.sideY + 7);
-      this.ctx.fillStyle = 'rgb(0,200,0)';
+
+    }
+
+  }
+
+  drawBarraEnergia() {
+    let maxLength = 100;
+    //maxLength:ratio= this.maxSalute : this.salute
+    const perCent = maxLength * this.salute / this.maxSalute;
+
+    this.ctx.fillStyle = 'red';
+    this.ctx.fillRect(
+      this.getX() * this.sideX,
+      this.getY() * this.sideY - 30,
+      perCent, 10
+    )
+    this.ctx.fillStyle = 'white';
+    this.ctx.fillRect(
+      this.getX() * this.sideX + maxLength,
+      this.getY() * this.sideY - 30,
+      5, 10
+    )
+    this.ctx.fillStyle = 'blue';
+    this.ctx.fillRect(
+      this.getX() * this.sideX,
+      this.getY() * this.sideY - 40,
+      this.mana, 10
+    )
+    this.ctx.fillStyle = 'white';
+    this.ctx.fillRect(
+      this.getX() * this.sideX + this.maxMana,
+      this.getY() * this.sideY - 40,
+      5, 10
+    )
+    this.ctx.fillStyle = this.getColor();
+    this.ctx.strokeStyle = 'black';
+
+    this.ctx.font = '18px Impact';
+    this.ctx.strokeText(
+      this.classe + ' - ' + this.name + ' - Level ' + this.livello + ' - $ ' + this.money + '     ' + this.salute + '     ' + this.maxSalute,
+      this.getX() * this.sideX,
+      this.getY() * this.sideY - 55, 500
+    );
+    this.ctx.font = '18px Impact';
+    this.ctx.fillText(
+      'F' + this.forza + ' I ' + this.intelligenza + 'A' + this.agilita + ' RF ' + this.resistenzaFisica + ' RM ' + this.resistenzaMagica,
+      this.getX() * this.sideX,
+      this.getY() * this.sideY - 75, 500
+    );
+    this.ctx.fillText(
+      this.classe + ' - ' + this.name + ' - Level ' + this.livello + ' - $ ' + this.money,
+      this.getX() * this.sideX,
+      this.getY() * this.sideY - 55, 500
+    );
+    if (this.isScudoAttivato) {
+      this.ctx.fillStyle = 'orangered';
+      this.ctx.fillRect(
+        this.getX() * this.sideX,
+        this.getY() * this.sideY - 10,
+        this.scudoAttivatoCounter / 2, 10
+      )
+      this.scudoIcon.src = 'assets/images/scudo.png';
+      this.ctx.drawImage(this.scudoIcon,
+        0,//colonna ws
+        0,//riga hs
+        this.scudoIcon.width, //ws
+        this.scudoIcon.height,//hs
+        this.getX() * this.sideX - 10 + this.scudoAttivatoCounter / 2,
+        this.getY() * this.sideY - 10,
+        this.sideX / 3,
+        this.sideY / 3);
+    }
+
+    if (this.pozioneAntiCambioStati) {
+      this.ctx.fillStyle = 'green';
       this.ctx.fillRect(this.getX() * this.sideX,
         this.getY() * this.sideY - 20,
         this.turniPozioneAntiCambiaStati / 10, 10);
+      this.pozioneIcon.src = 'assets/images/pozioneverde.png';
+      this.ctx.drawImage(this.pozioneIcon,
+        0,//colonna ws
+        0,//riga hs
+        this.pozioneIcon.width, //ws
+        this.pozioneIcon.height,//hs
+        this.getX() * this.sideX - 10 + this.turniPozioneAntiCambiaStati / 10,
+        this.getY() * this.sideY - 30,
+        this.sideX / 3,
+        this.sideY / 3);
     }
   }
 
-  setSprite() {
-    let riga = 0;
-    if (this.situazione.fiery.value && this.situazione.fiery.totTurni > 0) {
-      this.situazione.fiery.totTurni--;
-      this.ctx.fillStyle = 'red';
-      this.ctx.fillRect(this.getX() * this.sideX - 20, this.getY() * this.sideY + 40, 30, 30);
-      this.ctx.font = "20px Impact";
-      this.ctx.fillText('ON FIRE !!!', this.getX() * this.sideX - 70, this.getY() * this.sideY, 300)
+  attaccare(charter: Charter) {
+    if (!this.isVelenoApplicato) {
+      if (this.exp >= this.nextExp) {
+        this.exp = 0;
+        this.nextExp = 100 * this.livello;
+        this.incrementaLivello();
+      }
+      this.exp++;
+      this.stato = 'attaccando';
+      this.isOnAttack = true;
       if (this.counterAnimation == 3) {
-        console.log(this.name + ' riceve danni da ' + this.situazione.fiery.conditionType + ' : ' + this.situazione.fiery.quantita);
-        this.salute -= this.situazione.fiery.quantita;
+        this.numeroAttacchi++;
+        console.log('** ATTACCA ' + this.classe + ' ' + this.name)
+        if (!this.isMorto) {
+          let critico = 0;
+          let isCritico = false;
+          if (this.counterForCritico === this.counterForCriticoTreshold) {
+            critico = this.livello * 10;
+            this.danniCriticiInflitti += critico;
+            isCritico = true;
+            this.isCritico = true;
+          } else {
+            this.isCritico = false;
+          }
+          charter.difendere((this.intelligenza + critico) * this.livello, (this.forza + critico) * this.livello, isCritico);
+          this.counterForCritico === this.counterForCriticoTreshold ? this.counterForCritico = 0 : this.counterForCritico++;
+          this.ctx.strokeStyle = 'red';
+          if (charter.isMorto) {
+            this.money += charter.money;
+          }
+        }
+        console.log('** FINE ATTACCO ' + this.classe + ' ' + this.name)
+        this.counterOfCounterAnimation = 0;
+      } else {
+        this.counterOfCounterAnimation++;
       }
     }
-    if (this.situazione.poisoned.value && this.situazione.poisoned.totTurni > 0) {
-      this.situazione.poisoned.totTurni--;
-      this.ctx.fillStyle = 'green';
-      this.ctx.fillRect(this.getX() * this.sideX - 20, this.getY() * this.sideY + 60, 30, 30);
-      this.ctx.font = "20px Impact";
-      this.ctx.fillText('POISONED', this.getX() * this.sideX - 70, this.getY() * this.sideY + 60, 300)
-      if (this.counterAnimation == 3) {
-        console.log(this.name + ' riceve danni da ' + this.situazione.poisoned.conditionType + ' : ' + this.situazione.poisoned.quantita);
-        this.salute -= this.situazione.poisoned.quantita;
+  }
+
+  difendere(dannoMagico: number, dannoFisico: number, isCritico: boolean) {
+    console.log('****** DIFENDE ' + this.classe + ' ' + this.name)
+    isCritico ? console.log('******** critico') : null;
+    const schiva = Math.floor(Math.random() * 10);
+    let schivata = false;
+    this.stato = 'difendendo';
+    if (!isCritico || this.isVelenoApplicato) {//il critico non si schiva ,se sei avvelenato non schivi
+      for (let a of this.numeriFortunati) {
+        if (schiva == a) {
+          schivata = true;
+          this.numeroSchivate++;
+          console.log('******** schiva');
+          break;
+        }
       }
-      if (!this.isVelenoApplicato) {
-        this.isVelenoApplicato = true;
+    }
+    if (!schivata || isCritico) {
+      if (isCritico) {
+        this.danniCriticiRicevuti += dannoFisico;
+        this.ctx.fillStyle = this.getColor();
+        this.ctx.font = '18px Impact';
+        this.ctx.fillText(
+          'CRITICO',
+          this.getX() * this.sideX,
+          this.getY() * this.sideY - 60, 500
+        );
       }
+      let dannoFisicoEffettivo = 0;
+      let dannoMagicoEffettivo = 0;
+      if (this.resistenzaMagica < dannoMagico) {
+        dannoMagicoEffettivo = dannoMagico - this.resistenzaMagica * this.livello;
+        dannoMagicoEffettivo < 0 ? dannoMagicoEffettivo = 0 : null;
+      }
+      if (this.resistenzaFisica < dannoFisico) {
+        dannoFisicoEffettivo = dannoFisico - this.resistenzaFisica * this.livello;
+        dannoFisicoEffettivo < 0 ? dannoFisicoEffettivo = 0 : null;
+      }
+      this.salute -= dannoFisicoEffettivo + dannoMagicoEffettivo;
+      this.danniFisiciRicevuti += dannoFisicoEffettivo;
+      this.danniMagiciRicevuti += dannoMagicoEffettivo;
+
+      this.ctx.font = '30px Impact';
+      this.ctx.fillText((this.danniFisiciRicevuti + this.danniMagiciRicevuti) + '', this.getX() * this.sideX, this.getY() + this.sideY, 300);
+      console.log('******** danni magici ricevuti ' + dannoMagicoEffettivo);
+      console.log('******** danni fisici ricevuti ' + dannoFisicoEffettivo);
+    }
+    console.log('**** FINE DIFESA ' + this.classe + ' ' + this.name)
+    if (this.salute <= 0) {
+      this.isMorto = true
+      console.log(this.classe + ' - ' + this.name + ' è stato ucciso')
     } else {
-      this.isVelenoApplicato = false;
+      this.isMorto = false;
     }
-    let colonna;
-    switch (this.stato) {
+  }
 
-      case 'camminando':
-        switch (this.getDirection()) {
-          case 'TOP': riga = this.spriteSheetImage.height / 4 * 3;//riga 4
-            break;
-          case 'BOTTOM': riga = 0;//riga 1
-            break;
-          case 'LEFT': ;//riga 2
-            //se = 0 then SX = 1; se = 1 SX = 2 
-            if (this.genereSprite === 0) {
-              riga = this.spriteSheetImage.height / 4 * 2
-
-            } else {
-              riga = this.spriteSheetImage.height / 4
-            }
-            break;
-          case 'RIGHT': ;//riga 3
-            //se = 0  dx = 2 ; se = 1 DX = 1
-            if (this.genereSprite === 0) {
-              riga = this.spriteSheetImage.height / 4
-            } else {
-              riga = this.spriteSheetImage.height / 4 * 2
-            }
-            break;
-        }
-        colonna = this.spriteSheetImage.width / 4 * this.counterAnimation;
-        this.ctx.drawImage(this.spriteSheetImage, colonna, riga, this.spriteSheetImage.width / 4, this.spriteSheetImage.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90)
-        break;
-      case 'attaccando':
-        switch (this.getDirection()) {
-          case 'TOP': riga = this.spriteSheetImageAttack.height / 4 * 3;//riga 4
-            break;
-          case 'BOTTOM': riga = 0;//riga 1
-            break;
-          case 'LEFT': ;//riga 2
-            //se = 0 then SX = 1; se = 1 SX = 2 
-            if (this.genereSprite === 0) {
-              riga = this.spriteSheetImageAttack.height / 4 * 2
-
-            } else {
-              riga = this.spriteSheetImageAttack.height / 4
-            }
-            break;
-          case 'RIGHT': ;//riga 3
-            //se = 0  dx = 2 ; se = 1 DX = 1
-            if (this.genereSprite === 0) {
-              riga = this.spriteSheetImageAttack.height / 4
-            } else {
-              riga = this.spriteSheetImageAttack.height / 4 * 2
-            }
-            break;
-        }
-        colonna = this.spriteSheetImageAttack.width / 4 * this.counterAnimation;
-        this.ctx.drawImage(this.spriteSheetImageAttack, colonna, riga, this.spriteSheetImageAttack.width / 4, this.spriteSheetImageAttack.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90)
-        break;
-
-      case 'difendendo':
-        switch (this.getDirection()) {
-          case 'TOP': riga = this.spriteSheetImageAttack.height / 4 * 3;//riga 4
-            break;
-          case 'BOTTOM': riga = 0;//riga 1
-            break;
-          case 'LEFT': ;//riga 2
-            //se = 0 then SX = 1; se = 1 SX = 2 
-            if (this.genereSprite === 0) {
-              riga = this.spriteSheetImageAttack.height / 4 * 2
-
-            } else {
-              riga = this.spriteSheetImageAttack.height / 4
-            }
-            break;
-          case 'RIGHT': ;//riga 3
-            //se = 0  dx = 2 ; se = 1 DX = 1
-            if (this.genereSprite === 0) {
-              riga = this.spriteSheetImageAttack.height / 4
-            } else {
-              riga = this.spriteSheetImageAttack.height / 4 * 2
-            }
-            break;
-        }
-        colonna = this.spriteSheetImageAttack.width / 4 * this.counterAnimation;
-        this.ctx.drawImage(this.spriteSheetImageAttack, colonna, riga, this.spriteSheetImageAttack.width / 4, this.spriteSheetImageAttack.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90)
-        break;
-
-      case 'morendo':
-        this.ctx.fillText('morto', this.getX() * this.sideX, this.getY() * this.sideY, 300);
-        break;
-    }
+  incrementaLivello() {
+    this.livello++;
+    this.maxSalute = this.livello * 10000;
+    this.salute = this.maxSalute;
+    this.aggiornaCaratteristiche();
   }
 
   drawLabel() {
@@ -395,145 +464,125 @@ export abstract class Charter extends Square {
 
   }
 
-  drawBarraEnergia() {
-
-    this.ctx.fillStyle = 'red';
-    this.ctx.fillRect(
-      this.getX() * this.sideX,
-      this.getY() * this.sideY - 30,
-      this.salute / 100 , 10
-    )
-    this.ctx.fillStyle = 'white';
-    this.ctx.fillRect(
-      this.getX() * this.sideX + this.maxSalute/100,
-      this.getY() * this.sideY - 30,
-      5, 10
-    )
-    this.ctx.fillStyle = 'blue';
-    this.ctx.fillRect(
-      this.getX() * this.sideX,
-      this.getY() * this.sideY - 40,
-      this.mana, 10
-    )
-    this.ctx.fillStyle = 'white';
-    this.ctx.fillRect(
-      this.getX() * this.sideX + this.maxMana,
-      this.getY() * this.sideY - 40,
-      5, 10
-    )
-    this.ctx.fillStyle = this.getColor();
-    this.ctx.strokeStyle = 'black';
-
-    this.ctx.font = '18px Impact';
-    this.ctx.strokeText(
-      this.classe + ' - ' + this.name + ' - Level ' + this.livello + ' - $ ' + this.money + '     ' + this.salute+ '     ' + this.maxSalute,
-      this.getX() * this.sideX,
-      this.getY() * this.sideY - 45, 500
-    );
-    this.ctx.fillText(
-      this.classe + ' - ' + this.name + ' - Level ' + this.livello + ' - $ ' + this.money,
-      this.getX() * this.sideX,
-      this.getY() * this.sideY - 45, 500
-    );
-  }
-
-  attaccare(charter: Charter) {
-    if (!this.isVelenoApplicato) {
-      if (this.exp >= this.nextExp) {
-        this.exp = 0;
-        this.nextExp = 100 * this.livello;
-        this.incrementaLivello();
-      }
-      this.exp++;
-      this.stato = 'attaccando';
-      this.isOnAttack = true;
+  setSprite() {
+    let riga = 0;
+    if (this.situazione.fiery.value && this.situazione.fiery.totTurni > 0) {
+      this.situazione.fiery.totTurni--;
+      this.ctx.fillStyle = 'red';
+      this.ctx.fillRect(this.getX() * this.sideX - 20, this.getY() * this.sideY + 40, 30, 30);
+      this.ctx.font = "20px Impact";
+      this.ctx.fillText('ON FIRE !!!', this.getX() * this.sideX - 70, this.getY() * this.sideY, 300)
       if (this.counterAnimation == 3) {
-        this.numeroAttacchi++;
-        console.log('** ATTACCA ' + this.classe + ' ' + this.name)
-        if (!this.isMorto) {
-          let critico = 0;
-          let isCritico = false;
-          if (this.counterForCritico === this.counterForCriticoTreshold) {
-            critico = this.livello * 10;
-            this.danniCriticiInflitti += critico;
-            isCritico = true;
-            this.isCritico = true;
-          } else {
-            this.isCritico = false;
-          }
-          charter.difendere((this.intelligenza + critico) * this.livello, (this.forza + critico) * this.livello, isCritico);
-          this.counterForCritico === this.counterForCriticoTreshold ? this.counterForCritico = 0 : this.counterForCritico++;
-          this.ctx.strokeStyle = 'red';
-          if (charter.isMorto) {
-            this.money += charter.money;
-          }
-        }
-        console.log('** FINE ATTACCO ' + this.classe + ' ' + this.name)
-        this.counterOfCounterAnimation = 0;
-      } else {
-        this.counterOfCounterAnimation++;
+        console.log(this.name + ' riceve danni da ' + this.situazione.fiery.conditionType + ' : ' + this.situazione.fiery.quantita);
+        this.salute -= this.situazione.fiery.quantita;
       }
     }
-  }
-
-  difendere(dannoMagico: number, dannoFisico: number, isCritico: boolean) {
-    console.log('****** DIFENDE ' + this.classe + ' ' + this.name)
-    isCritico ? console.log('******** critico') : null;
-    const schiva = Math.floor(Math.random() * 10);
-    let schivata = false;
-    this.stato = 'difendendo';
-    if (!isCritico || this.isVelenoApplicato) {//il critico non si schiva ,se sei avvelenato non schivi
-      for (let a of this.numeriFortunati) {
-        if (schiva == a) {
-          schivata = true;
-          this.numeroSchivate++;
-          console.log('******** schiva');
-          break;
-        }
+    if (this.situazione.poisoned.value && this.situazione.poisoned.totTurni > 0) {
+      this.situazione.poisoned.totTurni--;
+      this.ctx.fillStyle = 'green';
+      this.ctx.fillRect(this.getX() * this.sideX - 20, this.getY() * this.sideY + 60, 30, 30);
+      this.ctx.font = "20px Impact";
+      this.ctx.fillText('POISONED', this.getX() * this.sideX - 70, this.getY() * this.sideY + 60, 300)
+      if (this.counterAnimation == 3) {
+        console.log(this.name + ' riceve danni da ' + this.situazione.poisoned.conditionType + ' : ' + this.situazione.poisoned.quantita);
+        this.salute -= this.situazione.poisoned.quantita;
       }
-    }
-    if (!schivata || isCritico) {
-      if (isCritico) {
-        this.danniCriticiRicevuti += dannoFisico;
-        this.ctx.fillStyle = this.getColor();
-        this.ctx.font = '18px Impact';
-        this.ctx.fillText(
-          'CRITICO',
-          this.getX() * this.sideX,
-          this.getY() * this.sideY - 60, 500
-        );
+      if (!this.isVelenoApplicato) {
+        this.isVelenoApplicato = true;
       }
-      let dannoFisicoEffettivo = 0;
-      let dannoMagicoEffettivo = 0;
-      if (this.resistenzaMagica < dannoMagico) {
-        dannoMagicoEffettivo = dannoMagico - this.resistenzaMagica * this.livello;
-        dannoMagicoEffettivo < 0 ? dannoMagicoEffettivo = 0 : null;
-      }
-      if (this.resistenzaFisica < dannoFisico) {
-        dannoFisicoEffettivo = dannoFisico - this.resistenzaFisica * this.livello;
-        dannoFisicoEffettivo < 0 ? dannoFisicoEffettivo = 0 : null;
-      }
-      this.salute -= dannoFisicoEffettivo + dannoMagicoEffettivo;
-      this.danniFisiciRicevuti += dannoFisicoEffettivo;
-      this.danniMagiciRicevuti += dannoMagicoEffettivo;
-
-      this.ctx.font = '30px Impact';
-      this.ctx.fillText((this.danniFisiciRicevuti + this.danniMagiciRicevuti) + '', this.getX() * this.sideX, this.getY() + this.sideY, 300);
-      console.log('******** danni magici ricevuti ' + dannoMagicoEffettivo);
-      console.log('******** danni fisici ricevuti ' + dannoFisicoEffettivo);
-    }
-    console.log('**** FINE DIFESA ' + this.classe + ' ' + this.name)
-    if (this.salute <= 0) {
-      this.isMorto = true
-      console.log(this.classe + ' - ' + this.name + ' è stato ucciso')
     } else {
-      this.isMorto = false;
+      this.isVelenoApplicato = false;
+    }
+    let colonna;
+    switch (this.stato) {
+
+      case 'camminando':
+        switch (this.getDirection()) {
+          case 'TOP': riga = this.spriteSheetImage.height / 4 * 3;//riga 4
+            break;
+          case 'BOTTOM': riga = 0;//riga 1
+            break;
+          case 'LEFT': ;//riga 2
+            //se = 0 then SX = 1; se = 1 SX = 2 
+            if (this.genereSprite === 0) {
+              riga = this.spriteSheetImage.height / 4 * 2
+
+            } else {
+              riga = this.spriteSheetImage.height / 4
+            }
+            break;
+          case 'RIGHT': ;//riga 3
+            //se = 0  dx = 2 ; se = 1 DX = 1
+            if (this.genereSprite === 0) {
+              riga = this.spriteSheetImage.height / 4
+            } else {
+              riga = this.spriteSheetImage.height / 4 * 2
+            }
+            break;
+        }
+        colonna = this.spriteSheetImage.width / 4 * this.counterAnimation;
+        this.ctx.drawImage(this.spriteSheetImage, colonna, riga, this.spriteSheetImage.width / 4, this.spriteSheetImage.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90)
+        break;
+      case 'attaccando':
+        switch (this.getDirection()) {
+          case 'TOP': riga = this.spriteSheetImageAttack.height / 4 * 3;//riga 4
+            break;
+          case 'BOTTOM': riga = 0;//riga 1
+            break;
+          case 'LEFT': ;//riga 2
+            //se = 0 then SX = 1; se = 1 SX = 2 
+            if (this.genereSprite === 0) {
+              riga = this.spriteSheetImageAttack.height / 4 * 2
+
+            } else {
+              riga = this.spriteSheetImageAttack.height / 4
+            }
+            break;
+          case 'RIGHT': ;//riga 3
+            //se = 0  dx = 2 ; se = 1 DX = 1
+            if (this.genereSprite === 0) {
+              riga = this.spriteSheetImageAttack.height / 4
+            } else {
+              riga = this.spriteSheetImageAttack.height / 4 * 2
+            }
+            break;
+        }
+        colonna = this.spriteSheetImageAttack.width / 4 * this.counterAnimation;
+        this.ctx.drawImage(this.spriteSheetImageAttack, colonna, riga, this.spriteSheetImageAttack.width / 4, this.spriteSheetImageAttack.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90)
+        break;
+
+      case 'difendendo':
+        switch (this.getDirection()) {
+          case 'TOP': riga = this.spriteSheetImageAttack.height / 4 * 3;//riga 4
+            break;
+          case 'BOTTOM': riga = 0;//riga 1
+            break;
+          case 'LEFT': ;//riga 2
+            //se = 0 then SX = 1; se = 1 SX = 2 
+            if (this.genereSprite === 0) {
+              riga = this.spriteSheetImageAttack.height / 4 * 2
+
+            } else {
+              riga = this.spriteSheetImageAttack.height / 4
+            }
+            break;
+          case 'RIGHT': ;//riga 3
+            //se = 0  dx = 2 ; se = 1 DX = 1
+            if (this.genereSprite === 0) {
+              riga = this.spriteSheetImageAttack.height / 4
+            } else {
+              riga = this.spriteSheetImageAttack.height / 4 * 2
+            }
+            break;
+        }
+        colonna = this.spriteSheetImageAttack.width / 4 * this.counterAnimation;
+        this.ctx.drawImage(this.spriteSheetImageAttack, colonna, riga, this.spriteSheetImageAttack.width / 4, this.spriteSheetImageAttack.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90)
+        break;
+
+      case 'morendo':
+        this.ctx.fillText('morto', this.getX() * this.sideX, this.getY() * this.sideY, 300);
+        break;
     }
   }
 
-  incrementaLivello() {
-    this.livello++;
-    this.maxSalute = this.livello * 10000;
-    this.aggiornaCaratteristiche();
-  }
 }

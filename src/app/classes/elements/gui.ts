@@ -3,43 +3,68 @@ import { BottonePozione } from "../buttons/bottone-pozione";
 import { Charter } from "../abstract/charter";
 import { BottoneSceltaCharter } from "../buttons/bottone-scelta-charter";
 import { classe } from "../utils/costants.enum";
+import { BottoneScudoAttiva } from "../buttons/bottone-scudo-attiva";
+import { Sfondo } from "./sfondo";
 
 export class Gui {
     startButton!: Bottone;
     compraBonus!: Bottone;
     restartButton!: Bottone;
+    pauseButton!: Bottone;
     incrementaLivelloButton!: Bottone;
     pozioniBottoni: BottonePozione[] = [];
+    scudoButton !: BottoneScudoAttiva;
     counterAnimationDieText = 0;
     counterAnimationDieTextThO = 200;
     sceltaCharter: BottoneSceltaCharter[] = [];
     classeCharterScelto: classe = 'ABSTRACT';
     isRestartTouched = false;
     private selectedImage = new Image();
+    private sfondo!: Sfondo;
     constructor(public ctx: CanvasRenderingContext2D) {
-        this.startButton = new Bottone(this.ctx, 'yellow');
+        this.sfondo = new Sfondo(this.ctx, '');
+        this.sfondo.setX(0);
+        this.sfondo.setY(1);
+        this.sfondo.setVelocita(0);
+        this.sfondo.livello = 0;
+        this.startButton = new Bottone(this.ctx, 'yellow', false);
         this.startButton.setX(4);
         this.startButton.setY(8);
         this.startButton.setText('START');
         //this.startButton.secondText = ' -> click';
         this.startButton.stand();
-        this.restartButton = new Bottone(this.ctx, 'orangered');
-        this.restartButton.setX(4);
-        this.restartButton.setY(8);
+        this.restartButton = new Bottone(this.ctx, 'orangered', false);
+        this.restartButton.setX(0);
+        this.restartButton.setY(9);
         this.restartButton.setText('RESTART');
         //this.restartButton.secondText = ' -> click';
         this.restartButton.stand();
-        this.incrementaLivelloButton = new Bottone(this.ctx, 'yellow');
+        this.pauseButton = new Bottone(this.ctx, 'orangered', true);
+        this.pauseButton.setX(2);
+        this.pauseButton.setY(9);
+        this.pauseButton.setText('PAUSE');
+        this.pauseButton.isShowState = true;
+        //this.restartButton.secondText = ' -> click';
+        this.pauseButton.stand();
+        this.incrementaLivelloButton = new Bottone(this.ctx, 'yellow', false);
         this.incrementaLivelloButton.setX(0);
         this.incrementaLivelloButton.setY(9);
         this.incrementaLivelloButton.setText('LEVEL');
         this.incrementaLivelloButton.secondText = ' key enter';
-        this.compraBonus = new Bottone(this.ctx, 'yellow');
+        this.compraBonus = new Bottone(this.ctx, 'yellow', false);
         this.compraBonus.setX(1);
         this.compraBonus.setY(9);
         this.compraBonus.setText('FOOD');
         this.compraBonus.secondText = ' key space';
         this.compraBonus.terzoText = '$ 10';
+
+        this.scudoButton = new BottoneScudoAttiva(this.ctx, '', true);
+        this.scudoButton.setX(17);
+        this.scudoButton.setY(9.1);
+        this.scudoButton.setText('SCUDO');
+        this.scudoButton.secondText = ' key x';
+        this.scudoButton.terzoText = '$ 10';
+
         this.ctx.strokeStyle = 'red';
         this.ctx.lineWidth = 1;
         this.ctx.strokeRect(1, 1, this.ctx.canvas.width / 4, this.ctx.canvas.height / 4);
@@ -48,7 +73,7 @@ export class Gui {
         this.ctx.strokeRect(this.ctx.canvas.width - this.ctx.canvas.width / 4, 1, this.ctx.canvas.width / 4, this.ctx.canvas.height / 4);
 
         for (let i = 0; i < 3; i++) {
-            let pozione = new BottonePozione(this.ctx, 'green');
+            let pozione = new BottonePozione(this.ctx, 'green', true);
             pozione.setX(i + 30);
             pozione.setY(8);
             pozione.secondText = ' key ' + (i + 1);
@@ -58,18 +83,18 @@ export class Gui {
         }
 
         for (let i = 0; i <= 3; i++) {
-            let sc = new BottoneSceltaCharter(this.ctx, '');
+            let sc = new BottoneSceltaCharter(this.ctx, '', false);
             switch (i) {
-                case 0: sc = new BottoneSceltaCharter(this.ctx, 'assets/images/samuraiAtk2.png');
+                case 0: sc = new BottoneSceltaCharter(this.ctx, 'assets/images/samuraiAtk2.png', false);
                     sc.typeOfCharter = 'SAMURAI';
                     break;//samurai
-                case 1: sc = new BottoneSceltaCharter(this.ctx, 'assets/images/discotraspooAtck.png');
+                case 1: sc = new BottoneSceltaCharter(this.ctx, 'assets/images/discotraspooAtck.png', false);
                     sc.typeOfCharter = 'MAGO';
                     break;//mago
-                case 2: sc = new BottoneSceltaCharter(this.ctx, 'assets/images/biondotraspoAtck_1.png');
+                case 2: sc = new BottoneSceltaCharter(this.ctx, 'assets/images/biondotraspoAtck_1.png', false);
                     sc.typeOfCharter = 'GUERRIERO';
                     break;//guerriero
-                case 3: sc = new BottoneSceltaCharter(this.ctx, 'assets/images/edwardAtk.png');
+                case 3: sc = new BottoneSceltaCharter(this.ctx, 'assets/images/edwardAtk.png', false);
                     sc.typeOfCharter = 'ARCERE';
                     break;//arcere
             }
@@ -88,6 +113,7 @@ export class Gui {
         this.ctx.fillRect(0, 650, this.ctx.canvas.width, 100);
 
         if (isFaseScelta) {
+
             if (!player || this.isRestartTouched) {
                 this.ctx.font = 'italic bolder 75px Orbitron';
                 this.ctx.fillStyle = 'black';
@@ -104,13 +130,13 @@ export class Gui {
                     //this.ctx.fillText('Hai scelto il ', 0, 450, 3000);
                     this.ctx.fillText(this.classeCharterScelto, 400, 450, 3000);
                     switch (this.classeCharterScelto) {
-                        case 'SAMURAI':this.selectedImage.src ='assets/images/samuraiAtk2.png';
+                        case 'SAMURAI': this.selectedImage.src = 'assets/images/samuraiAtk2.png';
                             break;//samurai
-                        case 'MAGO':this.selectedImage.src ='assets/images/discotraspooAtck.png';
+                        case 'MAGO': this.selectedImage.src = 'assets/images/discotraspooAtck.png';
                             break;//mago
-                        case 'GUERRIERO':this.selectedImage.src ='assets/images/biondotraspoAtck_1.png';
+                        case 'GUERRIERO': this.selectedImage.src = 'assets/images/biondotraspoAtck_1.png';
                             break;//guerriero
-                        case 'ARCERE':this.selectedImage.src = 'assets/images/edwardAtk.png';
+                        case 'ARCERE': this.selectedImage.src = 'assets/images/edwardAtk.png';
                             break;//arcere
                     }
                     this.ctx.drawImage(this.selectedImage,
@@ -118,19 +144,20 @@ export class Gui {
                         0,//riga hs
                         this.selectedImage.width / 4, //ws
                         this.selectedImage.height / 4,//hs
-                        500,500,
-                       100,
-                       140);
+                        500, 500,
+                        100,
+                        140);
                     this.startButton.stand();
                 } else {
                     this.ctx.fillText('Scegliere eroe', 0, 450, 3000);
                 }
             }
-
         } else {
             if (!player.isMorto) {
                 this.incrementaLivelloButton.stand();
+                this.pauseButton.stand()
                 this.compraBonus.stand();
+                this.scudoButton.stand();
                 for (let i = 0; i < this.pozioniBottoni.length; i++) {
                     this.pozioniBottoni[i].stand();
                 }
@@ -149,13 +176,16 @@ export class Gui {
             this.ctx.fillText('Mondo  ' + livelloSchema, 750, 50, 500);
             this.ctx.strokeText('Mondo  ' + livelloSchema, 750, 50, 500);
             if (!player.isMorto) {
+                let maxLength = 100;
+                const perCent = maxLength * player.exp / player.nextExp;
                 this.ctx.fillStyle = 'green';
-                this.ctx.fillRect(300, 650, player.exp, 10);
-                this.ctx.fillStyle = 'red';
-                this.ctx.fillRect(500 + player.nextExp / this.ctx.canvas.width, 650, 10, 10);
-                this.ctx.font = 'italic bolder 25px Orbitron';
-                this.ctx.fillStyle = 'rgb(60,60,60)';
-                this.ctx.fillText('EXP ' + player.classe + ' ' + player.livello + '- NOW  ' + player.exp + ' NEXT ' + player.nextExp, player.nextExp / this.ctx.canvas.width + 300, 690 + 10, 500);
+                this.ctx.fillRect(300, 650, perCent, 10);
+                this.ctx.fillStyle = 'white';
+                this.ctx.fillRect(500 + maxLength / player.nextExp, 650, 10, 10);
+                this.ctx.font = 'italic bolder 15px Orbitron';
+                this.ctx.fillStyle = 'rgb(60,160,60)';
+                this.ctx.fillText('EXP ' + player.classe + ' ' + player.livello + ' - NOW  ' + player.exp + ' NEXT ' + player.nextExp, maxLength / player.nextExp + 300, 690 + 10, 500);
+
             }
             if (player.isMorto && !this.isRestartTouched) {
                 this.ctx.font = 'normal bolder 115px Orbitron';

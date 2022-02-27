@@ -9,11 +9,12 @@ export class Mondo {
         this.sfondo.setX(0);
         this.sfondo.setY(1);
         this.sfondo.setVelocita(0);
-     
     }
+
     aggiornaLivello() {
         this.sfondo.livello = this.mondoNumero;
     }
+    
     aggiorna(livello:number) {
         //this.sfondo.livello = 1;
         this.sfondo.livello = livello;

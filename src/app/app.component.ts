@@ -12,6 +12,7 @@ import { Mondo } from './classes/elements/mondo';
 import { Guerriero } from './classes/charters/guerriero';
 import { Arcere } from './classes/charters/arcere';
 import { Samurai } from './classes/charters/samurai';
+import { GeneralSprite } from './classes/elements/general-sprite';
 export enum KEY_CODE {
   UP_ARROW = 87,
   DOWN_ARROW = 83,
@@ -74,6 +75,9 @@ export class AppComponent implements AfterViewInit {
           this.player.pozioni.pop();
           this.gui.pozioniBottoni[2].svuotaCasella();
         }
+        if (event.keyCode == 51 && this.gui.scudoButton.getIsScudoPresente()) {//4 consuma scudo
+          this.gui.scudoButton.attivaScudo(this.player);
+        }
         if (event.keyCode == 13) {//invio aumenta livello
           if (this.player.money > 500 * this.player.livello) {
             this.player.incrementaLivello();
@@ -120,13 +124,18 @@ export class AppComponent implements AfterViewInit {
   isfinalStatesInc = false;
   tesoro!: Treasure;
   isTesoroRaccolto = false;
+  isScudoRaccolto = false;
   camion!: Camion;
   isFaseScelta = true;
-
+  scudoBonus!: GeneralSprite;
+  isPause = false;
   constructor(private ngZone: NgZone) { }
 
   animate(): void {
-    requestAnimationFrame(this.animate.bind(this));
+    if (!this.isPause) {
+      requestAnimationFrame(this.animate.bind(this));
+    }
+
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     if (!this.isFaseScelta) {
       this.mondo.aggiorna(this.livelloSchema);
@@ -178,11 +187,11 @@ export class AppComponent implements AfterViewInit {
       this.enemies[i].counterAnimation = this.counterAnimation;
       if (!this.player.isMorto && !this.enemies[i].isMorto && Utilities.rectsColliding(this.enemies[i], this.player)) {
         if (this.player.agilita >= this.enemies[i].agilita) {
-          Utilities.algoAttack(this.player,this.enemies[i] );
+          Utilities.algoAttack(this.player, this.enemies[i]);
           Utilities.algoAttack(this.enemies[i], this.player);
         } else {
           Utilities.algoAttack(this.enemies[i], this.player);
-          Utilities.algoAttack(this.player,this.enemies[i] );
+          Utilities.algoAttack(this.player, this.enemies[i]);
         }
         this.player.isOnAttack = true;
         this.enemies[i].isOnAttack = true;
@@ -253,10 +262,23 @@ export class AppComponent implements AfterViewInit {
     if (this.livelloSchema % 3 != 0) {
       this.isTesoroRaccolto = false;
     }
+    //rilevo collisione player vs scudo
+    if (!this.isScudoRaccolto && Utilities.rectsColliding(this.player, this.scudoBonus)) {
+      this.gui.scudoButton.riempiScudo();
+      this.isScudoRaccolto = true;
+    }
   }
 
   update() {
+
     this.pozione.stand();
+    if (!this.isScudoRaccolto) {
+      this.scudoBonus.stand();
+    }
+    if (this.isScudoRaccolto && !this.gui.scudoButton.getIsScudoPresente()) {
+      this.isScudoRaccolto = false;
+      this.scudoBonus.stand();
+    }
     if (this.livelloSchema % 3 == 0 && (this.livelloSchema % 3 == 0 || this.isTesoroRaccolto == false)) {
       !this.isTesoroRaccolto ? this.tesoro.stand() : null;
     }
@@ -321,6 +343,11 @@ export class AppComponent implements AfterViewInit {
     this.pozione.setVelocita(0);
     this.pozione.stand();
 
+    this.scudoBonus = new GeneralSprite(this.ctx, 'assets/images/scudo.png', 50, 70);
+    this.scudoBonus.setX(4);
+    this.scudoBonus.setY(4);
+    this.scudoBonus.setVelocita(0);
+    this.scudoBonus.stand();
     //#region Eventi click canvas
     this.ctx.canvas.addEventListener(
       'click',
@@ -359,7 +386,7 @@ export class AppComponent implements AfterViewInit {
             }
           }
         }
-        if (!this.isFaseScelta) {//se non sono nella prima fase non servono gli handler ai bottoni di gioco
+        if (!this.isFaseScelta) {//se non sono nella prima fase non servono gli handler ai bottoni di gioco e alla pausa
 
           const incrementaLivelloButtonTouched = Utilities.changeButtonState(evt, this.gui.incrementaLivelloButton, this.ctx);
           if (incrementaLivelloButtonTouched && this.player.money > 0) {
@@ -383,6 +410,17 @@ export class AppComponent implements AfterViewInit {
               this.gui.pozioniBottoni[i].svuotaCasella();
             }
           }
+
+          const compraScudoTouched = Utilities.changeButtonState(evt, this.gui.scudoButton, this.ctx);
+          if (compraScudoTouched) {
+            this.gui.scudoButton.attivaScudo(this.player);
+          }
+
+          const attivaPauseTouched = Utilities.changeButtonState(evt, this.gui.pauseButton, this.ctx);
+          if (attivaPauseTouched) {
+            this.isPause ? (this.isPause = false, this.animate()) : this.isPause = true;
+          }
+
         }
 
       },
@@ -400,6 +438,7 @@ export class AppComponent implements AfterViewInit {
     this.isFaseScelta = false;
     this.gui.isRestartTouched = false;
     this.gui.counterAnimationDieText = 0;
+    this.isScudoRaccolto = false;
 
     this.level = 0;
     this.livelloSchema = 0;

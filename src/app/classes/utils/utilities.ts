@@ -49,7 +49,7 @@ export class Utilities {
 
         const ba: Bonus[] = [];
 
-        const bonus1 = new Bonus(ctx, 'red', 'salute', 100, 100);
+        const bonus1 = new Bonus(ctx, 'red', 'salute', 1000, 1000);
         //bonus1.spriteSheetCharterPath ='assets/images/polloo.png';
         bonus1.spriteSheetImage.src = 'assets/images/polloo.png';
         bonus1.setX(Math.floor(Math.random() * 19) + 1);
@@ -106,14 +106,16 @@ export class Utilities {
         }
         return enemies;
     }
-    private static setEnemiesArray(enemy: Charter, i: number, init: number, enemies: Charter[]) {
-        enemy.incrementaLivello();
+    private static setEnemiesArray(enemy: Charter, i: number, livelloNemici: number, enemies: Charter[]) {
+        for (let j = 0; j < livelloNemici; j++) {
+            enemy.incrementaLivello();
+        }
         enemy.setX(Math.floor(Math.random() * 20));
         enemy.setY(Math.floor(Math.random() * i) + 1);
         enemy.setVelocita(0.1);
         enemy.posizioneInfoLabelX = 370 + i * 120;
         enemy.posizioneInfoLabelY = 700;
-        enemy.dannoCritico = 10 * init;
+        enemy.dannoCritico = 10 * livelloNemici;
         enemy.counterForCriticoTreshold = 10;
         enemy.name = this.nomeRandomico();
         enemy.money = Math.floor(Math.random() * 100);
@@ -155,7 +157,7 @@ export class Utilities {
         };
         let out = false;
         if (Utilities.isInside(mousePos, rect)) {
-            button.state == 0 ? button.state = 1 : button.state = 0;
+            button.state == 'ON' ? button.state = 'OFF' : button.state = 'ON';
             out = true;
         }
 
@@ -168,11 +170,13 @@ export class Utilities {
         Utilities.directionToMoveSwitch(charter);
     }
 
-    static algoAttack(atatccante: Charter, difensore: Charter) {
-        atatccante.attaccare(difensore);
-        if (atatccante.mana >= atatccante.maxMana) {
-            atatccante.mana = 0;
-            atatccante.lanciaAbilita(difensore);
+    static algoAttack(attaccante: Charter, difensore: Charter) {
+        if (!difensore.isScudoAttivato) {
+            attaccante.attaccare(difensore);
+        }
+        if (attaccante.mana >= attaccante.maxMana) {
+            attaccante.mana = 0;
+            attaccante.lanciaAbilita(difensore);
         }
     }
 }

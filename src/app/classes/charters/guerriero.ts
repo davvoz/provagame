@@ -18,15 +18,17 @@ export class Guerriero extends Charter {
     super(ctx, color);
     this.livello = level;
     this.numeriFortunati = [0, 1, 2, 3, 4];
+    this.counterForCritico = this.counterForCritico/2;
     this.aggiornaCaratteristiche();
   }
 
   override aggiornaCaratteristiche() {
     this.incrementaSalute( Math.floor(Math.random() * 50) * this.livello);
-    this.forza += Math.floor(Math.random() * 50) * this.livello;
-    this.resistenzaFisica += Math.floor(Math.random() * 10) * this.livello;
-    this.intelligenza += Math.floor(Math.random() * 10) * this.livello;
-    this.resistenzaMagica += Math.floor(Math.random() * 10) * this.livello;
+    this.forza += Math.floor(Math.random() * 60) * this.livello;
+    this.resistenzaFisica += Math.floor(Math.random() * 20) * this.livello;
+    this.intelligenza += Math.floor(Math.random() * 20) * this.livello;
+    this.resistenzaMagica += Math.floor(Math.random() * 20) * this.livello;
+    this.agilita += Math.floor(Math.random() * 10) * this.livello;
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
     this.spriteSheetImageAttack.src = this.spriteSheetAttackPath;
   }

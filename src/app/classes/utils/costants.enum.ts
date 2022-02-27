@@ -29,3 +29,4 @@ export interface DrawSquareParam {
     sideX: number;
     sideY: number
 }
+export type statoBottone = 'ON'|'OFF';

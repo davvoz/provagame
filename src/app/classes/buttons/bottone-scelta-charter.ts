@@ -7,8 +7,8 @@ export class BottoneSceltaCharter extends Bottone {
     index = 0;
     counterAnimation = 0;
     
-    constructor(public override ctx: CanvasRenderingContext2D, path: string) {
-        super(ctx, path);
+    constructor(public override ctx: CanvasRenderingContext2D, path: string,isToggle:boolean) {
+        super(ctx, path,isToggle);
         this.image.src = path;
         this.sideX = 70;
         this.sideY = 90;
