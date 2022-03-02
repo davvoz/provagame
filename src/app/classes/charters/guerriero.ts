@@ -12,8 +12,8 @@ export class Guerriero extends Charter {
   override maxMana = 50;
   override name = 'Guerriero default name';
   override classe: classe = 'GUERRIERO';
-  override spriteSheetCharterPath = 'assets/images/biondotraspoAtck_1.png';//src\assets\images\biondotraspo.pngsrc\assets\images\spredtraso.png
-  override spriteSheetAttackPath = 'assets/images/biondotraspoAtck_1.png';//src\assets\images\Sensitolos.pngsrc\assets\images\biondotraspoAtck_1.pngsrc\assets\images\edward.png
+  override spriteSheetCharterPath = 'assets/images/biondotraspoAtck_1.png';
+  override spriteSheetAttackPath = 'assets/images/biondotraspoAtck_1.png';
   constructor(public override ctx: CanvasRenderingContext2D, color: string, level: number) {
     super(ctx, color);
     this.livello = level;

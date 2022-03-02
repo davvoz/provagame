@@ -4,7 +4,7 @@ import { Charter } from "../abstract/charter";
 import { BottoneSceltaCharter } from "../buttons/bottone-scelta-charter";
 import { classe } from "../utils/costants.enum";
 import { BottoneScudoAttiva } from "../buttons/bottone-scudo-attiva";
-import { Sfondo } from "./sfondo";
+import { GestioneSfondi } from "./gestione-sfondo";
 
 export class Gui {
     startButton!: Bottone;
@@ -20,31 +20,22 @@ export class Gui {
     classeCharterScelto: classe = 'ABSTRACT';
     isRestartTouched = false;
     private selectedImage = new Image();
-    private sfondo!: Sfondo;
     constructor(public ctx: CanvasRenderingContext2D) {
-        this.sfondo = new Sfondo(this.ctx, '');
-        this.sfondo.setX(0);
-        this.sfondo.setY(1);
-        this.sfondo.setVelocita(0);
-        this.sfondo.livello = 0;
         this.startButton = new Bottone(this.ctx, 'yellow', false);
         this.startButton.setX(4);
         this.startButton.setY(8);
         this.startButton.setText('START');
-        //this.startButton.secondText = ' -> click';
         this.startButton.stand();
         this.restartButton = new Bottone(this.ctx, 'orangered', false);
         this.restartButton.setX(0);
         this.restartButton.setY(9);
         this.restartButton.setText('RESTART');
-        //this.restartButton.secondText = ' -> click';
         this.restartButton.stand();
         this.pauseButton = new Bottone(this.ctx, 'orangered', true);
         this.pauseButton.setX(2);
         this.pauseButton.setY(9);
         this.pauseButton.setText('PAUSE');
         this.pauseButton.isShowState = true;
-        //this.restartButton.secondText = ' -> click';
         this.pauseButton.stand();
         this.incrementaLivelloButton = new Bottone(this.ctx, 'yellow', false);
         this.incrementaLivelloButton.setX(0);
@@ -57,14 +48,12 @@ export class Gui {
         this.compraBonus.setText('FOOD');
         this.compraBonus.secondText = ' key space';
         this.compraBonus.terzoText = '$ 10';
-
         this.scudoButton = new BottoneScudoAttiva(this.ctx, '', true);
         this.scudoButton.setX(17);
         this.scudoButton.setY(9.1);
         this.scudoButton.setText('SCUDO');
-        this.scudoButton.secondText = ' key x';
-        this.scudoButton.terzoText = '$ 10';
-
+        this.scudoButton.secondText = ' key 3';
+        this.scudoButton.terzoText = 'free';
         this.ctx.strokeStyle = 'red';
         this.ctx.lineWidth = 1;
         this.ctx.strokeRect(1, 1, this.ctx.canvas.width / 4, this.ctx.canvas.height / 4);
@@ -85,18 +74,22 @@ export class Gui {
         for (let i = 0; i <= 3; i++) {
             let sc = new BottoneSceltaCharter(this.ctx, '', false);
             switch (i) {
-                case 0: sc = new BottoneSceltaCharter(this.ctx, 'assets/images/samuraiAtk2.png', false);
+                case 0:
+                    sc = new BottoneSceltaCharter(this.ctx, 'assets/images/samuraiAtk2.png', false);
                     sc.typeOfCharter = 'SAMURAI';
-                    break;//samurai
-                case 1: sc = new BottoneSceltaCharter(this.ctx, 'assets/images/discotraspooAtck.png', false);
+                    break;
+                case 1:
+                    sc = new BottoneSceltaCharter(this.ctx, 'assets/images/discotraspooAtck.png', false);
                     sc.typeOfCharter = 'MAGO';
-                    break;//mago
-                case 2: sc = new BottoneSceltaCharter(this.ctx, 'assets/images/biondotraspoAtck_1.png', false);
+                    break;
+                case 2:
+                    sc = new BottoneSceltaCharter(this.ctx, 'assets/images/biondotraspoAtck_1.png', false);
                     sc.typeOfCharter = 'GUERRIERO';
-                    break;//guerriero
-                case 3: sc = new BottoneSceltaCharter(this.ctx, 'assets/images/edwardAtk.png', false);
+                    break;
+                case 3:
+                    sc = new BottoneSceltaCharter(this.ctx, 'assets/images/edwardAtk.png', false);
                     sc.typeOfCharter = 'ARCERE';
-                    break;//arcere
+                    break;
             }
             sc.setX(i);
             sc.setY(6);
@@ -165,17 +158,18 @@ export class Gui {
         }
 
         if (player) {
-            this.ctx.font = 'italic bolder 45px Orbitron';
-            this.ctx.fillStyle = 'rgb(200,200,200)';
-            this.ctx.fillText('Mondo  ' + livelloSchema, 753, 53, 500);
-            this.ctx.fillText('$' + player.money, 23, 53, 500);
-            this.ctx.fillStyle = 'rgb(250,150,10)';
-            this.ctx.strokeStyle = 'black';
-            this.ctx.fillText('$' + player.money, 20, 50, 500);
-            this.ctx.strokeText('$' + player.money, 20, 50, 500);
-            this.ctx.fillText('Mondo  ' + livelloSchema, 750, 50, 500);
-            this.ctx.strokeText('Mondo  ' + livelloSchema, 750, 50, 500);
+
             if (!player.isMorto) {
+                this.ctx.font = 'italic bolder 45px Orbitron';
+                this.ctx.fillStyle = 'rgb(200,200,200)';
+                this.ctx.fillText('Mondo  ' + livelloSchema, 753, 53, 500);
+                this.ctx.fillText('$' + player.money, 23, 53, 500);
+                this.ctx.fillStyle = 'rgb(250,150,10)';
+                this.ctx.strokeStyle = 'black';
+                this.ctx.fillText('$' + player.money, 20, 50, 500);
+                this.ctx.strokeText('$' + player.money, 20, 50, 500);
+                this.ctx.fillText('Mondo  ' + livelloSchema, 750, 50, 500);
+                this.ctx.strokeText('Mondo  ' + livelloSchema, 750, 50, 500);
                 let maxLength = 100;
                 const perCent = maxLength * player.exp / player.nextExp;
                 this.ctx.fillStyle = 'green';

@@ -42,8 +42,6 @@ export abstract class Charter extends Square {
   isVelenoApplicato = false;
   maxVelo = 0.1;
   pozioni: Pozione[] = [];
-  pozioneAntiCambioStati = false;
-  turniPozioneAntiCambiaStati = 1000;
   stato: stato = 'camminando';
   numeroSchivate = 0;
   numeroAttacchi = 0;
@@ -76,6 +74,8 @@ export abstract class Charter extends Square {
   private maxSalute = 10000 * this.livello;
   isScudoAttivato = false;
   scudoAttivatoCounter = 500;
+  isPozioneAntiCambioStatiAttivato = false;
+  pozioneAntiCambioStatiCounter = 1000;
   scudoIcon = new Image();
   pozioneIcon = new Image();
 
@@ -91,7 +91,7 @@ export abstract class Charter extends Square {
 
   updateSituazioneConditions(condition: Condition) {
     // console.error(this.name + ' riceve condition', condition);
-    if (!this.pozioneAntiCambioStati) {
+    if (!this.isPozioneAntiCambioStatiAttivato) {
       switch (condition.conditionType) {
         case 'STUN':
           this.situazione.stunned = condition;
@@ -130,6 +130,16 @@ export abstract class Charter extends Square {
     } else {
       this.scudoAttivatoCounter = 500;
     }
+
+    if (this.isPozioneAntiCambioStatiAttivato) {
+      if (this.pozioneAntiCambioStatiCounter <= 0) {
+        this.isPozioneAntiCambioStatiAttivato = false;
+      }
+      this.pozioneAntiCambioStatiCounter--;
+    } else {
+      this.pozioneAntiCambioStatiCounter = 500;
+    }
+
     if (this.counterAnimation == 3) {
       if (this.counterMana <= this.maxMana) {
         if ((this.mana < this.maxMana)) {
@@ -142,14 +152,12 @@ export abstract class Charter extends Square {
     }
   }
 
-  drawPozioneAntivelenoState() {
-    if (this.pozioneAntiCambioStati) {
+  drawBonusState() {
+    if (this.isPozioneAntiCambioStatiAttivato) {
       this.ctx.strokeStyle = 'rgb(0,200,0)';
       this.ctx.lineWidth = 6;
       this.ctx.strokeRect(this.getX() * this.sideX - 10, this.getY() * this.sideY + 10, this.sideX + 10, this.sideY + 10);
-
     }
-
   }
 
   drawBarraEnergia() {
@@ -220,18 +228,18 @@ export abstract class Charter extends Square {
         this.sideY / 3);
     }
 
-    if (this.pozioneAntiCambioStati) {
+    if (this.isPozioneAntiCambioStatiAttivato) {
       this.ctx.fillStyle = 'green';
       this.ctx.fillRect(this.getX() * this.sideX,
         this.getY() * this.sideY - 20,
-        this.turniPozioneAntiCambiaStati / 10, 10);
+        this.pozioneAntiCambioStatiCounter / 10, 10);
       this.pozioneIcon.src = 'assets/images/pozioneverde.png';
       this.ctx.drawImage(this.pozioneIcon,
         0,//colonna ws
         0,//riga hs
         this.pozioneIcon.width, //ws
         this.pozioneIcon.height,//hs
-        this.getX() * this.sideX - 10 + this.turniPozioneAntiCambiaStati / 10,
+        this.getX() * this.sideX - 10 + this.pozioneAntiCambioStatiCounter / 10,
         this.getY() * this.sideY - 30,
         this.sideX / 3,
         this.sideY / 3);

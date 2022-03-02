@@ -83,5 +83,6 @@ export class Square {
   setColor(color: string) {
     this.color = color;
   }
+ 
 
 }

@@ -18,12 +18,10 @@ export class Bottone extends Square {
     this.isToggle = isToggle;
   }
   override draw() {
-    
-  
     this.disegnaMe();
     this.scriviAltriTesti();
-
   }
+  
   disegnaMe() {
     this.ctx.fillStyle= this.getColor();
     this.ctx.fillRect(

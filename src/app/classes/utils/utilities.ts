@@ -7,8 +7,23 @@ import { Charter } from "../abstract/charter";
 import { Arcere } from "../charters/arcere";
 import { Bottone } from "../elements/bottone";
 import { Samurai } from "../charters/samurai";
+import { Camion } from "../elements/camion";
 
 export class Utilities {
+
+    static createCamionArray(numeroCamion: number, ctx: CanvasRenderingContext2D): Camion[] {
+        const ca: Camion[] = [];
+        for (let i = 0; i < numeroCamion; i++) {
+            const camion = new Camion(ctx, 'red');
+            camion.setX(29);
+            camion.setY(3);
+            camion.setVelocita(0.1);
+            camion.stand();
+            ca.push(camion);
+        }
+        return ca
+    }
+
     static arrayRandomicoNumerico(array: number[]): number {
         return array[Math.floor(Math.random() * array.length)];
     }
@@ -21,11 +36,13 @@ export class Utilities {
             r1.getY() + 1 < r2.getY()
         );
     }
+
     static direzionaRandomicamenteCharter(charter: Square) {
         const direzione: direzione[] = ["TOP", "BOTTOM", "LEFT", "RIGHT", "STAND"];
         const random = Math.floor(Math.random() * direzione.length);
         charter.setDirection(direzione[random]);
     }
+
     static directionToMoveSwitch(charter: Square) {
         switch (charter.getDirection()) {
             case 'TOP':
@@ -46,9 +63,7 @@ export class Utilities {
     }
 
     static createBonusArray(j: number, ctx: CanvasRenderingContext2D): Bonus[] {
-
         const ba: Bonus[] = [];
-
         const bonus1 = new Bonus(ctx, 'red', 'salute', 1000, 1000);
         //bonus1.spriteSheetCharterPath ='assets/images/polloo.png';
         bonus1.spriteSheetImage.src = 'assets/images/polloo.png';
@@ -106,6 +121,7 @@ export class Utilities {
         }
         return enemies;
     }
+
     private static setEnemiesArray(enemy: Charter, i: number, livelloNemici: number, enemies: Charter[]) {
         for (let j = 0; j < livelloNemici; j++) {
             enemy.incrementaLivello();
@@ -139,15 +155,19 @@ export class Utilities {
             mousePosition.y > rect.y
         );
     }
+
     static nomeRandomico(): string {
-        return Utilities.arrayRandomico(['Piero', 'Luigi', 'Aleg', 'Pistolius', 'Agricanto', 'Tacimela', 'Rambaudo', 'Coletta', 'Rimarro', 'Sgrunf', 'Prux', 'Laida', 'Skyre', 'Pantone', 'Ramira', 'Astofele', 'Carima', 'Stangolo',
+        return Utilities.arrayRandomico(['Piero', 'Luigi', 'Aleg', 'Pistolius',
+            'Agricanto', 'Tacimela', 'Rambaudo', 'Coletta', 'Rimarro', 'Sgrunf',
+            'Prux', 'Laida', 'Skyre', 'Pantone', 'Ramira', 'Astofele', 'Carima', 'Stangolo',
             'Aldo', 'Maria', 'Marco', 'Derrer', 'Skutillo', 'Rafranco']);
     }
+
     static arrayRandomico(array: string[]): string {
         return array[Math.floor(Math.random() * array.length)];
     }
-    static changeButtonState(evt: MouseEvent, button: Bottone, ctx: CanvasRenderingContext2D): boolean {
 
+    static changeButtonState(evt: MouseEvent, button: Bottone, ctx: CanvasRenderingContext2D): boolean {
         const mousePos = Utilities.getMousePos(ctx.canvas, evt);
         const rect = {
             x: button.getX() * button.sideX,
@@ -160,9 +180,9 @@ export class Utilities {
             button.state == 'ON' ? button.state = 'OFF' : button.state = 'ON';
             out = true;
         }
-
         return out;
     }
+
     static charterMovmentRandomRoutine(charter: Square, counterRoutine: number, treshold: number) {
         if (counterRoutine % treshold == 0) {
             Utilities.direzionaRandomicamenteCharter(charter);
@@ -179,4 +199,10 @@ export class Utilities {
             attaccante.lanciaAbilita(difensore);
         }
     }
+
+    static setRandomXY(square: Square) {
+        square.setX(Math.floor(Math.random() * 10) + 1);
+        square.setY(Math.floor(Math.random() * 5) + 1);
+    }
+
 }
