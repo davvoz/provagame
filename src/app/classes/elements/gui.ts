@@ -4,7 +4,6 @@ import { Charter } from "../abstract/charter";
 import { BottoneSceltaCharter } from "../buttons/bottone-scelta-charter";
 import { classe } from "../utils/costants.enum";
 import { BottoneScudoAttiva } from "../buttons/bottone-scudo-attiva";
-import { GestioneSfondi } from "./gestione-sfondo";
 
 export class Gui {
     startButton!: Bottone;

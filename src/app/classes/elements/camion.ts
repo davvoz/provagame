@@ -10,6 +10,7 @@ export class Camion extends Square {
     super(ctx, color);
     this.image.src = 'assets/images/camion.png';
   }
+  
   override draw(): void {
     this.ctx.strokeStyle = this.getColor();
     this.ctx.strokeRect(
@@ -23,6 +24,7 @@ export class Camion extends Square {
       this.aggiornaScritta();
     }
   }
+
   private aggiornaScritta() {
     this.ctx.font = 'normal bolder 15px Orbitron';
     this.ctx.fillStyle = 'rgb(200,150,10)';
@@ -34,6 +36,7 @@ export class Camion extends Square {
     this.setX(this.getX() + this.getVelocita());
     this.draw();
   }
+
   override  moveLeft() {
     this.setDirection('LEFT');
     this.setX(this.getX() - this.getVelocita());

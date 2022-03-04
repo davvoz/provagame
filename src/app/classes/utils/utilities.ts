@@ -160,7 +160,7 @@ export class Utilities {
         return Utilities.arrayRandomico(['Piero', 'Luigi', 'Aleg', 'Pistolius',
             'Agricanto', 'Tacimela', 'Rambaudo', 'Coletta', 'Rimarro', 'Sgrunf',
             'Prux', 'Laida', 'Skyre', 'Pantone', 'Ramira', 'Astofele', 'Carima', 'Stangolo',
-            'Aldo', 'Maria', 'Marco', 'Derrer', 'Skutillo', 'Rafranco']);
+            'Aldo', 'Maria', 'Marco', 'Derrer', 'Skutillo', 'Rafranco','Tetramarco']);
     }
 
     static arrayRandomico(array: string[]): string {

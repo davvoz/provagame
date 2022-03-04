@@ -1,7 +1,6 @@
 import { classe, Condition, Conditions, stato } from '../utils/costants.enum';
 import { Pozione } from '../elements/pozione';
 import { Square } from '../elements/square';
-import { ThisReceiver } from '@angular/compiler';
 
 export abstract class Charter extends Square {
   private salute = 10000; //salute totale

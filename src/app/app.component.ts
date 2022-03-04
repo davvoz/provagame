@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, NgZone, ViewChild } from '@angular/core';
 import { Bonus } from './classes/elements/bonus';
-import { Charter } from './classes/abstract/charter';
 import { Mago } from './classes/charters/mago';
 import { Utilities } from './classes/utils/utilities';
 import { classe, FinalState } from './classes/utils/costants.enum';
@@ -93,7 +92,6 @@ export class AppComponent implements AfterViewInit {
       }
     }
   }
-  isMagoScelto: boolean = false;
   livelloSchema: number = 0;
   aggiungiPozioneAdArray = false;
   dieCount: number = 0;
@@ -112,7 +110,6 @@ export class AppComponent implements AfterViewInit {
   isJustColliding = false;
   finalStates: FinalState[] = [];
   isfinalStatesInc = false;
-  //tesoro!: Treasure;
   isTesoroRaccolto = false;
   isScudoRaccolto = false;
   isFaseScelta = true;
@@ -129,13 +126,12 @@ export class AppComponent implements AfterViewInit {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     if (!this.isFaseScelta) {
       if (this.mondi.length > this.livelloSchema) {
-        this.mondi[this.livelloSchema].aggiorna(this.livelloSchema);
+        this.mondi[this.livelloSchema].aggiorna();
         this.collisionDetenction();
         this.update();
       }
     }
     this.gui.aggiornaGui(this.livelloSchema, this.player, this.counterAnimation, this.isFaseScelta);
-
     //velocità animazione ogni n frame
     if (this.counterRoutine % 8 == 0) {
       //step animazione 
@@ -244,21 +240,17 @@ export class AppComponent implements AfterViewInit {
     if (this.livelloSchema % 3 == 0 && (this.livelloSchema % 3 == 0 || this.isTesoroRaccolto == false)) {
       !this.isTesoroRaccolto ? this.mondi[this.livelloSchema].tesoro.stand() : null;
     }
-    this.ctx.fillText(this.dieCount + '---' + this.mondi[this.livelloSchema].enemies.length + '-----' + this.player.isMorto + '-----' + !this.isFromStart, 20, 20, 500);
-    //sono finiti i nemici , nuovo mondo...arrivo da start ?
-    if (this.dieCount == this.mondi[this.livelloSchema].enemies.length && !this.player.isMorto && !this.isFromStart) {
+    this.ctx.fillStyle = 'black';
+
+    if (this.dieCount != 0 && this.dieCount == this.mondi[this.livelloSchema].enemies.length && !this.player.isMorto) {
       this.dieCount = 0;
       this.gui.incrementaLivelloButton.terzoText = '$' + (100 * this.player.livello);
       this.bonus = [];
       this.bonus = Utilities.createBonusArray(this.livelloSchema, this.ctx);
       this.livelloSchema++;
-
-      // if (this.mondi[this.livelloSchema]) {
-      //   this.mondi[this.livelloSchema].startSchema();
-      // }
+      this.mondi[this.livelloSchema].inizialize(this.ctx);
     }
     Utilities.directionToMoveSwitch(this.player);
-
     this.mondi[this.livelloSchema].camion.setCamion();
     if (this.player.isMorto) {
       this.isFaseScelta = true;
@@ -277,16 +269,12 @@ export class AppComponent implements AfterViewInit {
             ratio: this.player.numeroAttacchi / this.player.numeroSchivate
           }
         );
-
         this.isfinalStatesInc = true;
       }
       this.livelloSchema = 0;
     }
-
     this.player.counterAnimation = this.counterAnimation;
-
   }
-
 
   ngAfterViewInit(): void {
     const res = this.canvasGui.nativeElement.getContext('2d');
@@ -297,14 +285,13 @@ export class AppComponent implements AfterViewInit {
     this.gui = new Gui(this.ctx);
     for (let i = 1; i < 50; i++) {
       for (let j = 1; j < 5; j++) {
-        this.mondi.push(new Mondo(this.ctx, i, j, 0.1))
+        this.mondi.push(new Mondo({ livelloNemici: i, numeroNemici: j, velocitaCamion: 0.1, id: i }))
       }
     }
     //#region Eventi click canvas
     this.ctx.canvas.addEventListener(
       'click',
       (evt) => {
-
         for (let i = 0; i < this.gui.sceltaCharter.length; i++) {
           const scegliCharterButtonTouched = Utilities.changeButtonState(evt, this.gui.sceltaCharter[i], this.ctx);
           if (scegliCharterButtonTouched) {
@@ -375,7 +362,6 @@ export class AppComponent implements AfterViewInit {
           }
 
         }
-
       },
       false
     );
@@ -387,19 +373,16 @@ export class AppComponent implements AfterViewInit {
   }
 
   startGame() {
-
     this.isFaseScelta = false;
     this.gui.isRestartTouched = false;
     this.gui.counterAnimationDieText = 0;
     this.isScudoRaccolto = false;
     this.livelloSchema = 1;
-    this.mondi[this.livelloSchema].inizialize(1, 1, this.ctx, 0.1)
-
-
+    this.mondi[this.livelloSchema].inizialize(this.ctx);
     this.player.setX(2);
     this.player.setY(2);
     this.player.setVelocita(0.9);
-    this.player.name = 'Tetramarco';
+    this.player.name = Utilities.nomeRandomico();
     this.player.posizioneInfoLabelX = 30;
     this.player.posizioneInfoLabelY = 700;
     this.player.numeriFortunati = [0, 1, 2, 3, 4, 5, 6, 7];
@@ -410,8 +393,6 @@ export class AppComponent implements AfterViewInit {
     this.player.stand();
     this.mondi[this.livelloSchema].startSchema();
     this.gui.incrementaLivelloButton.terzoText = '$' + (100 * this.player.livello);
-
-
     this.isfinalStatesInc = false;
 
   }

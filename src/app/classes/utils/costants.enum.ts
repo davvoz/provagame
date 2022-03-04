@@ -1,4 +1,4 @@
-export type classe = 'MAGO' | 'GUERRIERO' | 'ARCERE' |'SAMURAI' |'ABSTRACT';
+export type classe = 'MAGO' | 'GUERRIERO' | 'ARCERE' | 'SAMURAI' | 'ABSTRACT';
 export type tipoBonus = 'salute' | 'forza' | 'intelligenza';
 export type direzione = 'TOP' | 'BOTTOM' | 'RIGHT' | 'LEFT' | 'STAND';
 export type conditionType = 'STUN' | 'VENO' | 'FIRE';
@@ -18,10 +18,10 @@ export interface FinalState {
     money: number;
     livelloSchema: number;
     livelloPersonaggio: number;
-    classe:classe,
-    numeroSchivate:number,
-    numeroAttacchi:number,
-    ratio:number
+    classe: classe;
+    numeroSchivate: number;
+    numeroAttacchi: number;
+    ratio: number
 }
 export interface DrawSquareParam {
     x: number;
@@ -29,4 +29,11 @@ export interface DrawSquareParam {
     sideX: number;
     sideY: number
 }
-export type statoBottone = 'ON'|'OFF';
+export type statoBottone = 'ON' | 'OFF';
+export type tipoSfondo = 'NOTTE' | 'GIORNO';
+export interface MondoConfigurations {
+    livelloNemici: number;
+    numeroNemici: number;
+    velocitaCamion: number;
+    id:number
+} 

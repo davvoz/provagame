@@ -1,18 +1,17 @@
-import { DrawSquareParam } from "../utils/costants.enum";
+import { DrawSquareParam, tipoSfondo } from "../utils/costants.enum";
 import { Square } from "./square";
 
 export class GestioneSfondi extends Square {
-    spriteSheetPath = 'assets/images/alberi.png';//src\assets\images\biondotraspo.pngsrc\assets\images\spredtraso.png
-    spriteSheetPath5 = 'assets/images/skyline.png';//src\assets\images\biondotraspo.pngsrc\assets\images\src\assets\images\src\assets\images\grass2.png.png.png
-    livello = 0;
+    spriteSheetPath = 'assets/images/alberi.png';
+    spriteSheetPath5 = 'assets/images/skyline.png';
+    tipoSfondo:tipoSfondo ='GIORNO';
     image = new Image();
     image5 = new Image();
     imageCloud1 = new Image();
     imageSun = new Image();
     imageGrass = new Image();
-    //imageTubo = new Image();
-
     stelle: DrawSquareParam[] = [];
+
     constructor(public override ctx: CanvasRenderingContext2D, color: string,) {
         super(ctx, color);
         this.image.src = this.spriteSheetPath;
@@ -20,8 +19,6 @@ export class GestioneSfondi extends Square {
         this.imageCloud1.src = 'assets/images/cloud.png';
         this.imageSun.src = 'assets/images/sole.png';
         this.imageGrass.src = 'assets/images/grassEr.png';
-        //this.imageTubo.src = 'assets/images/grass.png';
-
         this.sideY = this.sideX;
         this.ctx.fillStyle = 'yellow';
         for (let i = 0; i < 250; i++) {
@@ -36,12 +33,12 @@ export class GestioneSfondi extends Square {
             );
         }
     }
+
     override draw(): void {
-        if (this.livello % 2 == 0) {
+        if (this.tipoSfondo  === 'GIORNO') {
             this.disegnaGiorno();
         } else {
             this.disegnaNotte();
-
         }
     }
 
