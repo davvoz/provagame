@@ -9,7 +9,7 @@ export class Square {
 
 
   private velocita = 1;
-  private direction:direzione = 'STAND';
+  private direction: direzione = 'STAND';
 
   constructor(public ctx: CanvasRenderingContext2D, color: string) {
     this.color = color;
@@ -26,21 +26,21 @@ export class Square {
   }
   moveRight() {
     this.direction = 'RIGHT';
-    if (this.x * this.sideX < this.ctx.canvas.width - this.sideX ) {
+    if (this.x * this.sideX < this.ctx.canvas.width - this.sideX) {
       this.x = this.x + this.velocita;
     }
     this.draw();
   }
   moveLeft() {
     this.direction = 'LEFT';
-    if (this.x * this.sideX > 0 ) {
+    if (this.x * this.sideX > 0) {
       this.x = this.x - this.velocita;
     }
     this.draw();
   }
   moveTop() {
     this.direction = 'TOP';
-    if (this.y * this.sideX > 50 ) {
+    if (this.y * this.sideX > 50) {
       this.y = this.y - this.velocita;
     }
     this.draw();
@@ -48,13 +48,14 @@ export class Square {
   moveBottom() {
     this.direction = 'BOTTOM';
     if (this.y * this.sideY < 550) {
-      this.y = this.y + this.velocita ;
+      this.y = this.y + this.velocita;
     }
     this.draw();
   }
   draw() {
     this.ctx.fillStyle = this.color;
-    this.ctx.lineWidth = 2;
+    this.ctx.lineWidth = 1;
+    this.ctx.strokeStyle = 'black';
     this.ctx.fillRect(this.sideX * this.x, this.sideY * this.y, this.sideX, this.sideY);
     this.ctx.strokeRect(this.sideX * this.x, this.sideY * this.y, this.sideX, this.sideY);
   }
@@ -83,6 +84,6 @@ export class Square {
   setColor(color: string) {
     this.color = color;
   }
- 
+
 
 }

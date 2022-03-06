@@ -1,52 +1,32 @@
-import { classe, Condition, Conditions, stato } from '../utils/costants.enum';
+import { CharterParam, classe, Condition, Conditions, ParametriFanatsy, SintesiDati, stato, Visione } from '../utils/costants.enum';
 import { Pozione } from '../elements/pozione';
 import { Square } from '../elements/square';
+import { GeneralSprite } from '../elements/general-sprite';
+import { CounterToTrashold } from '../utils/counter-to-treshold';
 
-export abstract class Charter extends Square {
-  private salute = 10000; //salute totale
-
-  mana = 0; //mana totale
-  forza = 0; // quanta hp togli in un attacco
-  agilita = 0; //quanti attacchi al secondo TODO
-  intelligenza = 0; //quanta hp togli  in un attacco
-  resistenzaMagica = 0;
-  resistenzaFisica = 0;
-  posizioneInfoLabelX = 0;
-  posizioneInfoLabelY = 0;
-  numeriFortunati: number[] = []; //se il generatore random fa uno di questi numeri schivi
-  isMorto = false;
-  classe: classe = 'ABSTRACT';
-  name = 'Abstract cant instantiate';
-  danniMagiciRicevuti = 0;
-  danniFisiciRicevuti = 0;
-  dannoCritico = 0;
-  counterForCritico = 10;//il decimo attacco è danno critico (danno normale * 10)
-  counterForCriticoTreshold = 100;
-  danniCriticiInflitti = 0;
-  danniCriticiRicevuti = 0;
-  counterAnimation = 0;
-  spriteSheetCharterPath = '';
-  spriteSheetImage = new Image();
-  spriteSheetImageAttack = new Image();
-  livello = 1;
-  money = 0;
-  isCritico = false;
-  counterForCriticoAnimation = 0;
-  spriteSheetAttackPath = '';
-  isOnAttack: boolean = false;
-  counterMana = 0;
-  counterManaTreshold = 10
-  maxMana = 30;
-  velocitaIniziale = 0;
-  isVelenoApplicato = false;
-  maxVelo = 0.1;
-  pozioni: Pozione[] = [];
-  stato: stato = 'camminando';
-  numeroSchivate = 0;
-  numeroAttacchi = 0;
-  genereSprite = 0;//se = 0 then SX = 1 dx = 2 ; se = 1 SX = 2 DX = 1
-  exp = 0;
-  nextExp = 200;
+export abstract class Charter extends Square implements Visione, CharterParam {
+  sintesiDati: SintesiDati = {
+    danniMagiciRicevuti: 0,
+    danniFisiciRicevuti: 0,
+    dannoCritico: 0,
+    counterForCritico: 10,
+    danniCriticiInflitti: 0,
+    danniCriticiRicevuti: 0,
+    numeroSchivate: 0,
+    numeroAttacchi: 0,
+  };
+  parametriFantasy: ParametriFanatsy = {
+    agilita: 0,
+    forza: 0,
+    intelligenza: 0,
+    mana: 0,
+    numeriFortunati: [],
+    resistenzaFisica: 0,
+    salute: 10000,
+    resistenzaMagica: 0,
+    livello: 1,
+    money: 0
+  };
   situazione: Conditions = {
     stunned:
     {
@@ -69,28 +49,67 @@ export abstract class Charter extends Square {
     }
 
   }
+  originX: number = 0;
+  originY: number = 0;
+  posizioneInfoLabelX = 0;
+  posizioneInfoLabelY = 0;
+  isMorto = false;
+  classe: classe = 'ABSTRACT';
+  name = 'Abstract cant instantiate';
+
+  counterAnimation = 0;
+  spriteSheetCharterPath = '';
+  spriteSheetImage = new Image();
+  spriteSheetImageAttack = new Image();
+  isCritico = false;
+  //counterForCriticoAnimation = 0;
+  counterForCriticoTreshold = 100;
+
+  spriteSheetAttackPath = '';
+  isOnAttack: boolean = false;
+  maxMana = 30;
+  velocitaIniziale = 0;
+  isVelenoApplicato = false;
+  maxVelo = 0.1;
+  pozioni: Pozione[] = [];
+  stato: stato = 'camminando';
+  genereSprite = 0;//se = 0 then SX = 1 dx = 2 ; se = 1 SX = 2 DX = 1
+  exp = 0;
+  nextExp = 200;
+
   counterOfCounterAnimation = 0;
-  private maxSalute = 10000 * this.livello;
-  isScudoAttivato = false;
-  scudoAttivatoCounter = 500;
-  isPozioneAntiCambioStatiAttivato = false;
-  pozioneAntiCambioStatiCounter = 1000;
+  private maxSalute = 10000 * this.parametriFantasy.livello;
+
+  manaCounter = new CounterToTrashold(500, true);
+  scudoCounter = new CounterToTrashold(500, false);
+  pozioneCounter = new CounterToTrashold(500, false);
+
   scudoIcon = new Image();
   pozioneIcon = new Image();
+  pozioneoggettoDaLanciareIcon = new Image();
+
+  isOggettoInvolo = false;
+  isOggettoAtterrato = false;
+  oggettoDaLanciare !: GeneralSprite;
+  dannoCritico: number = 50;
+  counterForCritico: number = 0;
 
   aggiornaCaratteristiche() { console.error('aggiornaCaratteristiche') }
 
+  lanciaOggetto() {
+    this.isOggettoInvolo = true;
+  }
+
   getSalute(): number {
-    return this.salute;
+    return this.parametriFantasy.salute;
   }
 
   incrementaSalute(addendum: number) {
-    this.salute + addendum > this.maxSalute ? this.salute = this.maxSalute : this.salute = this.salute + addendum;
+    this.parametriFantasy.salute + addendum > this.maxSalute ? this.parametriFantasy.salute = this.maxSalute : this.parametriFantasy.salute = this.parametriFantasy.salute + addendum;
   }
 
   updateSituazioneConditions(condition: Condition) {
-    // console.error(this.name + ' riceve condition', condition);
-    if (!this.isPozioneAntiCambioStatiAttivato) {
+    if (!this.pozioneCounter.isActive()) {
       switch (condition.conditionType) {
         case 'STUN':
           this.situazione.stunned = condition;
@@ -109,67 +128,41 @@ export abstract class Charter extends Square {
   lanciaAbilita(charter: Charter): void { console.error('abilita abstrtact') }
 
   override draw() {
-    if (this.salute <= 0) {
+    if (this.parametriFantasy.salute <= 0) {
       this.isMorto = true
       this.stato = 'morendo';
     } else {
       this.isMorto = false
-    }    //this.drawPozioneAntivelenoState();
+    }
+
+    if (this.exp >= this.nextExp) {
+      this.exp = 0;
+      this.nextExp = 100 * this.parametriFantasy.livello;
+      this.incrementaLivello();
+    }
     if (!this.isMorto) {
       this.setSprite();
-      this.drawBarraEnergia();
+      this.drawBarre();
     }
-    // this.drawLabel();
+    this.updateTimers();
+  }
 
-    if (this.isScudoAttivato) {
-      if (this.scudoAttivatoCounter <= 0) {
-        this.isScudoAttivato = false;
-      }
-      this.scudoAttivatoCounter--;
-    } else {
-      this.scudoAttivatoCounter = 500;
-    }
+  private updateTimers() {
+    this.scudoCounter.counting();
+    this.pozioneCounter.counting();
 
-    if (this.isPozioneAntiCambioStatiAttivato) {
-      if (this.pozioneAntiCambioStatiCounter <= 0) {
-        this.isPozioneAntiCambioStatiAttivato = false;
-      }
-      this.pozioneAntiCambioStatiCounter--;
-    } else {
-      this.pozioneAntiCambioStatiCounter = 500;
-    }
-
-    if (this.counterAnimation == 3) {
-      if (this.counterMana <= this.maxMana) {
-        if ((this.mana < this.maxMana)) {
-          this.mana++;
-        }
-        this.counterMana++
-      } else {
-        this.counterMana = 0
+    if (this.counterAnimation == 3) {//rallento assunzione mana
+      this.manaCounter.counting();
+      if (this.maxMana < this.parametriFantasy.mana) {
+        this.parametriFantasy.mana++;
       }
     }
   }
 
-  drawBonusState() {
-    if (this.isPozioneAntiCambioStatiAttivato) {
-      this.ctx.strokeStyle = 'rgb(0,200,0)';
-      this.ctx.lineWidth = 6;
-      this.ctx.strokeRect(this.getX() * this.sideX - 10, this.getY() * this.sideY + 10, this.sideX + 10, this.sideY + 10);
-    }
-  }
-
-  drawBarraEnergia() {
+  drawBarre() {
     let maxLength = 100;
-    //maxLength:ratio= this.maxSalute : this.salute
-    const perCent = maxLength * this.salute / this.maxSalute;
 
-    this.ctx.fillStyle = 'red';
-    this.ctx.fillRect(
-      this.getX() * this.sideX,
-      this.getY() * this.sideY - 30,
-      perCent, 10
-    )
+    this.setBarra('red', 100 * this.parametriFantasy.salute / this.maxSalute, 30, 10);
     this.ctx.fillStyle = 'white';
     this.ctx.fillRect(
       this.getX() * this.sideX + maxLength,
@@ -180,7 +173,7 @@ export abstract class Charter extends Square {
     this.ctx.fillRect(
       this.getX() * this.sideX,
       this.getY() * this.sideY - 40,
-      this.mana, 10
+      this.parametriFantasy.mana, 10
     )
     this.ctx.fillStyle = 'white';
     this.ctx.fillRect(
@@ -188,92 +181,98 @@ export abstract class Charter extends Square {
       this.getY() * this.sideY - 40,
       5, 10
     )
-    this.ctx.fillStyle = this.getColor();
-    this.ctx.strokeStyle = 'black';
-
-    this.ctx.font = '18px Impact';
-    this.ctx.strokeText(
-      this.classe + ' - ' + this.name + ' - Level ' + this.livello + ' - $ ' + this.money + '     ' + this.salute + '     ' + this.maxSalute,
-      this.getX() * this.sideX,
-      this.getY() * this.sideY - 55, 500
-    );
-    this.ctx.font = '18px Impact';
-    this.ctx.fillText(
-      'F' + this.forza + ' I ' + this.intelligenza + 'A' + this.agilita + ' RF ' + this.resistenzaFisica + ' RM ' + this.resistenzaMagica,
-      this.getX() * this.sideX,
-      this.getY() * this.sideY - 75, 500
-    );
-    this.ctx.fillText(
-      this.classe + ' - ' + this.name + ' - Level ' + this.livello + ' - $ ' + this.money,
-      this.getX() * this.sideX,
-      this.getY() * this.sideY - 55, 500
-    );
-    if (this.isScudoAttivato) {
-      this.ctx.fillStyle = 'orangered';
-      this.ctx.fillRect(
-        this.getX() * this.sideX,
-        this.getY() * this.sideY - 10,
-        this.scudoAttivatoCounter / 2, 10
-      )
+    this.setTexts();
+    if (this.scudoCounter.isActive()) {
+      this.setBarra('orangered', this.scudoCounter.counter / 3, 10, 10)
       this.scudoIcon.src = 'assets/images/scudo.png';
       this.ctx.drawImage(this.scudoIcon,
         0,//colonna ws
         0,//riga hs
         this.scudoIcon.width, //ws
         this.scudoIcon.height,//hs
-        this.getX() * this.sideX - 10 + this.scudoAttivatoCounter / 2,
+        this.getX() * this.sideX - 10 + this.scudoCounter.counter / 3,
         this.getY() * this.sideY - 10,
         this.sideX / 3,
         this.sideY / 3);
     }
 
-    if (this.isPozioneAntiCambioStatiAttivato) {
-      this.ctx.fillStyle = 'green';
-      this.ctx.fillRect(this.getX() * this.sideX,
-        this.getY() * this.sideY - 20,
-        this.pozioneAntiCambioStatiCounter / 10, 10);
+    if (this.pozioneCounter.isActive()) {
+      this.setBarra('green', this.pozioneCounter.counter / 3, 20, 10)
       this.pozioneIcon.src = 'assets/images/pozioneverde.png';
       this.ctx.drawImage(this.pozioneIcon,
         0,//colonna ws
         0,//riga hs
         this.pozioneIcon.width, //ws
         this.pozioneIcon.height,//hs
-        this.getX() * this.sideX - 10 + this.pozioneAntiCambioStatiCounter / 10,
+        this.getX() * this.sideX - 10 + this.pozioneCounter.counter / 3,
         this.getY() * this.sideY - 30,
         this.sideX / 3,
         this.sideY / 3);
     }
   }
 
+  private setTexts() {
+    this.ctx.fillStyle = this.getColor();
+    this.ctx.strokeStyle = 'black';
+
+    this.ctx.font = '18px Impact';
+    this.ctx.strokeText(
+      this.classe + ' - ' + this.name + ' - Level ' + this.parametriFantasy.livello + ' - $ ' + this.parametriFantasy.money + '     ' + this.parametriFantasy.salute + '     ' + this.maxSalute,
+      this.getX() * this.sideX,
+      this.getY() * this.sideY - 55, 500
+    );
+    this.ctx.font = '18px Impact';
+    this.ctx.fillText(
+      'F' + this.parametriFantasy.forza + ' I ' + this.parametriFantasy.intelligenza + 'A' + this.parametriFantasy.agilita + ' RF ' + this.parametriFantasy.resistenzaFisica + ' RM ' + this.parametriFantasy.resistenzaMagica,
+      this.getX() * this.sideX,
+      this.getY() * this.sideY - 75, 500
+    );
+    this.ctx.fillText(
+      this.classe + ' - ' + this.name + ' - Level ' + this.parametriFantasy.livello + ' - $ ' + this.parametriFantasy.money,
+      this.getX() * this.sideX,
+      this.getY() * this.sideY - 55, 500
+    );
+  }
+
+  private setBarra(color: string, counter: number, posHeight: number, heigt: number) {
+    this.ctx.fillStyle = color;
+    this.ctx.fillRect(
+      this.getX() * this.sideX,
+      this.getY() * this.sideY - posHeight,
+      counter, heigt);
+  }
+
+  rubaSoldiA(charter: Charter) {
+    this.parametriFantasy.money += charter.parametriFantasy.money;
+    charter.parametriFantasy.money = 0;
+  }
+
   attaccare(charter: Charter) {
-    if (!this.isVelenoApplicato) {
-      if (this.exp >= this.nextExp) {
-        this.exp = 0;
-        this.nextExp = 100 * this.livello;
-        this.incrementaLivello();
-      }
+    if (!this.isVelenoApplicato || this.counterAnimation * 3 == 9) {
+
       this.exp++;
       this.stato = 'attaccando';
       this.isOnAttack = true;
       if (this.counterAnimation == 3) {
-        this.numeroAttacchi++;
+        this.parametriFantasy.mana++;
+        this.sintesiDati.numeroAttacchi++;
         console.log('** ATTACCA ' + this.classe + ' ' + this.name)
         if (!this.isMorto) {
           let critico = 0;
           let isCritico = false;
           if (this.counterForCritico === this.counterForCriticoTreshold) {
-            critico = this.livello * 10;
-            this.danniCriticiInflitti += critico;
+            critico = this.parametriFantasy.livello * 10;
+            this.sintesiDati.danniCriticiInflitti += critico;
             isCritico = true;
             this.isCritico = true;
           } else {
             this.isCritico = false;
           }
-          charter.difendere((this.intelligenza + critico) * this.livello, (this.forza + critico) * this.livello, isCritico);
+          charter.difendere((this.parametriFantasy.intelligenza + critico) * this.parametriFantasy.livello, (this.parametriFantasy.forza + critico) * this.parametriFantasy.livello, isCritico);
           this.counterForCritico === this.counterForCriticoTreshold ? this.counterForCritico = 0 : this.counterForCritico++;
           this.ctx.strokeStyle = 'red';
           if (charter.isMorto) {
-            this.money += charter.money;
+            this.rubaSoldiA(charter);
           }
         }
         console.log('** FINE ATTACCO ' + this.classe + ' ' + this.name)
@@ -291,10 +290,10 @@ export abstract class Charter extends Square {
     let schivata = false;
     this.stato = 'difendendo';
     if (!isCritico || this.isVelenoApplicato) {//il critico non si schiva ,se sei avvelenato non schivi
-      for (let a of this.numeriFortunati) {
+      for (let a of this.parametriFantasy.numeriFortunati) {
         if (schiva == a) {
           schivata = true;
-          this.numeroSchivate++;
+          this.sintesiDati.numeroSchivate++;
           console.log('******** schiva');
           break;
         }
@@ -302,7 +301,7 @@ export abstract class Charter extends Square {
     }
     if (!schivata || isCritico) {
       if (isCritico) {
-        this.danniCriticiRicevuti += dannoFisico;
+        this.sintesiDati.danniCriticiRicevuti += dannoFisico;
         this.ctx.fillStyle = this.getColor();
         this.ctx.font = '18px Impact';
         this.ctx.fillText(
@@ -313,25 +312,25 @@ export abstract class Charter extends Square {
       }
       let dannoFisicoEffettivo = 0;
       let dannoMagicoEffettivo = 0;
-      if (this.resistenzaMagica < dannoMagico) {
-        dannoMagicoEffettivo = dannoMagico - this.resistenzaMagica * this.livello;
+      if (this.parametriFantasy.resistenzaMagica < dannoMagico) {
+        dannoMagicoEffettivo = dannoMagico - this.parametriFantasy.resistenzaMagica * this.parametriFantasy.livello;
         dannoMagicoEffettivo < 0 ? dannoMagicoEffettivo = 0 : null;
       }
-      if (this.resistenzaFisica < dannoFisico) {
-        dannoFisicoEffettivo = dannoFisico - this.resistenzaFisica * this.livello;
+      if (this.parametriFantasy.resistenzaFisica < dannoFisico) {
+        dannoFisicoEffettivo = dannoFisico - this.parametriFantasy.resistenzaFisica * this.parametriFantasy.livello;
         dannoFisicoEffettivo < 0 ? dannoFisicoEffettivo = 0 : null;
       }
-      this.salute -= dannoFisicoEffettivo + dannoMagicoEffettivo;
-      this.danniFisiciRicevuti += dannoFisicoEffettivo;
-      this.danniMagiciRicevuti += dannoMagicoEffettivo;
+      this.parametriFantasy.salute -= dannoFisicoEffettivo + dannoMagicoEffettivo;
+      this.sintesiDati.danniFisiciRicevuti += dannoFisicoEffettivo;
+      this.sintesiDati.danniMagiciRicevuti += dannoMagicoEffettivo;
 
       this.ctx.font = '30px Impact';
-      this.ctx.fillText((this.danniFisiciRicevuti + this.danniMagiciRicevuti) + '', this.getX() * this.sideX, this.getY() + this.sideY, 300);
+      this.ctx.fillText((this.sintesiDati.danniFisiciRicevuti + this.sintesiDati.danniMagiciRicevuti) + '', this.getX() * this.sideX, this.getY() + this.sideY, 300);
       console.log('******** danni magici ricevuti ' + dannoMagicoEffettivo);
       console.log('******** danni fisici ricevuti ' + dannoFisicoEffettivo);
     }
     console.log('**** FINE DIFESA ' + this.classe + ' ' + this.name)
-    if (this.salute <= 0) {
+    if (this.parametriFantasy.salute <= 0) {
       this.isMorto = true
       console.log(this.classe + ' - ' + this.name + ' è stato ucciso')
     } else {
@@ -340,9 +339,9 @@ export abstract class Charter extends Square {
   }
 
   incrementaLivello() {
-    this.livello++;
-    this.maxSalute = this.livello * 10000;
-    this.salute = this.maxSalute;
+    this.parametriFantasy.livello++;
+    this.maxSalute = this.parametriFantasy.livello * 10000;
+    this.parametriFantasy.salute = this.maxSalute;
     this.aggiornaCaratteristiche();
   }
 
@@ -351,32 +350,32 @@ export abstract class Charter extends Square {
     this.ctx.fillStyle = 'black';
     this.ctx.font = '15px Impact';
     this.ctx.fillText(
-      this.name + ' : ' + this.salute.toFixed(0),
+      this.name + ' : ' + this.parametriFantasy.salute.toFixed(0),
       this.posizioneInfoLabelX,
       this.posizioneInfoLabelY,
       300
     );
     this.ctx.fillText(
-      'Forza : ' + this.forza,
+      'Forza : ' + this.parametriFantasy.forza,
       this.posizioneInfoLabelX,
       this.posizioneInfoLabelY - 20,
       300
     );
     this.ctx.fillText(
-      'Resistenza : ' + this.resistenzaFisica,
+      'Resistenza : ' + this.parametriFantasy.resistenzaFisica,
       this.posizioneInfoLabelX,
       this.posizioneInfoLabelY - 20 - 20,
       300
     );
     this.ctx.fillText(
-      'intelligenza : ' + this.intelligenza,
+      'intelligenza : ' + this.parametriFantasy.intelligenza,
       this.posizioneInfoLabelX,
       this.posizioneInfoLabelY - 20 - 20 - 20,
       300
     );
     this.ctx.closePath();
     this.ctx.fillText(
-      'Resistenza m: ' + this.resistenzaMagica,
+      'Resistenza m: ' + this.parametriFantasy.resistenzaMagica,
       this.posizioneInfoLabelX,
       this.posizioneInfoLabelY -
       20 -
@@ -410,7 +409,7 @@ export abstract class Charter extends Square {
         300
       );
       this.ctx.fillText(
-        'Danni magici ricevuti ' + this.danniMagiciRicevuti,
+        'Danni magici ricevuti ' + this.sintesiDati.danniMagiciRicevuti,
         this.posizioneInfoLabelX,
         this.posizioneInfoLabelY -
         20 -
@@ -423,7 +422,7 @@ export abstract class Charter extends Square {
         300
       );
       this.ctx.fillText(
-        'Danni fisici ricevuti ' + this.danniFisiciRicevuti,
+        'Danni fisici ricevuti ' + this.sintesiDati.danniFisiciRicevuti,
         this.posizioneInfoLabelX,
         this.posizioneInfoLabelY -
         20 -
@@ -437,7 +436,7 @@ export abstract class Charter extends Square {
         300
       );
       this.ctx.fillText(
-        'Danni critici ricevuti ' + this.danniCriticiRicevuti,
+        'Danni critici ricevuti ' + this.sintesiDati.danniCriticiRicevuti,
         this.posizioneInfoLabelX,
         this.posizioneInfoLabelY -
         20 -
@@ -452,7 +451,7 @@ export abstract class Charter extends Square {
         300
       );
       this.ctx.fillText(
-        'Danni critici inflitti ' + this.danniCriticiInflitti,
+        'Danni critici inflitti ' + this.sintesiDati.danniCriticiInflitti,
         this.posizioneInfoLabelX,
         this.posizioneInfoLabelY -
         20 -
@@ -481,7 +480,7 @@ export abstract class Charter extends Square {
       this.ctx.fillText('ON FIRE !!!', this.getX() * this.sideX - 70, this.getY() * this.sideY, 300)
       if (this.counterAnimation == 3) {
         console.log(this.name + ' riceve danni da ' + this.situazione.fiery.conditionType + ' : ' + this.situazione.fiery.quantita);
-        this.salute -= this.situazione.fiery.quantita;
+        this.parametriFantasy.salute -= this.situazione.fiery.quantita;
       }
     }
     if (this.situazione.poisoned.value && this.situazione.poisoned.totTurni > 0) {
@@ -492,7 +491,7 @@ export abstract class Charter extends Square {
       this.ctx.fillText('POISONED', this.getX() * this.sideX - 70, this.getY() * this.sideY + 60, 300)
       if (this.counterAnimation == 3) {
         console.log(this.name + ' riceve danni da ' + this.situazione.poisoned.conditionType + ' : ' + this.situazione.poisoned.quantita);
-        this.salute -= this.situazione.poisoned.quantita;
+        this.parametriFantasy.salute -= this.situazione.poisoned.quantita;
       }
       if (!this.isVelenoApplicato) {
         this.isVelenoApplicato = true;

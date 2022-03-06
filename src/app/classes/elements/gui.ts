@@ -40,7 +40,7 @@ export class Gui {
         this.incrementaLivelloButton.setX(0);
         this.incrementaLivelloButton.setY(9);
         this.incrementaLivelloButton.setText('LEVEL');
-        this.incrementaLivelloButton.secondText = ' key enter';
+        this.incrementaLivelloButton.secondText = ' key \\';
         this.compraBonus = new Bottone(this.ctx, 'yellow', false);
         this.compraBonus.setX(1);
         this.compraBonus.setY(9);
@@ -87,7 +87,7 @@ export class Gui {
                     break;
                 case 3:
                     sc = new BottoneSceltaCharter(this.ctx, 'assets/images/edwardAtk.png', false);
-                    sc.typeOfCharter = 'ARCERE';
+                    sc.typeOfCharter = 'BULLO';
                     break;
             }
             sc.setX(i);
@@ -128,7 +128,7 @@ export class Gui {
                             break;//mago
                         case 'GUERRIERO': this.selectedImage.src = 'assets/images/biondotraspoAtck_1.png';
                             break;//guerriero
-                        case 'ARCERE': this.selectedImage.src = 'assets/images/edwardAtk.png';
+                        case 'BULLO': this.selectedImage.src = 'assets/images/edwardAtk.png';
                             break;//arcere
                     }
                     this.ctx.drawImage(this.selectedImage,
@@ -162,11 +162,11 @@ export class Gui {
                 this.ctx.font = 'italic bolder 45px Orbitron';
                 this.ctx.fillStyle = 'rgb(200,200,200)';
                 this.ctx.fillText('Mondo  ' + livelloSchema, 753, 53, 500);
-                this.ctx.fillText('$' + player.money, 23, 53, 500);
+                this.ctx.fillText('$' + player.parametriFantasy.money, 23, 53, 500);
                 this.ctx.fillStyle = 'rgb(250,150,10)';
                 this.ctx.strokeStyle = 'black';
-                this.ctx.fillText('$' + player.money, 20, 50, 500);
-                this.ctx.strokeText('$' + player.money, 20, 50, 500);
+                this.ctx.fillText('$' + player.parametriFantasy.money, 20, 50, 500);
+                this.ctx.strokeText('$' + player.parametriFantasy.money, 20, 50, 500);
                 this.ctx.fillText('Mondo  ' + livelloSchema, 750, 50, 500);
                 this.ctx.strokeText('Mondo  ' + livelloSchema, 750, 50, 500);
                 let maxLength = 100;
@@ -177,7 +177,7 @@ export class Gui {
                 this.ctx.fillRect(500 + maxLength / player.nextExp, 650, 10, 10);
                 this.ctx.font = 'italic bolder 15px Orbitron';
                 this.ctx.fillStyle = 'rgb(60,160,60)';
-                this.ctx.fillText('EXP ' + player.classe + ' ' + player.livello + ' - NOW  ' + player.exp + ' NEXT ' + player.nextExp, maxLength / player.nextExp + 300, 690 + 10, 500);
+                this.ctx.fillText('EXP ' + player.classe + ' ' + player.parametriFantasy.livello + ' - NOW  ' + player.exp + ' NEXT ' + player.nextExp, maxLength / player.nextExp + 300, 690 + 10, 500);
 
             }
             if (player.isMorto && !this.isRestartTouched) {

@@ -4,7 +4,7 @@ import { Guerriero } from "../charters/guerriero";
 import { Mago } from "../charters/mago";
 import { Bonus } from "../elements/bonus";
 import { Charter } from "../abstract/charter";
-import { Arcere } from "../charters/arcere";
+import { Bullo } from "../charters/bullo";
 import { Bottone } from "../elements/bottone";
 import { Samurai } from "../charters/samurai";
 import { Camion } from "../elements/camion";
@@ -110,7 +110,7 @@ export class Utilities {
                     Utilities.setEnemiesArray(enemy, i, livelloNemici, enemies);
                     break;
                 case 2:
-                    enemy = new Arcere(ctx, 'rgb(66,66,200)', livelloNemici)
+                    enemy = new Bullo(ctx, 'rgb(66,66,200)', livelloNemici)
                     Utilities.setEnemiesArray(enemy, i, livelloNemici, enemies);
                     break;
                 case 3:
@@ -134,7 +134,7 @@ export class Utilities {
         enemy.dannoCritico = 10 * livelloNemici;
         enemy.counterForCriticoTreshold = 10;
         enemy.name = this.nomeRandomico();
-        enemy.money = Math.floor(Math.random() * 100);
+        enemy.parametriFantasy.money = Math.floor(Math.random() * 100);
         enemy.stand();
         enemies.push(enemy);
     }
@@ -191,12 +191,13 @@ export class Utilities {
     }
 
     static algoAttack(attaccante: Charter, difensore: Charter) {
-        if (!difensore.isScudoAttivato) {
+        if (!difensore.scudoCounter.isActive()) {
             attaccante.attaccare(difensore);
         }
-        if (attaccante.mana >= attaccante.maxMana) {
-            attaccante.mana = 0;
-            attaccante.lanciaAbilita(difensore);
+        if (attaccante.parametriFantasy.mana >= attaccante.maxMana) {
+            attaccante.parametriFantasy.mana = 0;
+            attaccante.manaCounter.attiva();
+            //attaccante.lanciaAbilita(difensore);
         }
     }
 

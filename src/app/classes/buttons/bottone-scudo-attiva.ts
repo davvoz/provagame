@@ -55,6 +55,6 @@ export class BottoneScudoAttiva extends Bottone {
         if (this.isScudoPresente) {
             this.isScudoPresente = false;
         }
-        charter.isScudoAttivato = true;
+        charter.scudoCounter.attiva();
     }
 }
