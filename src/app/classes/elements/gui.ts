@@ -174,7 +174,7 @@ export class Gui {
                 this.ctx.fillStyle = 'green';
                 this.ctx.fillRect(300, 650, perCent, 10);
                 this.ctx.fillStyle = 'white';
-                this.ctx.fillRect(500 + maxLength / player.nextExp, 650, 10, 10);
+                this.ctx.fillRect(300+ maxLength, 650, 5, 10);
                 this.ctx.font = 'italic bolder 15px Orbitron';
                 this.ctx.fillStyle = 'rgb(60,160,60)';
                 this.ctx.fillText('EXP ' + player.classe + ' ' + player.parametriFantasy.livello + ' - NOW  ' + player.exp + ' NEXT ' + player.nextExp, maxLength / player.nextExp + 300, 690 + 10, 500);

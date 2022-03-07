@@ -67,29 +67,29 @@ export class Utilities {
         const bonus1 = new Bonus(ctx, 'red', 'salute', 1000, 1000);
         //bonus1.spriteSheetCharterPath ='assets/images/polloo.png';
         bonus1.spriteSheetImage.src = 'assets/images/polloo.png';
-        bonus1.setX(Math.floor(Math.random() * 19) + 1);
-        bonus1.setY(Math.floor(Math.random() * 7) + 1);
+        bonus1.setX(Math.floor(Math.random() * 9) + 1);
+        bonus1.setY(Math.floor(Math.random() * 8 ) + 1);
         bonus1.setVelocita(0);
         bonus1.stand();
         ba.push(bonus1);
         const bonus2 = new Bonus(ctx, 'red', 'salute', 200, 200);
         bonus2.spriteSheetImage.src = 'assets/images/panino.png';
-        bonus2.setX(Math.floor(Math.random() * 19) + 1);
-        bonus2.setY(Math.floor(Math.random() * 7) + 1);
+        bonus2.setX(Math.floor(Math.random() * 9) + 1);
+        bonus2.setY(Math.floor(Math.random() * 8 ) + 1);
         bonus2.setVelocita(0);
         bonus2.stand();
         ba.push(bonus2);
         const bonus3 = new Bonus(ctx, 'red', 'salute', 300, 300);
         bonus3.spriteSheetImage.src = 'assets/images/formaggio.png';
-        bonus3.setX(Math.floor(Math.random() * 19) + 1);
-        bonus3.setY(Math.floor(Math.random() * 7) + 1);
+        bonus3.setX(Math.floor(Math.random() * 9) + 1);
+        bonus3.setY(Math.floor(Math.random() * 8 ) + 1);
         bonus3.setVelocita(0);
         bonus3.stand();
         ba.push(bonus3);
         const bonus4 = new Bonus(ctx, 'red', 'salute', 400, 400);
         bonus4.spriteSheetImage.src = 'assets/images/uovo.png';
-        bonus4.setX(Math.floor(Math.random() * 19) + 1);
-        bonus4.setY(Math.floor(Math.random() * 7) + 1);
+        bonus4.setX(Math.floor(Math.random() * 9) + 1);
+        bonus4.setY(Math.floor(Math.random() * 8 ) + 1);
         bonus4.setVelocita(0);
         bonus4.stand();
         ba.push(bonus4);
@@ -194,15 +194,14 @@ export class Utilities {
         if (!difensore.scudoCounter.isActive()) {
             attaccante.attaccare(difensore);
         }
-        if (attaccante.parametriFantasy.mana >= attaccante.maxMana) {
+        if (attaccante.parametriFantasy.mana >= attaccante.parametriFantasy.maxMana) {
             attaccante.parametriFantasy.mana = 0;
-            attaccante.manaCounter.attiva();
-            //attaccante.lanciaAbilita(difensore);
+            attaccante.lanciaAbilita(difensore);
         }
     }
 
     static setRandomXY(square: Square) {
-        square.setX(Math.floor(Math.random() * 10) + 1);
+        square.setX(Math.floor(Math.random() * 8 ) + 1);
         square.setY(Math.floor(Math.random() * 5) + 1);
     }
 

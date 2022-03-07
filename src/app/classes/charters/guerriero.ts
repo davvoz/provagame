@@ -3,7 +3,6 @@ import { classe } from '../utils/costants.enum';
 
 export class Guerriero extends Charter {
  // override counterManaTreshold = 25;
-  override maxMana = 50;
   override name = 'Guerriero default name';
   override classe: classe = 'GUERRIERO';
   override spriteSheetCharterPath = 'assets/images/biondotraspoAtck_1.png';
@@ -20,10 +19,9 @@ export class Guerriero extends Charter {
     this.parametriFantasy.mana = 1;
     this.parametriFantasy.resistenzaFisica = 7;
     this.parametriFantasy.resistenzaMagica = 8;
+    this.parametriFantasy.maxMana = 50;
     this.genereSprite = 0;
     this.aggiornaCaratteristiche();
-    this.manaCounter.attiva();
-
   }
 
   override aggiornaCaratteristiche() {
@@ -32,9 +30,7 @@ export class Guerriero extends Charter {
     this.parametriFantasy.intelligenza += Math.floor(Math.random() * 2) * this.parametriFantasy.livello;
     this.parametriFantasy.resistenzaMagica += Math.floor(Math.random() * 2) * this.parametriFantasy.livello;
     this.parametriFantasy.agilita += Math.floor(Math.random() * 1) * this.parametriFantasy.livello;
-    this.incrementaSalute( Math.floor(Math.random() * 5) * this.parametriFantasy.livello);
-    
-    this.manaCounter.attiva();
+    this.incrementaSalute( Math.floor(Math.random() * 5) * this.parametriFantasy.livello); 
   }
   
   override lanciaAbilita(charter: Charter): void {
@@ -42,7 +38,7 @@ export class Guerriero extends Charter {
     charter.updateSituazioneConditions(
       {
         conditionType: 'FIRE',
-        quantita: 60 * this.parametriFantasy.livello,
+        quantita: 6 * this.parametriFantasy.livello,
         totTurni: 150 + this.parametriFantasy.livello,
         value: true
       }

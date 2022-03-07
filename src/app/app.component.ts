@@ -22,26 +22,24 @@ export enum KEY_CODE {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements AfterViewInit {
-  giaInvolo: boolean = false;
-  counterAnimationProiettile: number=0;
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
     if (this.player) {
-      if (!this.player.isMorto && !this.isJustColliding) {
+      if (!this.player.isMorto) {
         if (event.keyCode == KEY_CODE.DOWN_ARROW || event.keyCode == 40) {
-          this.player.setVelocita(this.player.maxVelo);
+          this.player.setVelocita(0.1);
           this.player.setDirection('BOTTOM');
         }
         if (event.keyCode == KEY_CODE.UP_ARROW || event.keyCode == 38) {
-          this.player.setVelocita(this.player.maxVelo);
+          this.player.setVelocita(0.1);
           this.player.setDirection('TOP');
         }
         if (event.keyCode == KEY_CODE.LEFT_ARROW || event.keyCode == 37) {
-          this.player.setVelocita(this.player.maxVelo);
+          this.player.setVelocita(0.1);
           this.player.setDirection('LEFT');
         }
         if (event.keyCode == KEY_CODE.RIGHT_ARROW || event.keyCode == 39) {
-          this.player.setVelocita(this.player.maxVelo);
+          this.player.setVelocita(0.1);
           this.player.setDirection('RIGHT');
         }
         if (event.keyCode == 49 && this.player.pozioni.length > 0) {//1 consuma pozione 1
@@ -80,13 +78,12 @@ export class AppComponent implements AfterViewInit {
         }
         if (event.keyCode == 32) {//space lancia qualcosa
           this.player.lanciaOggetto();
-          this.proiettile = new Proiettile(this.ctx, 'white', this.player.getX(), this.player.getY());
+          this.proiettile = new Proiettile(this.ctx, 'white', this.player.getX(), this.player.getY(),this.player.classe);
           this.proiettile.setDirection(this.player.getDirection());
           this.proiettile.setVelocita(0.9);
         }
       }
     }
-
   }
   @HostListener('window:keyup', ['$event'])
   keyEventMu(event: KeyboardEvent) {
@@ -105,6 +102,8 @@ export class AppComponent implements AfterViewInit {
       }
     }
   }
+  giaInvolo: boolean = false;
+  counterAnimationProiettile: number = 0;
   mondoNumero: number = 0;
   aggiungiPozioneAdArray = false;
   dieCount: number = 0;
@@ -120,7 +119,6 @@ export class AppComponent implements AfterViewInit {
   bonus: Bonus[] = [];
   bonusCount = 0;
   isStarted = false;
-  isJustColliding = false;
   finalStates: FinalState[] = [];
   isfinalStatesInc = false;
   isTesoroRaccolto = false;
@@ -191,13 +189,14 @@ export class AppComponent implements AfterViewInit {
 
         //se è rimasto vivo controllo se si contra con il proiettile
         if (this.proiettile && Utilities.rectsColliding(this.mondi[this.mondoNumero].enemies[i], this.proiettile)) {
-          this.mondi[this.mondoNumero].enemies[i].incrementaSalute(-1000*this.player.parametriFantasy.livello);
-          this.ctx.strokeStyle='red';
-          this.ctx.strokeRect(this.mondi[this.mondoNumero].enemies[i].getX() + 10 , this.mondi[this.mondoNumero].enemies[i].getY() +10, 30 ,30);
+          this.mondi[this.mondoNumero].enemies[i].incrementaSalute(-100 * this.player.parametriFantasy.livello);
+          this.ctx.strokeStyle = 'red';
+          this.ctx.strokeRect(this.mondi[this.mondoNumero].enemies[i].getX() + 10, this.mondi[this.mondoNumero].enemies[i].getY() + 10, 30, 30);
+          this.proiettile.lanciaAbilita(this.mondi[this.mondoNumero].enemies[i]);
           //se muore mgli rubo i soldi
           if (this.mondi[this.mondoNumero].enemies[i].isMorto && this.mondi[this.mondoNumero].enemies[i].parametriFantasy.money > 0) {
-              this.player.rubaSoldiA(this.mondi[this.mondoNumero].enemies[i]);
-              this.player.exp = this.player.exp + this.player.parametriFantasy.livello * this.mondi[this.mondoNumero].enemies[i].parametriFantasy.livello * 100;
+            this.player.rubaSoldiA(this.mondi[this.mondoNumero].enemies[i]);
+            this.player.exp = this.player.exp + this.player.parametriFantasy.livello * this.mondi[this.mondoNumero].enemies[i].parametriFantasy.livello * 100;
           }
         }
         if (!this.mondi[this.mondoNumero].enemies[i].isMorto) {
@@ -205,7 +204,7 @@ export class AppComponent implements AfterViewInit {
         }
       }
 
-      if (this.mondi[this.mondoNumero].enemies[i].isMorto) {        
+      if (this.mondi[this.mondoNumero].enemies[i].isMorto) {
         this.dieCount++;
       }
     }
@@ -266,14 +265,14 @@ export class AppComponent implements AfterViewInit {
   update() {
     if (this.player.isOggettoInvolo && !this.giaInvolo) {
       this.giaInvolo = true;
-      this.proiettile = new Proiettile(this.ctx, 'white', this.player.getX(), this.player.getY());
+      this.proiettile = new Proiettile(this.ctx, 'white', this.player.getX(), this.player.getY(),this.player.classe);
       this.proiettile.setDirection(this.player.getDirection());
       this.proiettile.setVelocita(0.1);
     }
     if (this.giaInvolo) {
-      
+
       this.proiettile.counterAnimation = this.counterAnimationProiettile;
-      
+
       Utilities.directionToMoveSwitch(this.proiettile);
       if (this.proiettile.getX() > 20 || this.proiettile.getX() < -20 || this.proiettile.getY() > 20 || this.proiettile.getY() < -20) {
         this.giaInvolo = false;
@@ -334,8 +333,8 @@ export class AppComponent implements AfterViewInit {
     this.ctx = res;
     this.gui = new Gui(this.ctx);
     for (let i = 1; i < 50; i++) {
-      for (let j = 1; j < 5; j++) {
-        this.mondi.push(new Mondo({ livelloNemici: i, numeroNemici: j, velocitaCamion: 0.1, id: i }))
+      for (let j = 1; j < 6; j++) {
+        this.mondi.push(new Mondo({ livelloNemici: i*j, numeroNemici: j, velocitaCamion: 0.1, id: i }))
       }
     }
     //#region Eventi click canvas

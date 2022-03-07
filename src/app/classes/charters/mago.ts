@@ -3,7 +3,6 @@ import { classe } from '../utils/costants.enum';
 
 export class Mago extends Charter {
   //override counterManaTreshold = 15;
-  override maxMana = 10;
   override name = 'Mago default name';
   override classe: classe = 'MAGO';
   override spriteSheetCharterPath = 'assets/images/discotraspoo.png';//src\assets\images\discotraspooAtck.png
@@ -21,8 +20,8 @@ export class Mago extends Charter {
     this.parametriFantasy.mana = 1;
     this.parametriFantasy.resistenzaFisica = 7;
     this.parametriFantasy.resistenzaMagica = 8;
+    this.parametriFantasy.maxMana = 10;
     this.aggiornaCaratteristiche();
-    this.manaCounter.attiva();
 
   }
 
@@ -40,8 +39,8 @@ export class Mago extends Charter {
     charter.updateSituazioneConditions(
       {
         conditionType: 'VENO',
-        quantita: 93 * this.parametriFantasy.livello,
-        totTurni: 130 + this.parametriFantasy.livello,
+        quantita: 2 * this.parametriFantasy.livello,
+        totTurni: 730 + this.parametriFantasy.livello,
         value: true
       }
     )

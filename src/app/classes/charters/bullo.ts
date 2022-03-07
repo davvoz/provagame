@@ -3,7 +3,6 @@ import { classe } from '../utils/costants.enum';
 
 export class Bullo extends Charter {
  // override counterManaTreshold = 20;
-  override maxMana = 50;
   override name = 'Bull default name';
   override classe: classe = 'BULLO';
   override spriteSheetCharterPath = 'assets/images/edwardAtk.png';
@@ -20,10 +19,9 @@ export class Bullo extends Charter {
     this.parametriFantasy.mana = 1;
     this.parametriFantasy.resistenzaFisica = 7;
     this.parametriFantasy.resistenzaMagica = 8;
+    this.parametriFantasy.maxMana = 50;
     this.genereSprite = 1;
     this.aggiornaCaratteristiche();
-    this.manaCounter.attiva();
-
   }
 
   override aggiornaCaratteristiche() {
@@ -33,8 +31,6 @@ export class Bullo extends Charter {
     this.parametriFantasy.resistenzaMagica += Math.floor(Math.random() * 2) * this.parametriFantasy.livello;
     this.parametriFantasy.agilita += Math.floor(Math.random() * 5) * this.parametriFantasy.livello;
     this.incrementaSalute(Math.floor(Math.random() * 5) * this.parametriFantasy.livello);
-    
-    this.manaCounter.attiva();
   }
 
   override lanciaAbilita(charter: Charter): void {
@@ -42,8 +38,8 @@ export class Bullo extends Charter {
     charter.updateSituazioneConditions(
       {
         conditionType: 'VENO',
-        quantita: 100 * this.parametriFantasy.livello,
-        totTurni: 500 + this.parametriFantasy.livello * 2,
+        quantita: 9 * this.parametriFantasy.livello,
+        totTurni: 200 + this.parametriFantasy.livello * 2,
         value: true
       }
     )

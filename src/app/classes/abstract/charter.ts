@@ -4,12 +4,13 @@ import { Square } from '../elements/square';
 import { GeneralSprite } from '../elements/general-sprite';
 import { CounterToTrashold } from '../utils/counter-to-treshold';
 
-export abstract class Charter extends Square implements Visione, CharterParam {
+export abstract class Charter extends Square implements CharterParam {
+  classe: classe = 'ABSTRACT';
+  name = 'Abstract cant instantiate';
   sintesiDati: SintesiDati = {
     danniMagiciRicevuti: 0,
     danniFisiciRicevuti: 0,
     dannoCritico: 0,
-    counterForCritico: 10,
     danniCriticiInflitti: 0,
     danniCriticiRicevuti: 0,
     numeroSchivate: 0,
@@ -25,7 +26,8 @@ export abstract class Charter extends Square implements Visione, CharterParam {
     salute: 10000,
     resistenzaMagica: 0,
     livello: 1,
-    money: 0
+    money: 0,
+    maxMana: 0
   };
   situazione: Conditions = {
     stunned:
@@ -49,51 +51,40 @@ export abstract class Charter extends Square implements Visione, CharterParam {
     }
 
   }
-  originX: number = 0;
-  originY: number = 0;
   posizioneInfoLabelX = 0;
   posizioneInfoLabelY = 0;
   isMorto = false;
-  classe: classe = 'ABSTRACT';
-  name = 'Abstract cant instantiate';
-
   counterAnimation = 0;
   spriteSheetCharterPath = '';
   spriteSheetImage = new Image();
   spriteSheetImageAttack = new Image();
   isCritico = false;
-  //counterForCriticoAnimation = 0;
   counterForCriticoTreshold = 100;
-
   spriteSheetAttackPath = '';
   isOnAttack: boolean = false;
-  maxMana = 30;
   velocitaIniziale = 0;
   isVelenoApplicato = false;
-  maxVelo = 0.1;
   pozioni: Pozione[] = [];
   stato: stato = 'camminando';
   genereSprite = 0;//se = 0 then SX = 1 dx = 2 ; se = 1 SX = 2 DX = 1
   exp = 0;
   nextExp = 200;
-
-  counterOfCounterAnimation = 0;
-  private maxSalute = 10000 * this.parametriFantasy.livello;
-
-  manaCounter = new CounterToTrashold(500, true);
   scudoCounter = new CounterToTrashold(500, false);
   pozioneCounter = new CounterToTrashold(500, false);
-
+  visualizzaDannoCounter = new CounterToTrashold(32, false);
   scudoIcon = new Image();
   pozioneIcon = new Image();
   pozioneoggettoDaLanciareIcon = new Image();
-
   isOggettoInvolo = false;
   isOggettoAtterrato = false;
   oggettoDaLanciare !: GeneralSprite;
   dannoCritico: number = 50;
   counterForCritico: number = 0;
+  fiammeImage = new Image();
+  velenoImage = new Image();
 
+  private maxSalute = 1000 * this.parametriFantasy.livello;
+  private ultimiDanni = 0;
   aggiornaCaratteristiche() { console.error('aggiornaCaratteristiche') }
 
   lanciaOggetto() {
@@ -143,17 +134,27 @@ export abstract class Charter extends Square implements Visione, CharterParam {
     if (!this.isMorto) {
       this.setSprite();
       this.drawBarre();
+      if (this.visualizzaDannoCounter.isActive()) {
+        this.ctx.fillStyle = !this.isCritico ? this.getColor() : 'red';
+        this.ctx.strokeStyle = 'black';
+        this.ctx.font = (this.ultimiDanni / 100 + 52) + 'px Impact';
+        this.ctx.strokeText(this.ultimiDanni + '', this.getX() * this.sideX - 30, this.getY() * this.sideY + this.sideY + 30, 300);
+        this.ctx.fillText(this.ultimiDanni + '', this.getX() * this.sideX - 30, this.getY() * this.sideY + this.sideY + 30, 300);
+
+      }
+
     }
+
     this.updateTimers();
   }
 
   private updateTimers() {
     this.scudoCounter.counting();
     this.pozioneCounter.counting();
+    this.visualizzaDannoCounter.counting();
 
     if (this.counterAnimation == 3) {//rallento assunzione mana
-      this.manaCounter.counting();
-      if (this.maxMana < this.parametriFantasy.mana) {
+      if (this.parametriFantasy.maxMana < this.parametriFantasy.mana) {
         this.parametriFantasy.mana++;
       }
     }
@@ -161,27 +162,13 @@ export abstract class Charter extends Square implements Visione, CharterParam {
 
   drawBarre() {
     let maxLength = 100;
-
-    this.setBarra('red', 100 * this.parametriFantasy.salute / this.maxSalute, 30, 10);
-    this.ctx.fillStyle = 'white';
-    this.ctx.fillRect(
-      this.getX() * this.sideX + maxLength,
-      this.getY() * this.sideY - 30,
-      5, 10
-    )
-    this.ctx.fillStyle = 'blue';
-    this.ctx.fillRect(
-      this.getX() * this.sideX,
-      this.getY() * this.sideY - 40,
-      this.parametriFantasy.mana, 10
-    )
-    this.ctx.fillStyle = 'white';
-    this.ctx.fillRect(
-      this.getX() * this.sideX + this.maxMana,
-      this.getY() * this.sideY - 40,
-      5, 10
-    )
-    this.setTexts();
+    //salute
+    this.setBarra('red', maxLength * this.parametriFantasy.salute / this.maxSalute, 30, 10);
+    this.setFineCorsa(maxLength, 30);
+    //mana
+    this.setBarra('blue', this.parametriFantasy.mana, 40, 10);
+    this.setFineCorsa(this.parametriFantasy.maxMana, 40);
+    //scudo
     if (this.scudoCounter.isActive()) {
       this.setBarra('orangered', this.scudoCounter.counter / 3, 10, 10)
       this.scudoIcon.src = 'assets/images/scudo.png';
@@ -195,7 +182,7 @@ export abstract class Charter extends Square implements Visione, CharterParam {
         this.sideX / 3,
         this.sideY / 3);
     }
-
+    //pozione
     if (this.pozioneCounter.isActive()) {
       this.setBarra('green', this.pozioneCounter.counter / 3, 20, 10)
       this.pozioneIcon.src = 'assets/images/pozioneverde.png';
@@ -209,12 +196,21 @@ export abstract class Charter extends Square implements Visione, CharterParam {
         this.sideX / 3,
         this.sideY / 3);
     }
+    this.setTexts();
+  }
+
+  private setFineCorsa(max: number, heigt: number) {
+    this.ctx.fillStyle = 'white';
+    this.ctx.fillRect(
+      this.getX() * this.sideX + max,
+      this.getY() * this.sideY - heigt,
+      5, 10
+    );
   }
 
   private setTexts() {
     this.ctx.fillStyle = this.getColor();
     this.ctx.strokeStyle = 'black';
-
     this.ctx.font = '18px Impact';
     this.ctx.strokeText(
       this.classe + ' - ' + this.name + ' - Level ' + this.parametriFantasy.livello + ' - $ ' + this.parametriFantasy.money + '     ' + this.parametriFantasy.salute + '     ' + this.maxSalute,
@@ -249,7 +245,6 @@ export abstract class Charter extends Square implements Visione, CharterParam {
 
   attaccare(charter: Charter) {
     if (!this.isVelenoApplicato || this.counterAnimation * 3 == 9) {
-
       this.exp++;
       this.stato = 'attaccando';
       this.isOnAttack = true;
@@ -276,9 +271,6 @@ export abstract class Charter extends Square implements Visione, CharterParam {
           }
         }
         console.log('** FINE ATTACCO ' + this.classe + ' ' + this.name)
-        this.counterOfCounterAnimation = 0;
-      } else {
-        this.counterOfCounterAnimation++;
       }
     }
   }
@@ -323,11 +315,15 @@ export abstract class Charter extends Square implements Visione, CharterParam {
       this.parametriFantasy.salute -= dannoFisicoEffettivo + dannoMagicoEffettivo;
       this.sintesiDati.danniFisiciRicevuti += dannoFisicoEffettivo;
       this.sintesiDati.danniMagiciRicevuti += dannoMagicoEffettivo;
+      this.ultimiDanni = dannoFisicoEffettivo + dannoMagicoEffettivo;
+      if (!this.visualizzaDannoCounter.isActive()) {
+        this.visualizzaDannoCounter.attiva();
+      }
 
-      this.ctx.font = '30px Impact';
-      this.ctx.fillText((this.sintesiDati.danniFisiciRicevuti + this.sintesiDati.danniMagiciRicevuti) + '', this.getX() * this.sideX, this.getY() + this.sideY, 300);
       console.log('******** danni magici ricevuti ' + dannoMagicoEffettivo);
       console.log('******** danni fisici ricevuti ' + dannoFisicoEffettivo);
+      console.log('******** danni totali ricevuti ' + (dannoFisicoEffettivo + dannoMagicoEffettivo));
+
     }
     console.log('**** FINE DIFESA ' + this.classe + ' ' + this.name)
     if (this.parametriFantasy.salute <= 0) {
@@ -475,9 +471,13 @@ export abstract class Charter extends Square implements Visione, CharterParam {
     if (this.situazione.fiery.value && this.situazione.fiery.totTurni > 0) {
       this.situazione.fiery.totTurni--;
       this.ctx.fillStyle = 'red';
-      this.ctx.fillRect(this.getX() * this.sideX - 20, this.getY() * this.sideY + 40, 30, 30);
       this.ctx.font = "20px Impact";
       this.ctx.fillText('ON FIRE !!!', this.getX() * this.sideX - 70, this.getY() * this.sideY, 300)
+      if (!this.fiammeImage.src) {
+        this.fiammeImage.src = 'assets/images/FUOCO.png';
+      }
+
+      this.ctx.drawImage(this.fiammeImage, this.fiammeImage.width / 4 * this.counterAnimation, 0, this.fiammeImage.width / 4, this.fiammeImage.height / 2, this.getX() * this.sideX - 30, this.getY() * this.sideY, 70, 90)
       if (this.counterAnimation == 3) {
         console.log(this.name + ' riceve danni da ' + this.situazione.fiery.conditionType + ' : ' + this.situazione.fiery.quantita);
         this.parametriFantasy.salute -= this.situazione.fiery.quantita;
@@ -486,9 +486,13 @@ export abstract class Charter extends Square implements Visione, CharterParam {
     if (this.situazione.poisoned.value && this.situazione.poisoned.totTurni > 0) {
       this.situazione.poisoned.totTurni--;
       this.ctx.fillStyle = 'green';
-      this.ctx.fillRect(this.getX() * this.sideX - 20, this.getY() * this.sideY + 60, 30, 30);
       this.ctx.font = "20px Impact";
       this.ctx.fillText('POISONED', this.getX() * this.sideX - 70, this.getY() * this.sideY + 60, 300)
+      this.ctx.drawImage(this.velenoImage, this.velenoImage.width / 4 * this.counterAnimation, 0, this.velenoImage.width / 4, this.velenoImage.height / 2, this.getX() * this.sideX , this.getY() * this.sideY- 30, 70, 90)
+
+      if (!this.velenoImage.src) {
+        this.velenoImage.src = 'assets/images/avvelenamento.png';
+      }
       if (this.counterAnimation == 3) {
         console.log(this.name + ' riceve danni da ' + this.situazione.poisoned.conditionType + ' : ' + this.situazione.poisoned.quantita);
         this.parametriFantasy.salute -= this.situazione.poisoned.quantita;

@@ -2,8 +2,6 @@ import { Charter } from '../abstract/charter';
 import { classe } from '../utils/costants.enum';
 
 export class Samurai extends Charter {
-  override maxMana = 40;
-  //override counterManaTreshold = 25;
   override name = 'SAMURAI default name';
   override classe: classe = 'SAMURAI';
   override genereSprite = 1;
@@ -22,8 +20,8 @@ export class Samurai extends Charter {
     this.parametriFantasy.resistenzaFisica = 7;
     this.parametriFantasy.resistenzaMagica = 8;
     this.genereSprite = 1;
+    this.parametriFantasy.maxMana = 50;
     this.aggiornaCaratteristiche();
-    this.manaCounter.attiva();
   }
 
   override aggiornaCaratteristiche() {
@@ -40,7 +38,7 @@ export class Samurai extends Charter {
     charter.updateSituazioneConditions(
       {
         conditionType: 'FIRE',
-        quantita: 69 * this.parametriFantasy.livello,
+        quantita: 7 * this.parametriFantasy.livello,
         totTurni: 190 + this.parametriFantasy.livello,
         value: true
       }

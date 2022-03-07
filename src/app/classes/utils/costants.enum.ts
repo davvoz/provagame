@@ -54,6 +54,7 @@ export interface ParametriFanatsy {
     resistenzaMagica: number;
     resistenzaFisica: number;
     mana: number;
+    maxMana:number;
     numeriFortunati: number[];
     livello: number;
     money: number
@@ -66,7 +67,6 @@ export interface SintesiDati {
     danniMagiciRicevuti: number;
     danniFisiciRicevuti: number;
     dannoCritico: number;
-    counterForCritico: number;
     danniCriticiInflitti: number;
     danniCriticiRicevuti: number;
     numeroSchivate: number;

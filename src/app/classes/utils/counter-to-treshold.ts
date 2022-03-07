@@ -23,7 +23,6 @@ export class CounterToTrashold {
             this.counterEnd = true;
             this.isCountingActive = false;
         }
-
     }
     
     private reverseCounting() {
