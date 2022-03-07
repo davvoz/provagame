@@ -37,9 +37,9 @@ export class Guerriero extends Charter {
     console.log(this.name + ' lancia abilità a ' + charter.name);
     charter.updateSituazioneConditions(
       {
-        conditionType: 'FIRE',
+        conditionType: 'STUN',
         quantita: 6 * this.parametriFantasy.livello,
-        totTurni: 150 + this.parametriFantasy.livello,
+        totTurni: 450 + this.parametriFantasy.livello,
         value: true
       }
     )

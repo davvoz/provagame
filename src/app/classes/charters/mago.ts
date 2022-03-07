@@ -38,9 +38,9 @@ export class Mago extends Charter {
     console.log(this.name + ' lancia abilità a ' + charter.name);
     charter.updateSituazioneConditions(
       {
-        conditionType: 'VENO',
+        conditionType: 'STUN',
         quantita: 2 * this.parametriFantasy.livello,
-        totTurni: 730 + this.parametriFantasy.livello,
+        totTurni: 130 + this.parametriFantasy.livello,
         value: true
       }
     )

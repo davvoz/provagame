@@ -63,9 +63,9 @@ export class Proiettile extends Square {
         break;
       case 'SAMURAI': charter.updateSituazioneConditions(
         {
-          conditionType: 'VENO',
+          conditionType: 'STUN',
           quantita: 60,
-          totTurni: 350,
+          totTurni: 750,
           value: true
         }
       )

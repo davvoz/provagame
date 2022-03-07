@@ -1,4 +1,4 @@
-import { CharterParam, classe, Condition, Conditions, ParametriFanatsy, SintesiDati, stato, Visione } from '../utils/costants.enum';
+import { CharterParam, classe, Condition, Conditions, ParametriFanatsy, SintesiDati, stato } from '../utils/costants.enum';
 import { Pozione } from '../elements/pozione';
 import { Square } from '../elements/square';
 import { GeneralSprite } from '../elements/general-sprite';
@@ -82,7 +82,8 @@ export abstract class Charter extends Square implements CharterParam {
   counterForCritico: number = 0;
   fiammeImage = new Image();
   velenoImage = new Image();
-
+  stunnoImage = new Image();
+  isPlayer = false;
   private maxSalute = 1000 * this.parametriFantasy.livello;
   private ultimiDanni = 0;
   aggiornaCaratteristiche() { console.error('aggiornaCaratteristiche') }
@@ -113,7 +114,6 @@ export abstract class Charter extends Square implements CharterParam {
           break;
       }
     }
-
   }
 
   lanciaAbilita(charter: Charter): void { console.error('abilita abstrtact') }
@@ -132,6 +132,7 @@ export abstract class Charter extends Square implements CharterParam {
       this.incrementaLivello();
     }
     if (!this.isMorto) {
+
       this.setSprite();
       this.drawBarre();
       if (this.visualizzaDannoCounter.isActive()) {
@@ -140,9 +141,7 @@ export abstract class Charter extends Square implements CharterParam {
         this.ctx.font = (this.ultimiDanni / 100 + 52) + 'px Impact';
         this.ctx.strokeText(this.ultimiDanni + '', this.getX() * this.sideX - 30, this.getY() * this.sideY + this.sideY + 30, 300);
         this.ctx.fillText(this.ultimiDanni + '', this.getX() * this.sideX - 30, this.getY() * this.sideY + this.sideY + 30, 300);
-
       }
-
     }
 
     this.updateTimers();
@@ -152,9 +151,8 @@ export abstract class Charter extends Square implements CharterParam {
     this.scudoCounter.counting();
     this.pozioneCounter.counting();
     this.visualizzaDannoCounter.counting();
-
     if (this.counterAnimation == 3) {//rallento assunzione mana
-      if (this.parametriFantasy.maxMana < this.parametriFantasy.mana) {
+      if (this.parametriFantasy.maxMana > this.parametriFantasy.mana) {
         this.parametriFantasy.mana++;
       }
     }
@@ -249,7 +247,6 @@ export abstract class Charter extends Square implements CharterParam {
       this.stato = 'attaccando';
       this.isOnAttack = true;
       if (this.counterAnimation == 3) {
-        this.parametriFantasy.mana++;
         this.sintesiDati.numeroAttacchi++;
         console.log('** ATTACCA ' + this.classe + ' ' + this.name)
         if (!this.isMorto) {
@@ -266,7 +263,7 @@ export abstract class Charter extends Square implements CharterParam {
           charter.difendere((this.parametriFantasy.intelligenza + critico) * this.parametriFantasy.livello, (this.parametriFantasy.forza + critico) * this.parametriFantasy.livello, isCritico);
           this.counterForCritico === this.counterForCriticoTreshold ? this.counterForCritico = 0 : this.counterForCritico++;
           this.ctx.strokeStyle = 'red';
-          if (charter.isMorto) {
+          if (charter.isMorto && !charter.isPlayer) {
             this.rubaSoldiA(charter);
           }
         }
@@ -467,126 +464,149 @@ export abstract class Charter extends Square implements CharterParam {
   }
 
   setSprite() {
-    let riga = 0;
+    this.setCharterSprite();
+    //situazione fire
     if (this.situazione.fiery.value && this.situazione.fiery.totTurni > 0) {
       this.situazione.fiery.totTurni--;
       this.ctx.fillStyle = 'red';
       this.ctx.font = "20px Impact";
-      this.ctx.fillText('ON FIRE !!!', this.getX() * this.sideX - 70, this.getY() * this.sideY, 300)
+      this.ctx.fillText('ON FIRE !!!', this.getX() * this.sideX - 50, this.getY() * this.sideY, 300)
       if (!this.fiammeImage.src) {
         this.fiammeImage.src = 'assets/images/FUOCO.png';
       }
 
       this.ctx.drawImage(this.fiammeImage, this.fiammeImage.width / 4 * this.counterAnimation, 0, this.fiammeImage.width / 4, this.fiammeImage.height / 2, this.getX() * this.sideX - 30, this.getY() * this.sideY, 70, 90)
-      if (this.counterAnimation == 3) {
-        console.log(this.name + ' riceve danni da ' + this.situazione.fiery.conditionType + ' : ' + this.situazione.fiery.quantita);
-        this.parametriFantasy.salute -= this.situazione.fiery.quantita;
-      }
+      console.log(this.name + ' riceve danni da ' + this.situazione.fiery.conditionType + ' : ' + this.situazione.fiery.quantita);
+      this.parametriFantasy.salute -= this.situazione.fiery.quantita;
+
     }
+    //situazione poison
     if (this.situazione.poisoned.value && this.situazione.poisoned.totTurni > 0) {
       this.situazione.poisoned.totTurni--;
       this.ctx.fillStyle = 'green';
       this.ctx.font = "20px Impact";
       this.ctx.fillText('POISONED', this.getX() * this.sideX - 70, this.getY() * this.sideY + 60, 300)
-      this.ctx.drawImage(this.velenoImage, this.velenoImage.width / 4 * this.counterAnimation, 0, this.velenoImage.width / 4, this.velenoImage.height / 2, this.getX() * this.sideX , this.getY() * this.sideY- 30, 70, 90)
+      this.ctx.drawImage(this.velenoImage, this.velenoImage.width / 4 * this.counterAnimation, 0, this.velenoImage.width / 4, this.velenoImage.height / 2, this.getX() * this.sideX, this.getY() * this.sideY - 30, 70, 90)
 
       if (!this.velenoImage.src) {
         this.velenoImage.src = 'assets/images/avvelenamento.png';
       }
-      if (this.counterAnimation == 3) {
-        console.log(this.name + ' riceve danni da ' + this.situazione.poisoned.conditionType + ' : ' + this.situazione.poisoned.quantita);
-        this.parametriFantasy.salute -= this.situazione.poisoned.quantita;
-      }
+      console.log(this.name + ' riceve danni da ' + this.situazione.poisoned.conditionType + ' : ' + this.situazione.poisoned.quantita);
+      this.parametriFantasy.salute -= this.situazione.poisoned.quantita;
       if (!this.isVelenoApplicato) {
         this.isVelenoApplicato = true;
       }
     } else {
       this.isVelenoApplicato = false;
     }
-    let colonna;
+    //situazione stun
+    if (this.situazione.stunned.value && this.situazione.stunned.totTurni > 0) {
+      console.log(this.name + ' riceve danni da ' + this.situazione.stunned.conditionType + ' : ' + this.situazione.stunned.quantita);
+      if (!this.stunnoImage.src) {
+        this.stunnoImage.src = 'assets/images/star.png';
+      }
+      this.ctx.fillStyle = 'gold';
+      this.ctx.font = "20px Impact";
+      this.ctx.fillText('STUNNED', this.getX() * this.sideX - 30, this.getY() * this.sideY + 60, 300);
+      this.ctx.drawImage(this.stunnoImage, this.stunnoImage.width / 4 * this.counterAnimation, 0, this.stunnoImage.width / 4, this.stunnoImage.height, this.getX() * this.sideX, this.getY() * this.sideY - 30, 70, 90)
+      this.parametriFantasy.salute -= this.situazione.stunned.quantita;
+      this.situazione.stunned.totTurni--;
+    }
+  }
+
+
+  private setCharterSprite() {
+    let colonna = 0;
+    let riga = 0;
     switch (this.stato) {
 
       case 'camminando':
         switch (this.getDirection()) {
-          case 'TOP': riga = this.spriteSheetImage.height / 4 * 3;//riga 4
+          case 'TOP': riga = this.spriteSheetImage.height / 4 * 3; //riga 4
             break;
-          case 'BOTTOM': riga = 0;//riga 1
+          case 'BOTTOM': riga = 0; //riga 1
             break;
-          case 'LEFT': ;//riga 2
+          case 'LEFT': ; //riga 2
+
             //se = 0 then SX = 1; se = 1 SX = 2 
             if (this.genereSprite === 0) {
-              riga = this.spriteSheetImage.height / 4 * 2
+              riga = this.spriteSheetImage.height / 4 * 2;
 
             } else {
-              riga = this.spriteSheetImage.height / 4
+              riga = this.spriteSheetImage.height / 4;
             }
             break;
-          case 'RIGHT': ;//riga 3
+          case 'RIGHT': ; //riga 3
+
             //se = 0  dx = 2 ; se = 1 DX = 1
             if (this.genereSprite === 0) {
-              riga = this.spriteSheetImage.height / 4
+              riga = this.spriteSheetImage.height / 4;
             } else {
-              riga = this.spriteSheetImage.height / 4 * 2
+              riga = this.spriteSheetImage.height / 4 * 2;
             }
             break;
         }
         colonna = this.spriteSheetImage.width / 4 * this.counterAnimation;
-        this.ctx.drawImage(this.spriteSheetImage, colonna, riga, this.spriteSheetImage.width / 4, this.spriteSheetImage.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90)
+        this.ctx.drawImage(this.spriteSheetImage, colonna, riga, this.spriteSheetImage.width / 4, this.spriteSheetImage.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90);
         break;
       case 'attaccando':
         switch (this.getDirection()) {
-          case 'TOP': riga = this.spriteSheetImageAttack.height / 4 * 3;//riga 4
+          case 'TOP': riga = this.spriteSheetImageAttack.height / 4 * 3; //riga 4
             break;
-          case 'BOTTOM': riga = 0;//riga 1
+          case 'BOTTOM': riga = 0; //riga 1
             break;
-          case 'LEFT': ;//riga 2
+          case 'LEFT': ; //riga 2
+
             //se = 0 then SX = 1; se = 1 SX = 2 
             if (this.genereSprite === 0) {
-              riga = this.spriteSheetImageAttack.height / 4 * 2
+              riga = this.spriteSheetImageAttack.height / 4 * 2;
 
             } else {
-              riga = this.spriteSheetImageAttack.height / 4
+              riga = this.spriteSheetImageAttack.height / 4;
             }
             break;
-          case 'RIGHT': ;//riga 3
+          case 'RIGHT': ; //riga 3
+
             //se = 0  dx = 2 ; se = 1 DX = 1
             if (this.genereSprite === 0) {
-              riga = this.spriteSheetImageAttack.height / 4
+              riga = this.spriteSheetImageAttack.height / 4;
             } else {
-              riga = this.spriteSheetImageAttack.height / 4 * 2
+              riga = this.spriteSheetImageAttack.height / 4 * 2;
             }
             break;
         }
         colonna = this.spriteSheetImageAttack.width / 4 * this.counterAnimation;
-        this.ctx.drawImage(this.spriteSheetImageAttack, colonna, riga, this.spriteSheetImageAttack.width / 4, this.spriteSheetImageAttack.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90)
+        this.ctx.drawImage(this.spriteSheetImageAttack, colonna, riga, this.spriteSheetImageAttack.width / 4, this.spriteSheetImageAttack.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90);
         break;
 
       case 'difendendo':
         switch (this.getDirection()) {
-          case 'TOP': riga = this.spriteSheetImageAttack.height / 4 * 3;//riga 4
+          case 'TOP': riga = this.spriteSheetImageAttack.height / 4 * 3; //riga 4
             break;
-          case 'BOTTOM': riga = 0;//riga 1
+          case 'BOTTOM': riga = 0; //riga 1
             break;
-          case 'LEFT': ;//riga 2
+          case 'LEFT': ; //riga 2
+
             //se = 0 then SX = 1; se = 1 SX = 2 
             if (this.genereSprite === 0) {
-              riga = this.spriteSheetImageAttack.height / 4 * 2
+              riga = this.spriteSheetImageAttack.height / 4 * 2;
 
             } else {
-              riga = this.spriteSheetImageAttack.height / 4
+              riga = this.spriteSheetImageAttack.height / 4;
             }
             break;
-          case 'RIGHT': ;//riga 3
+          case 'RIGHT': ; //riga 3
+
             //se = 0  dx = 2 ; se = 1 DX = 1
             if (this.genereSprite === 0) {
-              riga = this.spriteSheetImageAttack.height / 4
+              riga = this.spriteSheetImageAttack.height / 4;
             } else {
-              riga = this.spriteSheetImageAttack.height / 4 * 2
+              riga = this.spriteSheetImageAttack.height / 4 * 2;
             }
             break;
         }
         colonna = this.spriteSheetImageAttack.width / 4 * this.counterAnimation;
-        this.ctx.drawImage(this.spriteSheetImageAttack, colonna, riga, this.spriteSheetImageAttack.width / 4, this.spriteSheetImageAttack.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90)
+        this.ctx.drawImage(this.spriteSheetImageAttack, colonna, riga, this.spriteSheetImageAttack.width / 4, this.spriteSheetImageAttack.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90);
         break;
 
       case 'morendo':
@@ -594,5 +614,4 @@ export abstract class Charter extends Square implements CharterParam {
         break;
     }
   }
-
 }

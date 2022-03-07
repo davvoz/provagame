@@ -25,7 +25,7 @@ export class AppComponent implements AfterViewInit {
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
     if (this.player) {
-      if (!this.player.isMorto) {
+      if (!this.player.isMorto ) {
         if (event.keyCode == KEY_CODE.DOWN_ARROW || event.keyCode == 40) {
           this.player.setVelocita(0.1);
           this.player.setDirection('BOTTOM');
@@ -78,7 +78,7 @@ export class AppComponent implements AfterViewInit {
         }
         if (event.keyCode == 32) {//space lancia qualcosa
           this.player.lanciaOggetto();
-          this.proiettile = new Proiettile(this.ctx, 'white', this.player.getX(), this.player.getY(),this.player.classe);
+          this.proiettile = new Proiettile(this.ctx, 'white', this.player.getX(), this.player.getY(), this.player.classe);
           this.proiettile.setDirection(this.player.getDirection());
           this.proiettile.setVelocita(0.9);
         }
@@ -171,6 +171,7 @@ export class AppComponent implements AfterViewInit {
       if (!this.player.isMorto
         && !this.mondi[this.mondoNumero].enemies[i].isMorto
         && Utilities.rectsColliding(this.mondi[this.mondoNumero].enemies[i], this.player)) {
+        //il + agile attacca per primo
         if (this.player.parametriFantasy.agilita >= this.mondi[this.mondoNumero].enemies[i].parametriFantasy.agilita) {
           Utilities.algoAttack(this.player, this.mondi[this.mondoNumero].enemies[i]);
           Utilities.algoAttack(this.mondi[this.mondoNumero].enemies[i], this.player);
@@ -200,7 +201,14 @@ export class AppComponent implements AfterViewInit {
           }
         }
         if (!this.mondi[this.mondoNumero].enemies[i].isMorto) {
-          Utilities.charterMovmentRandomRoutine(this.mondi[this.mondoNumero].enemies[i], this.counterRoutine, 20);
+          if(this.mondi[this.mondoNumero].enemies[i].situazione.stunned.totTurni > 0){
+            //se è stunnato lo stando
+            this.mondi[this.mondoNumero].enemies[i].setDirection('STAND');
+            Utilities.directionToMoveSwitch(this.mondi[this.mondoNumero].enemies[i]);
+          }else{
+            Utilities.charterMovmentRandomRoutine(this.mondi[this.mondoNumero].enemies[i], this.counterRoutine, 20);
+
+          }
         }
       }
 
@@ -265,7 +273,7 @@ export class AppComponent implements AfterViewInit {
   update() {
     if (this.player.isOggettoInvolo && !this.giaInvolo) {
       this.giaInvolo = true;
-      this.proiettile = new Proiettile(this.ctx, 'white', this.player.getX(), this.player.getY(),this.player.classe);
+      this.proiettile = new Proiettile(this.ctx, 'white', this.player.getX(), this.player.getY(), this.player.classe);
       this.proiettile.setDirection(this.player.getDirection());
       this.proiettile.setVelocita(0.1);
     }
@@ -299,7 +307,8 @@ export class AppComponent implements AfterViewInit {
       this.mondoNumero++;
       this.mondi[this.mondoNumero].inizialize(this.ctx);
     }
-    Utilities.directionToMoveSwitch(this.player);
+    this.player.situazione.stunned.totTurni > 0 ? this.player.stand() : Utilities.directionToMoveSwitch(this.player);;
+    
     this.mondi[this.mondoNumero].camion.setCamion();
     if (this.player.isMorto) {
       this.isFaseScelta = true;
@@ -334,7 +343,7 @@ export class AppComponent implements AfterViewInit {
     this.gui = new Gui(this.ctx);
     for (let i = 1; i < 50; i++) {
       for (let j = 1; j < 6; j++) {
-        this.mondi.push(new Mondo({ livelloNemici: i*j, numeroNemici: j, velocitaCamion: 0.1, id: i }))
+        this.mondi.push(new Mondo({ livelloNemici: i * j, numeroNemici: j, velocitaCamion: 0.1, id: i }))
       }
     }
     //#region Eventi click canvas
@@ -436,10 +445,11 @@ export class AppComponent implements AfterViewInit {
     this.player.posizioneInfoLabelX = 30;
     this.player.posizioneInfoLabelY = 700;
     this.player.parametriFantasy.numeriFortunati = [0, 1, 2, 3, 4, 5, 6, 7];
-    this.player.dannoCritico = 50;
-    this.player.counterForCriticoTreshold = 10;
+    this.player.dannoCritico = 150;
+    this.player.counterForCriticoTreshold = 6;
     this.player.isMorto = false;
     this.player.parametriFantasy.money = 2000;
+    this.player.isPlayer = true;
     this.player.stand();
     this.mondi[this.mondoNumero].startSchema();
     this.gui.incrementaLivelloButton.terzoText = '$' + (100 * this.player.parametriFantasy.livello);
