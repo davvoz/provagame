@@ -21,10 +21,10 @@ export class Samurai extends Charter {
     this.parametriFantasy.resistenzaMagica = 8;
     this.genereSprite = 1;
     this.parametriFantasy.maxMana = 50;
-    this.aggiornaCaratteristiche();
+    this.updateParametriFantasy();
   }
 
-  override aggiornaCaratteristiche() {
+  override updateParametriFantasy() {
     this.parametriFantasy.forza += Math.floor(Math.random() * 5) * this.parametriFantasy.livello;
     this.parametriFantasy.resistenzaFisica += Math.floor(Math.random() * 3) * this.parametriFantasy.livello;
     this.parametriFantasy.intelligenza += Math.floor(Math.random() * 4) * this.parametriFantasy.livello;
@@ -35,9 +35,9 @@ export class Samurai extends Charter {
 
   override lanciaAbilita(charter: Charter): void {
     console.log(this.name + ' lancia abilità a ' + charter.name);
-    charter.updateSituazioneConditions(
+    charter.updateMalefici(
       {
-        conditionType: 'FIRE',
+        malus: 'FIRE',
         quantita: 7 * this.parametriFantasy.livello,
         totTurni: 190 + this.parametriFantasy.livello,
         value: true

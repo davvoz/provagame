@@ -102,33 +102,31 @@ export class AppComponent implements AfterViewInit {
       }
     }
   }
-  giaInvolo: boolean = false;
-  counterAnimationProiettile: number = 0;
-  mondoNumero: number = 0;
-  aggiungiPozioneAdArray = false;
-  dieCount: number = 0;
-  gui!: Gui;
-  typeOfPersonaggioSCelto !: classe;
   @ViewChild('canvasGui', { static: false })
   canvasGui!: ElementRef<HTMLCanvasElement>;
-  ctx!: CanvasRenderingContext2D;
-  player!: Charter;
+  counterAnimationProiettile= 0;
+  mn= 0;//indice mondi mn = mondo numero
+  dieCount= 0;
   counterRoutine = 0;
   counterAnimation = 0;
-  isCharterColliding = false;
-  bonus: Bonus[] = [];
-  bonusCount = 0;
   isStarted = false;
-  finalStates: FinalState[] = [];
+  aggiungiPozioneAdArray = false;
+  giaInvolo = false;//oggetto gia in volo
   isfinalStatesInc = false;
   isTesoroRaccolto = false;
   isScudoRaccolto = false;
   isFaseScelta = true;
   isPause = false;
-  mondi: Mondo[] = [];
   isFromStart = false;
+  m: Mondo[] = [];
   proiettile!: Proiettile;
   direzioneProiettile: direzione = 'STAND';
+  gui!: Gui;
+  ctx!: CanvasRenderingContext2D;
+  player!: Charter;
+  bonus: Bonus[] = [];
+  bonusCount = 0;
+  finalStates: FinalState[] = [];//sintesi finale matches
   constructor(private ngZone: NgZone) { }
 
   animate(): void {
@@ -138,13 +136,13 @@ export class AppComponent implements AfterViewInit {
 
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     if (!this.isFaseScelta) {
-      if (this.mondi.length > this.mondoNumero) {
-        this.mondi[this.mondoNumero].aggiorna();
+      if (this.m.length > this.mn) {
+        this.m[this.mn].aggiorna();
         this.collisionDetenction();
         this.update();
       }
     }
-    this.gui.aggiornaGui(this.mondoNumero, this.player, this.counterAnimation, this.isFaseScelta);
+    this.gui.aggiornaGui(this.mn, this.player, this.counterAnimation, this.isFaseScelta);
     //velocità animazione ogni n frame
     if (this.counterRoutine % 8 == 0) {
       //step animazione 
@@ -166,60 +164,60 @@ export class AppComponent implements AfterViewInit {
   collisionDetenction() {
     this.dieCount = 0;
     //rilevo collisione player vs enemies[]
-    for (let i = 0; i < this.mondi[this.mondoNumero].enemies.length; i++) {
-      this.mondi[this.mondoNumero].enemies[i].counterAnimation = this.counterAnimation;
+    for (let i = 0; i < this.m[this.mn].enemies.length; i++) {
+      this.m[this.mn].enemies[i].counterAnimation = this.counterAnimation;
       if (!this.player.isMorto
-        && !this.mondi[this.mondoNumero].enemies[i].isMorto
-        && Utilities.rectsColliding(this.mondi[this.mondoNumero].enemies[i], this.player)) {
+        && !this.m[this.mn].enemies[i].isMorto
+        && Utilities.rectsColliding(this.m[this.mn].enemies[i], this.player)) {
         //il + agile attacca per primo
-        if (this.player.parametriFantasy.agilita >= this.mondi[this.mondoNumero].enemies[i].parametriFantasy.agilita) {
-          Utilities.algoAttack(this.player, this.mondi[this.mondoNumero].enemies[i]);
-          Utilities.algoAttack(this.mondi[this.mondoNumero].enemies[i], this.player);
+        if (this.player.parametriFantasy.agilita >= this.m[this.mn].enemies[i].parametriFantasy.agilita) {
+          Utilities.algoAttack(this.player, this.m[this.mn].enemies[i]);
+          Utilities.algoAttack(this.m[this.mn].enemies[i], this.player);
         } else {
-          Utilities.algoAttack(this.mondi[this.mondoNumero].enemies[i], this.player);
-          Utilities.algoAttack(this.player, this.mondi[this.mondoNumero].enemies[i]);
+          Utilities.algoAttack(this.m[this.mn].enemies[i], this.player);
+          Utilities.algoAttack(this.player, this.m[this.mn].enemies[i]);
         }
         this.player.isOnAttack = true;
-        this.mondi[this.mondoNumero].enemies[i].isOnAttack = true;
-        this.mondi[this.mondoNumero].enemies[i].stand();
+        this.m[this.mn].enemies[i].isOnAttack = true;
+        this.m[this.mn].enemies[i].stand();
       } else {
         this.player.isOnAttack = false;
         this.player.stato = 'camminando';
-        this.mondi[this.mondoNumero].enemies[i].isOnAttack = false;
-        this.mondi[this.mondoNumero].enemies[i].stato = 'camminando';
+        this.m[this.mn].enemies[i].isOnAttack = false;
+        this.m[this.mn].enemies[i].stato = 'camminando';
 
         //se è rimasto vivo controllo se si contra con il proiettile
-        if (this.proiettile && Utilities.rectsColliding(this.mondi[this.mondoNumero].enemies[i], this.proiettile)) {
-          this.mondi[this.mondoNumero].enemies[i].incrementaSalute(-100 * this.player.parametriFantasy.livello);
+        if (this.proiettile && Utilities.rectsColliding(this.m[this.mn].enemies[i], this.proiettile)) {
+          this.m[this.mn].enemies[i].incrementaSalute(-100 * this.player.parametriFantasy.livello);
           this.ctx.strokeStyle = 'red';
-          this.ctx.strokeRect(this.mondi[this.mondoNumero].enemies[i].getX() + 10, this.mondi[this.mondoNumero].enemies[i].getY() + 10, 30, 30);
-          this.proiettile.lanciaAbilita(this.mondi[this.mondoNumero].enemies[i]);
+          this.ctx.strokeRect(this.m[this.mn].enemies[i].getX() + 10, this.m[this.mn].enemies[i].getY() + 10, 30, 30);
+          this.proiettile.lanciaAbilita(this.m[this.mn].enemies[i]);
           //se muore mgli rubo i soldi
-          if (this.mondi[this.mondoNumero].enemies[i].isMorto && this.mondi[this.mondoNumero].enemies[i].parametriFantasy.money > 0) {
-            this.player.rubaSoldiA(this.mondi[this.mondoNumero].enemies[i]);
-            this.player.exp = this.player.exp + this.player.parametriFantasy.livello * this.mondi[this.mondoNumero].enemies[i].parametriFantasy.livello * 100;
+          if (this.m[this.mn].enemies[i].isMorto && this.m[this.mn].enemies[i].parametriFantasy.money > 0) {
+            this.player.rubaSoldiA(this.m[this.mn].enemies[i]);
+            this.player.exp = this.player.exp + this.player.parametriFantasy.livello * this.m[this.mn].enemies[i].parametriFantasy.livello * 100;
           }
         }
-        if (!this.mondi[this.mondoNumero].enemies[i].isMorto) {
-          if(this.mondi[this.mondoNumero].enemies[i].situazione.stunned.totTurni > 0){
+        if (!this.m[this.mn].enemies[i].isMorto) {
+          if(this.m[this.mn].enemies[i].malefici.stunned.totTurni > 0){
             //se è stunnato lo stando
-            this.mondi[this.mondoNumero].enemies[i].setDirection('STAND');
-            Utilities.directionToMoveSwitch(this.mondi[this.mondoNumero].enemies[i]);
+            this.m[this.mn].enemies[i].setDirection('STAND');
+            Utilities.directionToMoveSwitch(this.m[this.mn].enemies[i]);
           }else{
-            Utilities.charterMovmentRandomRoutine(this.mondi[this.mondoNumero].enemies[i], this.counterRoutine, 20);
+            Utilities.charterMovmentRandomRoutine(this.m[this.mn].enemies[i], this.counterRoutine, 20);
 
           }
         }
       }
 
-      if (this.mondi[this.mondoNumero].enemies[i].isMorto) {
+      if (this.m[this.mn].enemies[i].isMorto) {
         this.dieCount++;
       }
     }
 
     //rilevo collisione player vs camion
-    if (Utilities.rectsColliding(this.player, this.mondi[this.mondoNumero].camion)) {
-      this.player.incrementaSalute(-(500 * this.mondoNumero));
+    if (Utilities.rectsColliding(this.player, this.m[this.mn].camion)) {
+      this.player.incrementaSalute(-(500 * this.mn));
       if (this.player.getSalute() <= 0) {
         this.player.isMorto = true;
       }
@@ -239,13 +237,13 @@ export class AppComponent implements AfterViewInit {
     }
 
     //rilevo collisione player vs pozione
-    if (Utilities.rectsColliding(this.player, this.mondi[this.mondoNumero].pozione)) {
-      this.player.pozioni.push(this.mondi[this.mondoNumero].pozione);
+    if (Utilities.rectsColliding(this.player, this.m[this.mn].pozione)) {
+      this.player.pozioni.push(this.m[this.mn].pozione);
       for (let i = 0; i < this.gui.pozioniBottoni.length; i++) {
         if (!this.gui.pozioniBottoni[i].isCasellaPiena && !this.aggiungiPozioneAdArray) {
           this.gui.pozioniBottoni[i].riempiCasella();
           this.aggiungiPozioneAdArray = true;
-          Utilities.setRandomXY(this.mondi[this.mondoNumero].pozione);
+          Utilities.setRandomXY(this.m[this.mn].pozione);
           break;
         }
       }
@@ -253,20 +251,20 @@ export class AppComponent implements AfterViewInit {
       this.aggiungiPozioneAdArray = false;
     }
     //rilevo collisione player vs tesoro
-    if ((!this.isTesoroRaccolto && Utilities.rectsColliding(this.player, this.mondi[this.mondoNumero].tesoro)) && //
-      ((this.mondoNumero % 3 == 0 && (this.mondoNumero % 3 == 0 || this.isTesoroRaccolto == false)))) {
-      this.player.parametriFantasy.money += this.mondi[this.mondoNumero].tesoro.money;
-      Utilities.setRandomXY(this.mondi[this.mondoNumero].tesoro);
+    if ((!this.isTesoroRaccolto && Utilities.rectsColliding(this.player, this.m[this.mn].tesoro)) && //
+      ((this.mn % 3 == 0 && (this.mn % 3 == 0 || this.isTesoroRaccolto == false)))) {
+      this.player.parametriFantasy.money += this.m[this.mn].tesoro.money;
+      Utilities.setRandomXY(this.m[this.mn].tesoro);
       this.isTesoroRaccolto = true;
     }
-    if (this.mondoNumero % 3 != 0) {
+    if (this.mn % 3 != 0) {
       this.isTesoroRaccolto = false;
     }
     //rilevo collisione player vs scudo
-    if (!this.isScudoRaccolto && Utilities.rectsColliding(this.player, this.mondi[this.mondoNumero].scudoBonus)) {
+    if (!this.isScudoRaccolto && Utilities.rectsColliding(this.player, this.m[this.mn].scudoBonus)) {
       this.gui.scudoButton.riempiScudo();
       this.isScudoRaccolto = true;
-      Utilities.setRandomXY(this.mondi[this.mondoNumero].scudoBonus);
+      Utilities.setRandomXY(this.m[this.mn].scudoBonus);
     }
   }
 
@@ -289,27 +287,27 @@ export class AppComponent implements AfterViewInit {
     }
 
     if (!this.isScudoRaccolto) {
-      this.mondi[this.mondoNumero].scudoBonus.stand();
+      this.m[this.mn].scudoBonus.stand();
     }
     if (this.isScudoRaccolto && !this.gui.scudoButton.getIsScudoPresente()) {
       this.isScudoRaccolto = false;
-      this.mondi[this.mondoNumero].scudoBonus.stand();
+      this.m[this.mn].scudoBonus.stand();
     }
-    if (this.mondoNumero % 3 == 0 && (this.mondoNumero % 3 == 0 || this.isTesoroRaccolto == false)) {
-      !this.isTesoroRaccolto ? this.mondi[this.mondoNumero].tesoro.stand() : null;
+    if (this.mn % 3 == 0 && (this.mn % 3 == 0 || this.isTesoroRaccolto == false)) {
+      !this.isTesoroRaccolto ? this.m[this.mn].tesoro.stand() : null;
     }
     this.ctx.fillStyle = 'black';
-    if (this.dieCount != 0 && this.dieCount == this.mondi[this.mondoNumero].enemies.length && !this.player.isMorto) {
+    if (this.dieCount != 0 && this.dieCount == this.m[this.mn].enemies.length && !this.player.isMorto) {
       this.dieCount = 0;
       this.gui.incrementaLivelloButton.terzoText = '$' + (100 * this.player.parametriFantasy.livello);
       this.bonus = [];
-      this.bonus = Utilities.createBonusArray(this.mondoNumero, this.ctx);
-      this.mondoNumero++;
-      this.mondi[this.mondoNumero].inizialize(this.ctx);
+      this.bonus = Utilities.createBonusArray(this.mn, this.ctx);
+      this.mn++;
+      this.m[this.mn].inizialize(this.ctx);
     }
-    this.player.situazione.stunned.totTurni > 0 ? this.player.stand() : Utilities.directionToMoveSwitch(this.player);;
+    this.player.malefici.stunned.totTurni > 0 ? this.player.stand() : Utilities.directionToMoveSwitch(this.player);;
     
-    this.mondi[this.mondoNumero].camion.setCamion();
+    this.m[this.mn].camion.setCamion();
     if (this.player.isMorto) {
       this.isFaseScelta = true;
       this.gui.isRestartTouched = false;
@@ -319,7 +317,7 @@ export class AppComponent implements AfterViewInit {
         this.finalStates.push(
           {
             livelloPersonaggio: this.player.parametriFantasy.livello,
-            livelloSchema: this.mondoNumero,
+            livelloSchema: this.mn,
             money: this.player.parametriFantasy.money,
             classe: this.player.classe,
             numeroSchivate: this.player.sintesiDati.numeroSchivate,
@@ -329,7 +327,7 @@ export class AppComponent implements AfterViewInit {
         );
         this.isfinalStatesInc = true;
       }
-      this.mondoNumero = 0;
+      this.mn = 0;
     }
     this.player.counterAnimation = this.counterAnimation;
   }
@@ -343,7 +341,7 @@ export class AppComponent implements AfterViewInit {
     this.gui = new Gui(this.ctx);
     for (let i = 1; i < 50; i++) {
       for (let j = 1; j < 6; j++) {
-        this.mondi.push(new Mondo({ livelloNemici: i * j, numeroNemici: j, velocitaCamion: 0.1, id: i }))
+        this.m.push(new Mondo({ livelloNemici: i * j, numeroNemici: j, velocitaCamion: 0.1, id: i }))
       }
     }
     //#region Eventi click canvas
@@ -377,10 +375,10 @@ export class AppComponent implements AfterViewInit {
               this.isFaseScelta = true;
               this.gui.isRestartTouched = true;
               this.gui.classeCharterScelto = 'ABSTRACT';
-              this.mondoNumero = 1;
+              this.mn = 1;
               this.player.parametriFantasy.money = 0;
               this.isStarted = false;
-              this.mondi[this.mondoNumero].enemies
+              this.m[this.mn].enemies
             }
           }
         }
@@ -436,8 +434,8 @@ export class AppComponent implements AfterViewInit {
     this.gui.isRestartTouched = false;
     this.gui.counterAnimationDieText = 0;
     this.isScudoRaccolto = false;
-    this.mondoNumero = 1;
-    this.mondi[this.mondoNumero].inizialize(this.ctx);
+    this.mn = 1;
+    this.m[this.mn].inizialize(this.ctx);
     this.player.setX(2);
     this.player.setY(2);
     this.player.setVelocita(0.9);
@@ -451,7 +449,7 @@ export class AppComponent implements AfterViewInit {
     this.player.parametriFantasy.money = 2000;
     this.player.isPlayer = true;
     this.player.stand();
-    this.mondi[this.mondoNumero].startSchema();
+    this.m[this.mn].startSchema();
     this.gui.incrementaLivelloButton.terzoText = '$' + (100 * this.player.parametriFantasy.livello);
     this.isfinalStatesInc = false;
 

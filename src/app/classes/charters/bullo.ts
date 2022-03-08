@@ -2,7 +2,6 @@ import { Charter } from '../abstract/charter';
 import { classe } from '../utils/costants.enum';
 
 export class Bullo extends Charter {
- // override counterManaTreshold = 20;
   override name = 'Bull default name';
   override classe: classe = 'BULLO';
   override spriteSheetCharterPath = 'assets/images/edwardAtk.png';
@@ -21,10 +20,10 @@ export class Bullo extends Charter {
     this.parametriFantasy.resistenzaMagica = 8;
     this.parametriFantasy.maxMana = 50;
     this.genereSprite = 1;
-    this.aggiornaCaratteristiche();
+    this.updateParametriFantasy();
   }
 
-  override aggiornaCaratteristiche() {
+  override updateParametriFantasy() {
     this.parametriFantasy.forza += Math.floor(Math.random() * 2) * this.parametriFantasy.livello;
     this.parametriFantasy.resistenzaFisica += Math.floor(Math.random() * 5) * this.parametriFantasy.livello;
     this.parametriFantasy.intelligenza += Math.floor(Math.random() * 5) * this.parametriFantasy.livello;
@@ -35,9 +34,9 @@ export class Bullo extends Charter {
 
   override lanciaAbilita(charter: Charter): void {
     console.log(this.name + ' lancia abilità a ' + charter.name);
-    charter.updateSituazioneConditions(
+    charter.updateMalefici(
       {
-        conditionType: 'VENO',
+        malus: 'VENO',
         quantita: 9 * this.parametriFantasy.livello,
         totTurni: 200 + this.parametriFantasy.livello * 2,
         value: true

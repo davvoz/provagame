@@ -3,17 +3,18 @@ import { GeneralSprite } from "../elements/general-sprite";
 export type classe = 'MAGO' | 'GUERRIERO' | 'ARCERE' | 'SAMURAI' | 'ABSTRACT' | 'BULLO';
 export type tipoBonus = 'salute' | 'forza' | 'intelligenza';
 export type direzione = 'TOP' | 'BOTTOM' | 'RIGHT' | 'LEFT' | 'STAND';
-export type conditionType = 'STUN' | 'VENO' | 'FIRE';
-export interface Condition {
-    conditionType: conditionType;
+export type malus = 'STUN' | 'VENO' | 'FIRE'|'BLOCK';
+export interface MaliciusEffect {
+    malus: malus;
     value: boolean;
     quantita: number;
     totTurni: number
 }
-export interface Conditions {
-    stunned: Condition;
-    poisoned: Condition;
-    fiery: Condition
+export interface Malefici {
+    stunned: MaliciusEffect;
+    poisoned: MaliciusEffect;
+    fiery: MaliciusEffect;
+    blocked:MaliciusEffect;
 }
 export type stato = 'attaccando' | 'difendendo' | 'camminando' | 'morendo';
 export interface FinalState {
@@ -61,7 +62,8 @@ export interface ParametriFanatsy {
 }
 export interface CharterParam {
     parametriFantasy: ParametriFanatsy;
-    sintesiDati: SintesiDati
+    sintesiDati: SintesiDati;
+    malefici:Malefici
 }
 export interface SintesiDati {
     danniMagiciRicevuti: number;

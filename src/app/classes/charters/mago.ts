@@ -2,10 +2,9 @@ import { Charter } from '../abstract/charter';
 import { classe } from '../utils/costants.enum';
 
 export class Mago extends Charter {
-  //override counterManaTreshold = 15;
   override name = 'Mago default name';
   override classe: classe = 'MAGO';
-  override spriteSheetCharterPath = 'assets/images/discotraspoo.png';//src\assets\images\discotraspooAtck.png
+  override spriteSheetCharterPath = 'assets/images/discotraspoo.png';
   override spriteSheetAttackPath = 'assets/images/discotraspooAtck.png';
   override genereSprite: number=0;
   constructor(public override ctx: CanvasRenderingContext2D, color: string, level: number) {
@@ -21,11 +20,11 @@ export class Mago extends Charter {
     this.parametriFantasy.resistenzaFisica = 7;
     this.parametriFantasy.resistenzaMagica = 8;
     this.parametriFantasy.maxMana = 10;
-    this.aggiornaCaratteristiche();
+    this.updateParametriFantasy();
 
   }
 
-  override aggiornaCaratteristiche() {
+  override updateParametriFantasy() {
     this.parametriFantasy.forza += Math.floor(Math.random() * 1) * this.parametriFantasy.livello;
     this.parametriFantasy.resistenzaFisica += Math.floor(Math.random() * 1) * this.parametriFantasy.livello;
     this.parametriFantasy.intelligenza += Math.floor(Math.random() * 5) * this.parametriFantasy.livello;
@@ -36,9 +35,9 @@ export class Mago extends Charter {
   
   override lanciaAbilita(charter: Charter): void {
     console.log(this.name + ' lancia abilità a ' + charter.name);
-    charter.updateSituazioneConditions(
+    charter.updateMalefici(
       {
-        conditionType: 'STUN',
+        malus: 'STUN',
         quantita: 2 * this.parametriFantasy.livello,
         totTurni: 130 + this.parametriFantasy.livello,
         value: true

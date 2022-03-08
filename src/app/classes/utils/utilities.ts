@@ -191,10 +191,10 @@ export class Utilities {
     }
 
     static algoAttack(attaccante: Charter, difensore: Charter) {
-        if (!difensore.scudoCounter.isActive() || (attaccante.situazione.stunned.totTurni == 0 && !difensore.scudoCounter.isActive())) {
+        if (!difensore.scudoCounter.isActive() || (attaccante.malefici.stunned.totTurni == 0 && !difensore.scudoCounter.isActive())) {
             attaccante.attaccare(difensore);
         }
-        if (attaccante.parametriFantasy.mana >= attaccante.parametriFantasy.maxMana && attaccante.situazione.stunned.totTurni == 0) {
+        if (attaccante.parametriFantasy.mana >= attaccante.parametriFantasy.maxMana && attaccante.malefici.stunned.totTurni == 0) {
             attaccante.parametriFantasy.mana = 0;
             attaccante.lanciaAbilita(difensore);
         }

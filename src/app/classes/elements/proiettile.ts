@@ -21,7 +21,7 @@ export class Proiettile extends Square {
         break;
       case 'MAGO': this.spriteSheet = 'assets/images/fireballs2.png';
         break;
-      case 'GUERRIERO': this.spriteSheet = 'assets/images/edwardAtk.png';
+      case 'GUERRIERO': this.spriteSheet = 'assets/images/spidero.png';
         break;
       case 'SAMURAI': this.spriteSheet = 'assets/images/edwardAtk.png';
         break;
@@ -34,45 +34,45 @@ export class Proiettile extends Square {
 
   lanciaAbilita(charter: Charter): void {
     switch (this.classe) {
-      case 'BULLO': charter.updateSituazioneConditions(
+      case 'BULLO': charter.updateMalefici(
         {
-          conditionType: 'FIRE',
+          malus: 'FIRE',
           quantita: 60,
           totTurni: 350,
           value: true
         }
       )
         break;
-      case 'MAGO': charter.updateSituazioneConditions(
+      case 'MAGO': charter.updateMalefici(
         {
-          conditionType: 'FIRE',
+          malus: 'FIRE',
           quantita: 60,
           totTurni: 350,
           value: true
         }
       )
         break;
-      case 'GUERRIERO': charter.updateSituazioneConditions(
+      case 'GUERRIERO': charter.updateMalefici(
         {
-          conditionType: 'VENO',
-          quantita: 60,
-          totTurni: 350,
-          value: true
-        }
-      )
-        break;
-      case 'SAMURAI': charter.updateSituazioneConditions(
-        {
-          conditionType: 'STUN',
+          malus: 'BLOCK',
           quantita: 60,
           totTurni: 750,
           value: true
         }
       )
         break;
-      case 'ARCERE': charter.updateSituazioneConditions(
+      case 'SAMURAI': charter.updateMalefici(
         {
-          conditionType: 'VENO',
+          malus: 'STUN',
+          quantita: 60,
+          totTurni: 750,
+          value: true
+        }
+      )
+        break;
+      case 'ARCERE': charter.updateMalefici(
+        {
+          malus: 'VENO',
           quantita: 60,
           totTurni: 350,
           value: true
@@ -106,8 +106,24 @@ export class Proiettile extends Square {
   override draw(): void {
     this.ctx.fillStyle = this.getColor();
 
-    if (this.classe !== 'MAGO' && this.classe !== 'BULLO') {
+    if (this.classe == 'SAMURAI') {
       this.ctx.drawImage(this.image, this.image.width / 4 * this.counterAnimation, 0, this.image.width / 4, this.image.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90)
+
+    }
+    if (this.classe == 'GUERRIERO') {
+      let riga = 0;
+      switch (this.getDirection()) {
+        case 'BOTTOM': riga = 0;
+          break;
+        case 'TOP': riga = this.image.height / 4 * 2
+          break;
+        case 'LEFT': riga = this.image.height / 4 
+          break;
+        case 'RIGHT': riga = this.image.height / 4 * 3
+          break;
+      }
+      let colonna = this.image.width / 4 * this.counterAnimation ;
+      this.ctx.drawImage(this.image, colonna, riga, this.image.width / 4, this.image.height / 4, this.getX() * this.sideX, this.getY() * this.sideY, 70, 90);
 
     }
     if (this.classe === 'MAGO' || this.classe === 'BULLO') {

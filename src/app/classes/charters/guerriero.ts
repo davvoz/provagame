@@ -2,7 +2,6 @@ import { Charter } from '../abstract/charter';
 import { classe } from '../utils/costants.enum';
 
 export class Guerriero extends Charter {
- // override counterManaTreshold = 25;
   override name = 'Guerriero default name';
   override classe: classe = 'GUERRIERO';
   override spriteSheetCharterPath = 'assets/images/biondotraspoAtck_1.png';
@@ -21,10 +20,10 @@ export class Guerriero extends Charter {
     this.parametriFantasy.resistenzaMagica = 8;
     this.parametriFantasy.maxMana = 50;
     this.genereSprite = 0;
-    this.aggiornaCaratteristiche();
+    this.updateParametriFantasy();
   }
 
-  override aggiornaCaratteristiche() {
+  override updateParametriFantasy() {
     this.parametriFantasy.forza += Math.floor(Math.random() * 6) * this.parametriFantasy.livello;
     this.parametriFantasy.resistenzaFisica += Math.floor(Math.random() * 2) * this.parametriFantasy.livello;
     this.parametriFantasy.intelligenza += Math.floor(Math.random() * 2) * this.parametriFantasy.livello;
@@ -35,9 +34,9 @@ export class Guerriero extends Charter {
   
   override lanciaAbilita(charter: Charter): void {
     console.log(this.name + ' lancia abilità a ' + charter.name);
-    charter.updateSituazioneConditions(
+    charter.updateMalefici(
       {
-        conditionType: 'STUN',
+        malus: 'STUN',
         quantita: 6 * this.parametriFantasy.livello,
         totTurni: 450 + this.parametriFantasy.livello,
         value: true
