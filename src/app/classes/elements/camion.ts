@@ -1,3 +1,4 @@
+import { SquareConfig } from '../utils/costants.enum';
 import { Utilities } from '../utils/utilities';
 import { Square } from './square';
 
@@ -6,19 +7,19 @@ export class Camion extends Square {
   image = new Image();
   isPlayerMorto = false;
 
-  constructor(public override ctx: CanvasRenderingContext2D, color: string) {
-    super(ctx, color);
+  constructor(configurazioneInziale:SquareConfig) {
+  super(configurazioneInziale);
     this.image.src = 'assets/images/camion.png';
   }
   
   override draw(): void {
-    this.ctx.strokeStyle = this.getColor();
-    this.ctx.strokeRect(
-      this.getX() * this.sideX, this.getY() * this.sideY, this.image.width, this.image.height);
-    this.ctx.drawImage(this.image,
+    this.config.ctx.strokeStyle = this.getColor();
+    this.config.ctx.strokeRect(
+      this.getX() * this.config.w, this.getY() * this.config.h, this.image.width, this.image.height);
+    this.config.ctx.drawImage(this.image,
       0, 0,
       this.image.width, this.image.height,
-      this.getX() * this.sideX, this.getY() * this.sideY,
+      this.getX() * this.config.w, this.getY() * this.config.h,
       this.image.width, this.image.height);
     if (this.isPlayerMorto) {
       this.aggiornaScritta();
@@ -26,9 +27,9 @@ export class Camion extends Square {
   }
 
   private aggiornaScritta() {
-    this.ctx.font = 'normal bolder 15px Orbitron';
-    this.ctx.fillStyle = 'rgb(200,150,10)';
-    this.ctx.fillText('YOU ARE DEAD DUMBASS', this.getX() * this.sideX + 460, this.getY() * this.sideY + 100, 300);
+    this.config.ctx.font = 'normal bolder 15px Orbitron';
+    this.config.ctx.fillStyle = 'rgb(200,150,10)';
+    this.config.ctx.fillText('YOU ARE DEAD DUMBASS', this.getX() * this.config.w + 460, this.getY() * this.config.h + 100, 300);
   }
 
   override moveRight() {
@@ -44,7 +45,7 @@ export class Camion extends Square {
   }
 
   setCamion() {
-    if (this.getX() * this.sideX + this.image.width > 0) {
+    if (this.getX() * this.config.w + this.image.width > 0) {
       this.setDirection('LEFT');
       Utilities.directionToMoveSwitch(this);
     } else {

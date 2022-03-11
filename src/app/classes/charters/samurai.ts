@@ -1,5 +1,5 @@
 import { Charter } from '../abstract/charter';
-import { classe } from '../utils/costants.enum';
+import { classe, SquareConfig } from '../utils/costants.enum';
 
 export class Samurai extends Charter {
   override name = 'SAMURAI default name';
@@ -7,11 +7,11 @@ export class Samurai extends Charter {
   override genereSprite = 1;
   override spriteSheetCharterPath = 'assets/images/samuraiAtk2.png';
   override spriteSheetAttackPath = 'assets/images/samuraiAtk2.png';
-  constructor(public override ctx: CanvasRenderingContext2D, color: string, level: number) {
-    super(ctx, color);
+  constructor(configurazioneInziale:SquareConfig) {
+    super(configurazioneInziale);
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
     this.spriteSheetImageAttack.src = this.spriteSheetAttackPath;  
-    this.parametriFantasy.livello = level;
+    this.parametriFantasy.livello = 1;
     this.parametriFantasy.numeriFortunati = [0, 1, 2, 3, 4, 5, 6];
     this.parametriFantasy.agilita = 2;
     this.parametriFantasy.forza = 10;

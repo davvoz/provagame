@@ -4,6 +4,7 @@ import { Charter } from "../abstract/charter";
 import { BottoneSceltaCharter } from "../buttons/bottone-scelta-charter";
 import { classe } from "../utils/costants.enum";
 import { BottoneScudoAttiva } from "../buttons/bottone-scudo-attiva";
+import { Utilities } from "../utils/utilities";
 
 export class Gui {
     startButton!: Bottone;
@@ -20,34 +21,64 @@ export class Gui {
     isRestartTouched = false;
     private selectedImage = new Image();
     constructor(public ctx: CanvasRenderingContext2D) {
-        this.startButton = new Bottone(this.ctx, 'yellow', false);
-        this.startButton.setX(4);
-        this.startButton.setY(8);
+        this.startButton = new Bottone({
+            color: 'yellow',
+            ctx: ctx,
+            velocita: 0,
+            h: 90,
+            w: 70,
+            x: 5,
+            y: 6
+        }, false);
         this.startButton.setText('START');
         this.startButton.stand();
-        this.restartButton = new Bottone(this.ctx, 'orangered', false);
-        this.restartButton.setX(0);
-        this.restartButton.setY(9);
+        this.restartButton = new Bottone({
+            color: 'orangered',
+            ctx: ctx,
+            velocita: 0.1,
+            h: 90,
+            w: 70,
+            x: 0,
+            y: 7
+        }, false);
         this.restartButton.setText('RESTART');
         this.restartButton.stand();
-        this.pauseButton = new Bottone(this.ctx, 'orangered', true);
-        this.pauseButton.setX(2);
-        this.pauseButton.setY(9);
+        this.pauseButton = new Bottone({
+            color: 'orangered',
+            ctx: ctx,
+            velocita: 0.1,
+            h: 90,
+            w: 70,
+            x: 2,
+            y: 7
+        }, true);
         this.pauseButton.setText('PAUSE');
         this.pauseButton.isShowState = true;
         this.pauseButton.stand();
-        this.incrementaLivelloButton = new Bottone(this.ctx, 'yellow', false);
-        this.incrementaLivelloButton.setX(0);
-        this.incrementaLivelloButton.setY(9);
+        this.incrementaLivelloButton = new Bottone({
+            color: 'yellow',
+            ctx: ctx,
+            velocita: 0.1,
+            h: 90,
+            w: 70,
+            x: 1,
+            y: 7
+        }, false);
         this.incrementaLivelloButton.setText('LEVEL');
         this.incrementaLivelloButton.secondText = ' key \\';
-        this.compraBonus = new Bottone(this.ctx, 'yellow', false);
-        this.compraBonus.setX(1);
-        this.compraBonus.setY(9);
+        this.compraBonus = new Bottone({
+            color: 'yellow',
+            ctx: ctx,
+            velocita: 0.1,
+            h: 90,
+            w: 70,
+            x: 0,
+            y: 7
+        }, false);
         this.compraBonus.setText('FOOD');
         this.compraBonus.secondText = ' key space';
         this.compraBonus.terzoText = '$ 10';
-        this.scudoButton = new BottoneScudoAttiva(this.ctx, '', true);
+        this.scudoButton = new BottoneScudoAttiva(Utilities.getSquareConfig(this.ctx, 'red'), true);
         this.scudoButton.setX(17);
         this.scudoButton.setY(9.1);
         this.scudoButton.setText('SCUDO');
@@ -61,7 +92,7 @@ export class Gui {
         this.ctx.strokeRect(this.ctx.canvas.width - this.ctx.canvas.width / 4, 1, this.ctx.canvas.width / 4, this.ctx.canvas.height / 4);
 
         for (let i = 0; i < 3; i++) {
-            let pozione = new BottonePozione(this.ctx, 'green', true);
+            let pozione = new BottonePozione(Utilities.getSquareConfig(this.ctx, ''), true);
             pozione.setX(i + 30);
             pozione.setY(8);
             pozione.secondText = ' key ' + (i + 1);
@@ -71,22 +102,22 @@ export class Gui {
         }
 
         for (let i = 0; i <= 3; i++) {
-            let sc = new BottoneSceltaCharter(this.ctx, '', false);
+            let sc = new BottoneSceltaCharter(Utilities.getSquareConfig(this.ctx, ''), '', false);
             switch (i) {
                 case 0:
-                    sc = new BottoneSceltaCharter(this.ctx, 'assets/images/samuraiAtk2.png', false);
+                    sc = new BottoneSceltaCharter(Utilities.getSquareConfig(this.ctx, ''), 'assets/images/samuraiAtk2.png', false);
                     sc.typeOfCharter = 'SAMURAI';
                     break;
                 case 1:
-                    sc = new BottoneSceltaCharter(this.ctx, 'assets/images/discotraspooAtck.png', false);
+                    sc = new BottoneSceltaCharter(Utilities.getSquareConfig(this.ctx, ''), 'assets/images/discotraspooAtck.png', false);
                     sc.typeOfCharter = 'MAGO';
                     break;
                 case 2:
-                    sc = new BottoneSceltaCharter(this.ctx, 'assets/images/biondotraspoAtck_1.png', false);
+                    sc = new BottoneSceltaCharter(Utilities.getSquareConfig(this.ctx, ''), 'assets/images/biondotraspoAtck_1.png', false);
                     sc.typeOfCharter = 'GUERRIERO';
                     break;
                 case 3:
-                    sc = new BottoneSceltaCharter(this.ctx, 'assets/images/edwardAtk.png', false);
+                    sc = new BottoneSceltaCharter(Utilities.getSquareConfig(this.ctx, ''), 'assets/images/edwardAtk.png', false);
                     sc.typeOfCharter = 'BULLO';
                     break;
             }
@@ -174,7 +205,7 @@ export class Gui {
                 this.ctx.fillStyle = 'green';
                 this.ctx.fillRect(300, 650, perCent, 10);
                 this.ctx.fillStyle = 'white';
-                this.ctx.fillRect(300+ maxLength, 650, 5, 10);
+                this.ctx.fillRect(300 + maxLength, 650, 5, 10);
                 this.ctx.font = 'italic bolder 15px Orbitron';
                 this.ctx.fillStyle = 'rgb(60,160,60)';
                 this.ctx.fillText('EXP ' + player.classe + ' ' + player.parametriFantasy.livello + ' - NOW  ' + player.exp + ' NEXT ' + player.nextExp, maxLength / player.nextExp + 300, 690 + 10, 500);

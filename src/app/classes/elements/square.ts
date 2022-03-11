@@ -1,18 +1,12 @@
-import { direzione } from "../utils/costants.enum";
+import { direzione, SquareConfig } from "../utils/costants.enum";
 
 export class Square {
-  private color = 'black';
-  private x = 0;
-  private y = 0;
-  sideX = 50;
-  sideY = 70;
-
 
   private velocita = 1;
   private direction: direzione = 'STAND';
-
-  constructor(public ctx: CanvasRenderingContext2D, color: string) {
-    this.color = color;
+  config!: SquareConfig;
+  constructor( configurazioneIniziale: SquareConfig) {
+    this.config = configurazioneIniziale
   }
 
   getDirection() {
@@ -26,38 +20,38 @@ export class Square {
   }
   moveRight() {
     this.direction = 'RIGHT';
-    if (this.x * this.sideX < this.ctx.canvas.width - this.sideX) {
-      this.x = this.x + this.velocita;
+    if (this.config.x * this.config.w < this.config.ctx.canvas.width - this.config.w) {
+      this.config.x = this.config.x + this.velocita;
     }
     this.draw();
   }
   moveLeft() {
     this.direction = 'LEFT';
-    if (this.x * this.sideX > 0) {
-      this.x = this.x - this.velocita;
+    if (this.config.x * this.config.w > 0) {
+      this.config.x = this.config.x - this.velocita;
     }
     this.draw();
   }
   moveTop() {
     this.direction = 'TOP';
-    if (this.y * this.sideX > 50) {
-      this.y = this.y - this.velocita;
+    if (this.config.y * this.config.w > 50) {
+      this.config.y = this.config.y - this.velocita;
     }
     this.draw();
   }
   moveBottom() {
     this.direction = 'BOTTOM';
-    if (this.y * this.sideY < 550) {
-      this.y = this.y + this.velocita;
+    if (this.config.y * this.config.h < 550) {
+      this.config.y = this.config.y + this.velocita;
     }
     this.draw();
   }
   draw() {
-    this.ctx.fillStyle = this.color;
-    this.ctx.lineWidth = 1;
-    this.ctx.strokeStyle = 'black';
-    this.ctx.fillRect(this.sideX * this.x, this.sideY * this.y, this.sideX, this.sideY);
-    this.ctx.strokeRect(this.sideX * this.x, this.sideY * this.y, this.sideX, this.sideY);
+    this.config.ctx.fillStyle = this.config.color;
+    this.config.ctx.lineWidth = 1;
+    this.config.ctx.strokeStyle = 'black';
+    this.config.ctx.fillRect(this.config.w * this.config.x, this.config.h * this.config.y, this.config.w, this.config.h);
+    this.config.ctx.strokeRect(this.config.w * this.config.x, this.config.h * this.config.y, this.config.w, this.config.h);
   }
 
   getVelocita(): number {
@@ -67,22 +61,22 @@ export class Square {
     this.velocita = velocita;
   }
   getX(): number {
-    return this.x;
+    return this.config.x;
   }
   setX(x: number) {
-    this.x = x;
+    this.config.x = x;
   }
   getY(): number {
-    return this.y;
+    return this.config.y;
   }
   setY(y: number) {
-    this.y = y;
+    this.config.y = y;
   }
   getColor(): string {
-    return this.color;
+    return this.config.color;
   }
   setColor(color: string) {
-    this.color = color;
+    this.config.color = color;
   }
 
 

@@ -1,7 +1,6 @@
-import { CharterParam, classe, MaliciusEffect, Malefici, ParametriFanatsy, SintesiDati, stato } from '../utils/costants.enum';
+import { CharterParam, classe, MaliciusEffect, Malefici, ParametriFanatsy, SintesiDati, stato, SquareConfig } from '../utils/costants.enum';
 import { Pozione } from '../elements/pozione';
 import { Square } from '../elements/square';
-import { GeneralSprite } from '../elements/general-sprite';
 import { CounterToTrashold } from '../utils/counter-to-treshold';
 import { DrawCharter } from '../elements/draw-charter';
 
@@ -59,20 +58,24 @@ export class Charter extends Square implements CharterParam {
     },
 
   }
-
+  override config !:SquareConfig;
   maxSalute = 1000 * this.parametriFantasy.livello;
   genereSprite = 0;//se = 0 then SX = 1 dx = 2 ; se = 1 SX = 2 DX = 1
   exp = 0;
   nextExp = 200;
-  velocitaIniziale = 0;
+  velocitaIniziale = 0.1;
   posizioneInfoLabelX = 0;
   posizioneInfoLabelY = 0;
   counterAnimation = 0;
   counterForCriticoTreshold = 100;
   dannoCritico = 50;
   counterForCritico = 0;
+  ultimiDanni = 0;
   spriteSheetCharterPath = '';
   spriteSheetAttackPath = '';
+
+  spriteSheetImage = new Image();
+  spriteSheetImageAttack = new Image();
 
   isOnAttack = false;
   isVelenoApplicato = false;
@@ -84,23 +87,12 @@ export class Charter extends Square implements CharterParam {
 
   pozioni: Pozione[] = [];
   stato: stato = 'camminando';
-  oggettoDaLanciare !: GeneralSprite;
 
   scudoCounter = new CounterToTrashold(500, false);
   pozioneCounter = new CounterToTrashold(500, false);
   visualizzaDannoCounter = new CounterToTrashold(32, false);
-
-  fiammeImage = new Image();
-  velenoImage = new Image();
-  stunnoImage = new Image();
-  scudoIcon = new Image();
-  pozioneIcon = new Image();
-  spriteSheetImage = new Image();
-  spriteSheetImageAttack = new Image();
-  pozioneoggettoDaLanciareIcon = new Image();
-
-  private ultimiDanni = 0;
-  private disegno!: DrawCharter;
+  disegno!: DrawCharter;
+  isLogActive = false;
 
   override draw() {
     if (!this.disegno) {
@@ -120,13 +112,6 @@ export class Charter extends Square implements CharterParam {
     }
     if (!this.isMorto) {
       this.disegno.drawAll(false);
-      if (this.visualizzaDannoCounter.isActive()) {
-        this.ctx.fillStyle = !this.isCritico ? this.getColor() : 'red';
-        this.ctx.strokeStyle = 'black';
-        this.ctx.font = (this.ultimiDanni / 100 + 52) + 'px Impact';
-        this.ctx.strokeText(this.ultimiDanni + '', this.getX() * this.sideX - 30, this.getY() * this.sideY + this.sideY + 30, 300);
-        this.ctx.fillText(this.ultimiDanni + '', this.getX() * this.sideX - 30, this.getY() * this.sideY + this.sideY + 30, 300);
-      }
     }
     this.updateTimers();
   }
@@ -163,6 +148,9 @@ export class Charter extends Square implements CharterParam {
         case 'FIRE':
           this.malefici.fiery = effettoMalevolo;
           break;
+        case 'BLOCK':
+          this.malefici.blocked = effettoMalevolo;
+          break;
       }
     }
   }
@@ -179,7 +167,7 @@ export class Charter extends Square implements CharterParam {
       this.isOnAttack = true;
       if (this.counterAnimation == 3) {
         this.sintesiDati.numeroAttacchi++;
-        console.log('** ATTACCA ' + this.classe + ' ' + this.name)
+        //Utilities.log(this.isLogActive, [this.classe + ' ' + this.name +'** ATTACCA ' + charter.classe + ' ' + charter.name ]);
         if (!this.isMorto) {
           let critico = 0;
           let isCritico = false;
@@ -193,12 +181,11 @@ export class Charter extends Square implements CharterParam {
           }
           charter.difendere((this.parametriFantasy.intelligenza + critico) * this.parametriFantasy.livello, (this.parametriFantasy.forza + critico) * this.parametriFantasy.livello, isCritico);
           this.counterForCritico === this.counterForCriticoTreshold ? this.counterForCritico = 0 : this.counterForCritico++;
-          this.ctx.strokeStyle = 'red';
           if (charter.isMorto && !charter.isPlayer) {
             this.rubaSoldiA(charter);
           }
         }
-        console.log('** FINE ATTACCO ' + this.classe + ' ' + this.name)
+        //console.log('** FINE ATTACCO ' + this.classe + ' ' + this.name)
       }
     }
   }
@@ -222,12 +209,12 @@ export class Charter extends Square implements CharterParam {
     if (!schivata || isCritico) {
       if (isCritico) {
         this.sintesiDati.danniCriticiRicevuti += dannoFisico;
-        this.ctx.fillStyle = this.getColor();
-        this.ctx.font = '18px Impact';
-        this.ctx.fillText(
+        this.config.ctx.fillStyle = this.getColor();
+        this.config.ctx.font = '18px Impact';
+        this.config.ctx.fillText(
           'CRITICO',
-          this.getX() * this.sideX,
-          this.getY() * this.sideY - 60, 500
+          this.getX() * this.config.w,
+          this.getY() * this.config.y - 60, 500
         );
       }
       let dannoFisicoEffettivo = 0;

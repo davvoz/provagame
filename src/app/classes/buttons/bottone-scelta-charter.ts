@@ -1,5 +1,5 @@
 import { Bottone } from "../elements/bottone";
-import { classe } from "../utils/costants.enum";
+import { classe, SquareConfig } from "../utils/costants.enum";
 
 export class BottoneSceltaCharter extends Bottone {
     typeOfCharter: classe= 'ABSTRACT';
@@ -7,37 +7,38 @@ export class BottoneSceltaCharter extends Bottone {
     index = 0;
     counterAnimation = 0;
     
-    constructor(public override ctx: CanvasRenderingContext2D, path: string,isToggle:boolean) {
-        super(ctx, path,isToggle);
+    constructor(configurazioneInziale: SquareConfig, path: string,isToggle:boolean) {
+        super(configurazioneInziale,isToggle);
+        this.config = configurazioneInziale;
         this.image.src = path;
-        this.sideX = 70;
-        this.sideY = 90;
+        this.config.w = 70;
+        this.config.h = 90;
     }
 
     override disegnaMe(): void {
-        this.ctx.strokeStyle = 'red';
-        this.ctx.lineWidth = 3;
-        this.ctx.strokeRect(
-            this.getX() * this.sideX,
-            this.getY() * this.sideY + this.sideY / 2 -30,
-            this.sideX,
-            this.sideY);
-        this.ctx.drawImage(this.image,
+        this.config.ctx.strokeStyle = 'red';
+        this.config.ctx.lineWidth = 3;
+        this.config.ctx.strokeRect(
+            this.getX() * this.config.w,
+            this.getY() * this.config.h + this.config.h / 2 -30,
+            this.config.w,
+            this.config.h);
+        this.config.ctx.drawImage(this.image,
             this.image.width / 4 * this.counterAnimation,//colonna ws
             0,//riga hs
             this.image.width / 4, //ws
             this.image.height / 4,//hs
-            this.getX() * this.sideX,
-            this.getY() * this.sideY + this.sideY / 2 ,
-            this.sideX,
-            this.sideY);
+            this.getX() * this.config.w,
+            this.getY() * this.config.h + this.config.h / 2 ,
+            this.config.w,
+            this.config.h);
     }
 
     override scriviAltriTesti() {
-        this.ctx.fillText(
+        this.config.ctx.fillText(
             this.terzoText,
-            this.getX() * this.sideX,
-            this.getY() * this.sideY + this.sideY / 2 - 50,
+            this.getX() * this.config.w,
+            this.getY() * this.config.h + this.config.h / 2 - 50,
             60
           );
     }

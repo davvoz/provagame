@@ -1,16 +1,16 @@
 import { Charter } from '../abstract/charter';
-import { classe } from '../utils/costants.enum';
+import { classe, SquareConfig } from '../utils/costants.enum';
 
 export class Guerriero extends Charter {
   override name = 'Guerriero default name';
   override classe: classe = 'GUERRIERO';
   override spriteSheetCharterPath = 'assets/images/biondotraspoAtck_1.png';
   override spriteSheetAttackPath = 'assets/images/biondotraspoAtck_1.png';
-  constructor(public override ctx: CanvasRenderingContext2D, color: string, level: number) {
-    super(ctx, color);
+  constructor(configurazioneInziale:SquareConfig) {
+    super(configurazioneInziale);
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
     this.spriteSheetImageAttack.src = this.spriteSheetAttackPath;
-    this.parametriFantasy.livello = level;
+    this.parametriFantasy.livello = 1;
     this.parametriFantasy.numeriFortunati = [0, 1, 2, 3, 4, 5, 6, 7, 8];
     this.parametriFantasy.agilita = 2;
     this.parametriFantasy.forza = 10;
