@@ -1,19 +1,17 @@
+import { SquareConfig } from "../utils/costants.enum";
 import { Square } from "./square";
 
 export class Pozione extends Square {
     image = new Image();
-    constructor(
-        public override ctx: CanvasRenderingContext2D,
-        color: string,
-    ) {
-        super(ctx, color);
+    override config!:SquareConfig;
+    constructor(configurazioneInziale:SquareConfig) {
+    super(configurazioneInziale);
         this.image.src = 'assets/images/pozioneverde.png'//src\assets\images\.png
-        this.sideX = 50;
-        this.sideY = 70;
-        this.image.src ='assets/images/pozioneverde.png';
+        this.config.w = 50;
+        this.config.h = 70;
     }
     override draw(): void {
-        this.ctx.drawImage(this.image, this.sideX * this.getX(), this.sideY * this.getY(), 50, 75)
+        this.config.ctx.drawImage(this.image, this.config.w * this.getX(), this.config.h * this.getY(), 50, 75)
 
     }
 }

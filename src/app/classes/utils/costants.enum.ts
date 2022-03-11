@@ -1,9 +1,11 @@
 import { GeneralSprite } from "../elements/general-sprite";
 
 export type classe = 'MAGO' | 'GUERRIERO' | 'ARCERE' | 'SAMURAI' | 'ABSTRACT' | 'BULLO';
+export type classeProiettile = 'PALLADIFUOCO' | 'RAGNO' | 'EDWARD' | 'HAMMER' | 'ABSTRACT';
+
 export type tipoBonus = 'salute' | 'forza' | 'intelligenza';
 export type direzione = 'TOP' | 'BOTTOM' | 'RIGHT' | 'LEFT' | 'STAND';
-export type malus = 'STUN' | 'VENO' | 'FIRE'|'BLOCK';
+export type malus = 'STUN' | 'VENO' | 'FIRE' | 'BLOCK';
 export interface MaliciusEffect {
     malus: malus;
     value: boolean;
@@ -14,7 +16,7 @@ export interface Malefici {
     stunned: MaliciusEffect;
     poisoned: MaliciusEffect;
     fiery: MaliciusEffect;
-    blocked:MaliciusEffect;
+    blocked: MaliciusEffect;
 }
 export type stato = 'attaccando' | 'difendendo' | 'camminando' | 'morendo';
 export interface FinalState {
@@ -55,7 +57,7 @@ export interface ParametriFanatsy {
     resistenzaMagica: number;
     resistenzaFisica: number;
     mana: number;
-    maxMana:number;
+    maxMana: number;
     numeriFortunati: number[];
     livello: number;
     money: number
@@ -63,7 +65,7 @@ export interface ParametriFanatsy {
 export interface CharterParam {
     parametriFantasy: ParametriFanatsy;
     sintesiDati: SintesiDati;
-    malefici:Malefici
+    malefici: Malefici
 }
 export interface SintesiDati {
     danniMagiciRicevuti: number;
@@ -73,4 +75,13 @@ export interface SintesiDati {
     danniCriticiRicevuti: number;
     numeroSchivate: number;
     numeroAttacchi: number;
+}
+export interface SquareConfig {
+    x: number;
+    y: number;
+    h: number;
+    w: number;
+    ctx: CanvasRenderingContext2D;
+    color: string;
+    velocita: number;
 }

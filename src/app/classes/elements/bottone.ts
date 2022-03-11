@@ -1,74 +1,58 @@
-import { statoBottone } from '../utils/costants.enum';
+import { SquareConfig, statoBottone } from '../utils/costants.enum';
 import { Square } from './square';
 
 export class Bottone extends Square {
   private text = 'BOTTONE';
   secondText = '';
-  state :statoBottone='OFF';
+  state: statoBottone = 'OFF';
   terzoText = '';
-  isToggle = false ;
-  isShowState= false;
-  constructor(
-    public override ctx: CanvasRenderingContext2D,
-    color: string,isToggle:boolean
-  ) {
-    super(ctx, color);
-    this.sideX = 70;
-    this.sideY = this.sideX;
+  isToggle = false;
+  isShowState = false;
+  constructor(configurazioneInziale: SquareConfig, isToggle: boolean) {
+    super(configurazioneInziale);
     this.isToggle = isToggle;
   }
   override draw() {
+   
     this.disegnaMe();
-    this.scriviAltriTesti();
+   // this.scriviAltriTesti();
   }
-  
+
   disegnaMe() {
-    this.ctx.fillStyle= this.getColor();
-    this.ctx.fillRect(
-      this.sideX * this.getX(),
-      this.sideY * this.getY() + 10,
-      this.sideX,
-      this.sideY
-    );
-    this.ctx.lineWidth = 2;
-    this.ctx.strokeStyle = 'black';
-    this.ctx.strokeRect(
-      this.sideX * this.getX(),
-      this.sideY * this.getY() + 10,
-      this.sideX,
-      this.sideY
-    );
-    this.ctx.font = 'normal bolder 15px Orbitron';
-    this.ctx.fillStyle = 'black';
-    this.ctx.fillText(
+    this.config.ctx.fillStyle = this.getColor();
+    //this.config.ctx.fillRect(this.config.w * this.config.x, this.config.h * this.config.y, this.config.w, this.config.h);
+    this.config.ctx.strokeRect(this.config.w * this.config.x, this.config.h * this.config.y, this.config.w, this.config.h);
+    this.config.ctx.font = 'normal bolder 15px Orbitron';
+    this.config.ctx.fillStyle = 'black';
+    this.config.ctx.fillText(
       this.text,
-      this.getX() * this.sideX,
-      this.getY() * this.sideY + this.sideY / 2 + 10,
-      this.sideX
+      this.config.w * this.config.x, 
+      this.config.h * this.config.y+ this.config.h /2,
+      300
     );
   }
 
   scriviAltriTesti() {
-    this.ctx.font = 'normal bolder 15px Orbitron';
-    this.ctx.fillStyle = 'black';
-    this.ctx.fillText(
+    this.config.ctx.font = 'normal bolder 15px Orbitron';
+    this.config.ctx.fillStyle = 'black';
+    this.config.ctx.fillText(
       this.secondText,
-      this.getX() * this.sideX,
-      this.getY() * this.sideY + this.sideY / 2 + 29,
-      this.sideX
+      this.getX() * this.config.w,
+      this.getY() * this.config.y + this.config.y + 29,
+      this.config.w
     );
-    this.ctx.fillText(
+    this.config.ctx.fillText(
       this.terzoText,
-      this.getX() * this.sideX,
-      this.getY() * this.sideY + this.sideY / 2 - 10,
-      this.sideX
+      this.getX() * this.config.w,
+      this.getY() * this.config.y + this.config.y - 10,
+      this.config.w
     );
-    if(this.isToggle && this.isShowState){
-      this.ctx.fillText(
+    if (this.isToggle && this.isShowState) {
+      this.config.ctx.fillText(
         this.state,
-        this.getX() * this.sideX,
-        this.getY() * this.sideY + 60,
-        this.sideX
+        this.getX() * this.config.w,
+        this.getY() * this.config.y + 60,
+        this.config.w
       );
     }
   }

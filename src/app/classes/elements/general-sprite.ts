@@ -1,17 +1,17 @@
+import { SquareConfig } from "../utils/costants.enum";
 import { Square } from "./square";
 
 export class GeneralSprite extends Square {
     image = new Image();
-    constructor(public override ctx: CanvasRenderingContext2D, path: string, sideX: number, sideY: number) {
-        super(ctx, path);
+    override config!:SquareConfig;
+    constructor(configurazioneInziale:SquareConfig,path:string) {
+    super(configurazioneInziale);
         this.image.src = path;
-        this.sideX = sideX;
-        this.sideY = sideY;
     }
 
     override draw(): void {
-        this.ctx.drawImage(this.image, this.sideX * this.getX(), this.sideY * this.getY(), this.sideX, this.sideY);
-        this.ctx.strokeRect(this.sideX * this.getX(), this.sideY * this.getY(), this.sideX, this.sideY);
+        this.config.ctx.drawImage(this.image, this.config.w * this.getX(), this.config.h * this.getY(), this.config.w, this.config.h);
+        this.config.ctx.strokeRect(this.config.w * this.getX(), this.config.h * this.getY(), this.config.w, this.config.h);
 
     }
 }
