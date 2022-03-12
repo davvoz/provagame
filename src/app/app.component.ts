@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, NgZone, ViewChild }
 import { Bonus } from './classes/elements/bonus';
 import { Mago } from './classes/charters/mago';
 import { Utilities } from './classes/utils/utilities';
-import { classe, direzione, FinalState } from './classes/utils/costants.enum';
+import { classe, classeProiettile, direzione, FinalState } from './classes/utils/costants.enum';
 import { Gui } from './classes/elements/gui';
 import { Mondo } from './classes/elements/mondo';
 import { Guerriero } from './classes/charters/guerriero';
@@ -27,19 +27,19 @@ export class AppComponent implements AfterViewInit {
     if (this.player) {
       if (!this.player.isMorto) {
         if (event.keyCode == KEY_CODE.DOWN_ARROW || event.keyCode == 40) {
-          this.player.setVelocita(0.1);
+          this.player.config.velocita = 0.1;
           this.player.setDirection('BOTTOM');
         }
         if (event.keyCode == KEY_CODE.UP_ARROW || event.keyCode == 38) {
-          this.player.setVelocita(0.1);
+          this.player.config.velocita = 0.1;
           this.player.setDirection('TOP');
         }
         if (event.keyCode == KEY_CODE.LEFT_ARROW || event.keyCode == 37) {
-          this.player.setVelocita(0.1);
+          this.player.config.velocita = 0.1;
           this.player.setDirection('LEFT');
         }
         if (event.keyCode == KEY_CODE.RIGHT_ARROW || event.keyCode == 39) {
-          this.player.setVelocita(0.1);
+          this.player.config.velocita = 0.1;
           this.player.setDirection('RIGHT');
         }
         if (event.keyCode == 49 && this.player.pozioni.length > 0) {//1 consuma pozione 1
@@ -88,16 +88,16 @@ export class AppComponent implements AfterViewInit {
   keyEventMu(event: KeyboardEvent) {
     if (this.player) {
       if (event.keyCode == KEY_CODE.DOWN_ARROW || event.keyCode == 40) {
-        this.player.setVelocita(0);
+        this.player.config.velocita = 0;
       }
       if (event.keyCode == KEY_CODE.UP_ARROW || event.keyCode == 38) {
-        this.player.setVelocita(0);
+        this.player.config.velocita = 0;
       }
       if (event.keyCode == KEY_CODE.LEFT_ARROW || event.keyCode == 37) {
-        this.player.setVelocita(0);
+        this.player.config.velocita = 0;
       }
       if (event.keyCode == KEY_CODE.RIGHT_ARROW || event.keyCode == 39) {
-        this.player.setVelocita(0);
+        this.player.config.velocita = 0;
       }
     }
   }
@@ -128,7 +128,7 @@ export class AppComponent implements AfterViewInit {
   finalStates: FinalState[] = [];//sintesi finale matches
   constructor(private ngZone: NgZone) { }
 
-  animate(): void {
+  private animate(): void {
 
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     if (!this.isFaseScelta) {
@@ -145,26 +145,7 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  private updateCounter() {
-    //velocità animazione ogni n frame
-    if (this.counterRoutine % 8 == 0) {
-      //step animazione 
-      this.counterAnimation === 3
-        ? (this.counterAnimation = 0)
-        : this.counterAnimation++;
-    }
-    if (this.counterRoutine % 2 == 0) {
-      //step animazione 
-      this.counterAnimationProiettile === 3
-        ? (this.counterAnimationProiettile = 0)
-        : this.counterAnimationProiettile++;
-    }
-    this.counterRoutine === 399
-      ? (this.counterRoutine = 0)
-      : this.counterRoutine++;
-  }
-
-  collisionDetenction() {
+  private collisionDetenction() {
     this.dieCount = 0;
     //rilevo collisione player vs enemies[]
     for (let i = 0; i < this.m[this.mn].enemies.length; i++) {
@@ -193,7 +174,7 @@ export class AppComponent implements AfterViewInit {
         if (this.proiettile && Utilities.rectsCollidingWrong(this.m[this.mn].enemies[i], this.proiettile)) {
           this.m[this.mn].enemies[i].incrementaSalute(-100 * this.player.parametriFantasy.livello);
           this.ctx.strokeStyle = 'red';
-          this.ctx.strokeRect(this.m[this.mn].enemies[i].getX() + 10, this.m[this.mn].enemies[i].getY() + 10, 30, 30);
+          this.ctx.strokeRect(this.m[this.mn].enemies[i].config.x + 10, this.m[this.mn].enemies[i].config.y + 10, 30, 30);
           this.proiettile.lanciaAbilita(this.m[this.mn].enemies[i]);
           //se muore mgli rubo i soldi
           if (this.m[this.mn].enemies[i].isMorto && this.m[this.mn].enemies[i].parametriFantasy.money > 0) {
@@ -278,19 +259,19 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  update() {
+  private update() {
+
     if (this.player.isOggettoInvolo && !this.giaInvolo) {
       this.giaInvolo = true;
       this.newProiettile();
       this.proiettile.setDirection(this.player.getDirection());
-      this.proiettile.setVelocita(0.1);
+      this.proiettile.config.velocita = 0.1;
     }
+
     if (this.giaInvolo) {
-
       this.proiettile.counterAnimation = this.counterAnimationProiettile;
-
       Utilities.directionToMoveSwitch(this.proiettile);
-      if (this.proiettile.getX() > 20 || this.proiettile.getX() < -20 || this.proiettile.getY() > 20 || this.proiettile.getY() < -20) {
+      if (this.proiettile.config.x > 20 || this.proiettile.config.x < -20 || this.proiettile.config.y > 20 || this.proiettile.config.y < -20) {
         this.giaInvolo = false;
         this.player.isOggettoInvolo = false;
       }
@@ -299,13 +280,16 @@ export class AppComponent implements AfterViewInit {
     if (!this.isScudoRaccolto) {
       this.m[this.mn].scudoBonus.stand();
     }
+
     if (this.isScudoRaccolto && !this.gui.scudoButton.getIsScudoPresente()) {
       this.isScudoRaccolto = false;
       this.m[this.mn].scudoBonus.stand();
     }
+
     if (this.mn % 3 == 0 && (this.mn % 3 == 0 || this.isTesoroRaccolto == false)) {
       !this.isTesoroRaccolto ? this.m[this.mn].tesoro.stand() : null;
     }
+
     this.ctx.fillStyle = 'black';
     if (this.dieCount != 0 && this.dieCount == this.m[this.mn].enemies.length && !this.player.isMorto) {
       this.dieCount = 0;
@@ -342,18 +326,6 @@ export class AppComponent implements AfterViewInit {
     this.player.counterAnimation = this.counterAnimation;
   }
 
-  private newProiettile() {
-    this.proiettile = new Proiettile({
-      color: 'white',
-      ctx: this.ctx,
-      velocita: 1,
-      h: 70,
-      w: 50,
-      x: this.player.config.x,
-      y: this.player.config.y
-    }, 'assets/images/fireballs2.png', 'PALLADIFUOCO');
-  }
-
   ngAfterViewInit(): void {
     const res = this.canvasGui.nativeElement.getContext('2d');
     if (!res || !(res instanceof CanvasRenderingContext2D)) {
@@ -366,7 +338,57 @@ export class AppComponent implements AfterViewInit {
         this.m.push(new Mondo({ livelloNemici: i * j, numeroNemici: j, velocitaCamion: 0.1, id: i }))
       }
     }
-    //#region Eventi click canvas
+    this.setCanvasListener();
+    if (this.isFaseScelta) {
+      this.ngZone.runOutsideAngular(() => this.animate());
+    }
+  }
+
+  private startGame() {
+    this.isFaseScelta = false;
+    this.gui.isRestartTouched = false;
+    this.gui.counterAnimationDieText = 0;
+    this.isScudoRaccolto = false;
+    this.mn = 1;
+    this.m[this.mn].inizialize(this.ctx);
+    this.player.config.x = 2;
+    this.player.config.y = 6;
+    //this.player.config.velocita = 0.1;
+    this.player.name = 'BEST PLAYER';
+    this.player.posizioneInfoLabelX = 30;
+    this.player.posizioneInfoLabelY = 700;
+    this.player.parametriFantasy.numeriFortunati = [0, 1, 2, 3, 4, 5, 6, 7];
+    this.player.dannoCritico = 150;
+    this.player.counterForCriticoTreshold = 4;
+    this.player.isMorto = false;
+    this.player.parametriFantasy.money = 2000;
+    this.player.isPlayer = true;
+    this.player.stand();
+    this.m[this.mn].startSchema();
+    this.gui.incrementaLivelloButton.terzoText = '$' + (100 * this.player.parametriFantasy.livello);
+    this.isfinalStatesInc = false;
+  }
+
+  private updateCounter() {
+    //velocità animazione ogni n frame
+    if (this.counterRoutine % 8 == 0) {
+      //step animazione 
+      this.counterAnimation === 3
+        ? (this.counterAnimation = 0)
+        : this.counterAnimation++;
+    }
+    if (this.counterRoutine % 2 == 0) {
+      //step animazione 
+      this.counterAnimationProiettile === 3
+        ? (this.counterAnimationProiettile = 0)
+        : this.counterAnimationProiettile++;
+    }
+    this.counterRoutine === 399
+      ? (this.counterRoutine = 0)
+      : this.counterRoutine++;
+  }
+
+  private setCanvasListener() {
     this.ctx.canvas.addEventListener(
       'click',
       (evt) => {
@@ -400,11 +422,11 @@ export class AppComponent implements AfterViewInit {
               this.mn = 1;
               this.player.parametriFantasy.money = 0;
               this.isStarted = false;
-              this.m[this.mn].enemies
+              this.m[this.mn].enemies;
             }
           }
         }
-        if (!this.isFaseScelta) {//se non sono nella prima fase non servono gli handler ai bottoni di gioco e alla pausa
+        if (!this.isFaseScelta) { //se non sono nella prima fase non servono gli handler ai bottoni di gioco e alla pausa
 
           const incrementaLivelloButtonTouched = Utilities.changeButtonState(evt, this.gui.incrementaLivelloButton, this.ctx);
           if (incrementaLivelloButtonTouched && this.player.parametriFantasy.money > 0) {
@@ -444,36 +466,26 @@ export class AppComponent implements AfterViewInit {
       },
       false
     );
-    //#endregion
-    if (this.isFaseScelta) {
-      this.ngZone.runOutsideAngular(() => this.animate());
-    }
-
   }
 
-  startGame() {
-    this.isFaseScelta = false;
-    this.gui.isRestartTouched = false;
-    this.gui.counterAnimationDieText = 0;
-    this.isScudoRaccolto = false;
-    this.mn = 1;
-    this.m[this.mn].inizialize(this.ctx);
-    this.player.setX(2);
-    this.player.setY(2);
-    this.player.setVelocita(0.9);
-    this.player.name = Utilities.nomeRandomico();
-    this.player.posizioneInfoLabelX = 30;
-    this.player.posizioneInfoLabelY = 700;
-    this.player.parametriFantasy.numeriFortunati = [0, 1, 2, 3, 4, 5, 6, 7];
-    this.player.dannoCritico = 150;
-    this.player.counterForCriticoTreshold = 6;
-    this.player.isMorto = false;
-    this.player.parametriFantasy.money = 2000;
-    this.player.isPlayer = true;
-    this.player.stand();
-    this.m[this.mn].startSchema();
-    this.gui.incrementaLivelloButton.terzoText = '$' + (100 * this.player.parametriFantasy.livello);
-    this.isfinalStatesInc = false;
-
+  private newProiettile() {
+    let path;
+    let classeProiettile: classeProiettile;
+    switch (this.player.classe) {
+      case 'BULLO': classeProiettile = 'EDWARD'; path = 'assets/images/edwardAtk.png'; break;//C:\Progetti\AngularProjects\game2022\game2k22\src\assets\images\edwardAtk.png
+      case 'MAGO': classeProiettile = 'PALLADIFUOCO'; path = 'assets/images/fireballs2.png'; break;
+      case 'SAMURAI': classeProiettile = 'RAGNO'; path = 'assets/images/spidero.png'; break;
+      case 'GUERRIERO': classeProiettile = 'HAMMER'; path = 'assets/images/hammero.png'; break;//src\assets\images\hammero.png
+      default: classeProiettile = 'HAMMER'; path = 'assets/images/hammero.png'; break;
+    }
+    this.proiettile = new Proiettile({
+      color: 'white',
+      ctx: this.ctx,
+      velocita: 0.5,
+      h: 70,
+      w: 50,
+      x: this.player.config.x,
+      y: this.player.config.y
+    }, path, classeProiettile);
   }
 }

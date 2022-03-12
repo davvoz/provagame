@@ -209,13 +209,13 @@ export class Charter extends Square implements CharterParam {
     if (!schivata || isCritico) {
       if (isCritico) {
         this.sintesiDati.danniCriticiRicevuti += dannoFisico;
-        this.config.ctx.fillStyle = this.getColor();
-        this.config.ctx.font = '18px Impact';
-        this.config.ctx.fillText(
-          'CRITICO',
-          this.getX() * this.config.w,
-          this.getY() * this.config.y - 60, 500
-        );
+        this.config.ctx.fillStyle = this.config.color;
+        // this.config.ctx.font = '18px Impact';
+        // this.config.ctx.fillText(
+        //   'CRITICO',
+        //   this.config.x * this.config.w,
+        //   this.config.y * this.config.y - 60, 500
+        // );
       }
       let dannoFisicoEffettivo = 0;
       let dannoMagicoEffettivo = 0;

@@ -21,14 +21,14 @@ export class DrawCharter {
             color: '',
             ctx: this.charter.config.ctx,
             velocita: 0,
-            x:this.charter.getX() * this.charter.config.w - this.charter.config.w * 2,
-            y: this.charter.getY() * this.charter.config.h - this.charter.config.w * 2,
+            x:this.charter.config.x * this.charter.config.w - this.charter.config.w * 2,
+            y: this.charter.config.y * this.charter.config.h - this.charter.config.w * 2,
             h:this.charter.config.w * 6,
             w:this.charter.config.w * 6
         }
         const s = new Square(config);
         this.charter.config.ctx.strokeStyle = 'violet';
-        this.charter.config.ctx.strokeRect(s.getX() * this.charter.config.w, s.getY() * this.charter.config.h, s.config.w - 10, s.config.h - 10);
+        this.charter.config.ctx.strokeRect(s.config.x * this.charter.config.w, s.config.y * this.charter.config.h, s.config.w - 10, s.config.h - 10);
         return s;
     }
 
@@ -36,11 +36,11 @@ export class DrawCharter {
         this.drawSprite();
         this.drawBarre();
         if (this.charter.visualizzaDannoCounter.isActive()) {
-            this.charter.config.ctx.fillStyle = !this.charter.isCritico ? this.charter.getColor() : 'red';
+            this.charter.config.ctx.fillStyle = !this.charter.isCritico ? this.charter.config.color : 'red';
             this.charter.config.ctx.strokeStyle = 'black';
             this.charter.config.ctx.font = (this.charter.ultimiDanni / 100 + 52) + 'px Impact';
-            this.charter.config.ctx.strokeText(this.charter.ultimiDanni + '', this.charter.getX() * this.charter.config.w - 30, this.charter.getY() * this.charter.config.h + this.charter.config.h + 30, 300);
-            this.charter.config.ctx.fillText(this.charter.ultimiDanni + '', this.charter.getX() * this.charter.config.w - 30, this.charter.getY() * this.charter.config.h + this.charter.config.h + 30, 300);
+            this.charter.config.ctx.strokeText(this.charter.ultimiDanni + '', this.charter.config.x * this.charter.config.w - 30, this.charter.config.y * this.charter.config.h + this.charter.config.h + 30, 300);
+            this.charter.config.ctx.fillText(this.charter.ultimiDanni + '', this.charter.config.x * this.charter.config.w - 30, this.charter.config.y * this.charter.config.h + this.charter.config.h + 30, 300);
         }
         if (drowSintesi) {
             this.drawSintesi();
@@ -179,8 +179,8 @@ export class DrawCharter {
     }
 
     private drawVisione() {
-        const centerOfSpriteX = this.charter.getX() * this.charter.config.w;
-        const centerOfSpriteY = this.charter.getY() * this.charter.config.h;
+        const centerOfSpriteX = this.charter.config.x * this.charter.config.w;
+        const centerOfSpriteY = this.charter.config.y * this.charter.config.h;
         this.charter.config.ctx.save();
         this.charter.config.ctx.fillStyle = 'rgba(200,120,120,0.4)';
         this.charter.config.ctx.lineWidth = 5;
@@ -200,12 +200,12 @@ export class DrawCharter {
             this.charter.malefici.fiery.totTurni--;
             this.charter.config.ctx.fillStyle = 'red';
             this.charter.config.ctx.font = "20px Impact";
-            this.charter.config.ctx.fillText('ON FIRE !!!', this.charter.getX() * this.charter.config.w - 50, this.charter.getY() * this.charter.config.h, 300);
+            this.charter.config.ctx.fillText('ON FIRE !!!', this.charter.config.x * this.charter.config.w - 50, this.charter.config.y * this.charter.config.h, 300);
             if (!this.fiammeImage.src) {
                 this.fiammeImage.src = 'assets/images/FUOCO.png';
             }
 
-            this.charter.config.ctx.drawImage(this.fiammeImage, this.fiammeImage.width / 4 * this.charter.counterAnimation, 0, this.fiammeImage.width / 4, this.fiammeImage.height / 2, this.charter.getX() * this.charter.config.w - 30, this.charter.getY() * this.charter.config.h, 70, 90);
+            this.charter.config.ctx.drawImage(this.fiammeImage, this.fiammeImage.width / 4 * this.charter.counterAnimation, 0, this.fiammeImage.width / 4, this.fiammeImage.height / 2, this.charter.config.x * this.charter.config.w - 30, this.charter.config.y * this.charter.config.h, 70, 90);
             //  console.log(this.charter.name + ' riceve danni da ' + this.charter.malefici.fiery.malus + ' : ' + this.charter.malefici.fiery.quantita);
             this.charter.parametriFantasy.salute -= this.charter.malefici.fiery.quantita;
 
@@ -215,8 +215,8 @@ export class DrawCharter {
             this.charter.malefici.poisoned.totTurni--;
             this.charter.config.ctx.fillStyle = 'green';
             this.charter.config.ctx.font = "20px Impact";
-            this.charter.config.ctx.fillText('POISONED', this.charter.getX() * this.charter.config.w - 70, this.charter.getY() * this.charter.config.h + 60, 300);
-            this.charter.config.ctx.drawImage(this.velenoImage, this.velenoImage.width / 4 * this.charter.counterAnimation, 0, this.velenoImage.width / 4, this.velenoImage.height / 2, this.charter.getX() * this.charter.config.w, this.charter.getY() * this.charter.config.h - 30, 70, 90);
+            this.charter.config.ctx.fillText('POISONED', this.charter.config.x * this.charter.config.w - 70, this.charter.config.y * this.charter.config.h + 60, 300);
+            this.charter.config.ctx.drawImage(this.velenoImage, this.velenoImage.width / 4 * this.charter.counterAnimation, 0, this.velenoImage.width / 4, this.velenoImage.height / 2, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h - 30, 70, 90);
 
             if (!this.velenoImage.src) {
                 this.velenoImage.src = 'assets/images/avvelenamento.png';
@@ -237,8 +237,8 @@ export class DrawCharter {
             }
             this.charter.config.ctx.fillStyle = 'gold';
             this.charter.config.ctx.font = "20px Impact";
-            this.charter.config.ctx.fillText('STUNNED', this.charter.getX() * this.charter.config.w + this.charter.config.w, this.charter.getY() * this.charter.config.h + 60, 300);
-            this.charter.config.ctx.drawImage(this.stunnoImage, this.stunnoImage.width / 4 * this.charter.counterAnimation, 0, this.stunnoImage.width / 4, this.stunnoImage.height, this.charter.getX() * this.charter.config.w, this.charter.getY() * this.charter.config.h - 30, 70, 90);
+            this.charter.config.ctx.fillText('STUNNED', this.charter.config.x * this.charter.config.w + this.charter.config.w, this.charter.config.y * this.charter.config.h + 60, 300);
+            this.charter.config.ctx.drawImage(this.stunnoImage, this.stunnoImage.width / 4 * this.charter.counterAnimation, 0, this.stunnoImage.width / 4, this.stunnoImage.height, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h - 30, 70, 90);
             this.charter.parametriFantasy.salute -= this.charter.malefici.stunned.quantita;
             this.charter.malefici.stunned.totTurni--;
         }
@@ -249,16 +249,16 @@ export class DrawCharter {
             if (!this.blockImage.src) {
                 this.blockImage.src = 'assets/images/singlespiderweb.png'; //src\assets\images\singlespiderweb.png
             }
-            this.charter.setVelocita(0.05);
+            this.charter.config.velocita =0.05;
             this.charter.parametriFantasy.salute -= this.charter.malefici.blocked.quantita;
             this.charter.malefici.blocked.totTurni--;
             this.charter.config.ctx.fillStyle = 'white';
             this.charter.config.ctx.font = "20px Impact";
-            this.charter.config.ctx.fillText('BLOCKED', this.charter.getX() * this.charter.config.w - 30, this.charter.getY() * this.charter.config.h + 60, 300);
-            this.charter.config.ctx.drawImage(this.blockImage, 0, 0, this.blockImage.width, this.blockImage.height, this.charter.getX() * this.charter.config.w, this.charter.getY() * this.charter.config.h, 70, 90);
+            this.charter.config.ctx.fillText('BLOCKED', this.charter.config.x * this.charter.config.w - 30, this.charter.config.y * this.charter.config.h + 60, 300);
+            this.charter.config.ctx.drawImage(this.blockImage, 0, 0, this.blockImage.width, this.blockImage.height, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h, 70, 90);
         } else {
             if (this.isRallentato) {
-                this.charter.setVelocita(this.charter.velocitaIniziale);
+                this.charter.config.velocita =this.charter.velocitaIniziale;
                 this.isRallentato = false;
             }
         }
@@ -283,8 +283,8 @@ export class DrawCharter {
                 0,//riga hs
                 this.scudoIcon.width, //ws
                 this.scudoIcon.height,//hs
-                this.charter.getX() * this.charter.config.w - 10 + this.charter.scudoCounter.counter / 3,
-                this.charter.getY() * this.charter.config.h - 10,
+                this.charter.config.x * this.charter.config.w - 10 + this.charter.scudoCounter.counter / 3,
+                this.charter.config.y * this.charter.config.h - 10,
                 this.charter.config.w / 3,
                 this.charter.config.h / 3);
         }
@@ -297,8 +297,8 @@ export class DrawCharter {
                 0,//riga hs
                 this.pozioneIcon.width, //ws
                 this.pozioneIcon.height,//hs
-                this.charter.getX() * this.charter.config.w - 10 + this.charter.pozioneCounter.counter / 3,
-                this.charter.getY() * this.charter.config.h - 30,
+                this.charter.config.x * this.charter.config.w - 10 + this.charter.pozioneCounter.counter / 3,
+                this.charter.config.y * this.charter.config.h - 30,
                 this.charter.config.w / 3,
                 this.charter.config.h / 3);
         }
@@ -308,39 +308,39 @@ export class DrawCharter {
     private drawFineCorsa(max: number, heigt: number) {
         this.charter.config.ctx.fillStyle = 'white';
         this.charter.config.ctx.fillRect(
-            this.charter.getX() * this.charter.config.w + max,
-            this.charter.getY() * this.charter.config.h - heigt,
+            this.charter.config.x * this.charter.config.w + max,
+            this.charter.config.y * this.charter.config.h - heigt,
             5, 10
         );
     }
 
     private drawTexts() {
-        this.charter.config.ctx.fillStyle = this.charter.getColor();
+        this.charter.config.ctx.fillStyle = this.charter.config.color;
         this.charter.config.ctx.strokeStyle = 'black';
         this.charter.config.ctx.font = '18px Impact';
         this.charter.config.ctx.strokeText(
             this.charter.classe + ' - ' + this.charter.name + ' - Level ' + this.charter.parametriFantasy.livello + ' - $ ' + this.charter.parametriFantasy.money + '     ' + this.charter.parametriFantasy.salute + '     ' + this.charter.maxSalute,
-            this.charter.getX() * this.charter.config.w,
-            this.charter.getY() * this.charter.config.h - 55, 500
+            this.charter.config.x * this.charter.config.w,
+            this.charter.config.y * this.charter.config.h - 55, 500
         );
         this.charter.config.ctx.font = '18px Impact';
         this.charter.config.ctx.fillText(
             'F' + this.charter.parametriFantasy.forza + ' I ' + this.charter.parametriFantasy.intelligenza + 'A' + this.charter.parametriFantasy.agilita + ' RF ' + this.charter.parametriFantasy.resistenzaFisica + ' RM ' + this.charter.parametriFantasy.resistenzaMagica,
-            this.charter.getX() * this.charter.config.w,
-            this.charter.getY() * this.charter.config.h - 75, 500
+            this.charter.config.x * this.charter.config.w,
+            this.charter.config.y * this.charter.config.h - 75, 500
         );
         this.charter.config.ctx.fillText(
             this.charter.classe + ' - ' + this.charter.name + ' - Level ' + this.charter.parametriFantasy.livello + ' - $ ' + this.charter.parametriFantasy.money,
-            this.charter.getX() * this.charter.config.w,
-            this.charter.getY() * this.charter.config.h - 55, 500
+            this.charter.config.x * this.charter.config.w,
+            this.charter.config.y * this.charter.config.h - 55, 500
         );
     }
 
     private drawBarra(color: string, counter: number, posHeight: number, heigt: number) {
         this.charter.config.ctx.fillStyle = color;
         this.charter.config.ctx.fillRect(
-            this.charter.getX() * this.charter.config.w,
-            this.charter.getY() * this.charter.config.h - posHeight,
+            this.charter.config.x * this.charter.config.w,
+            this.charter.config.y * this.charter.config.h - posHeight,
             counter, heigt);
     }
 
@@ -376,7 +376,7 @@ export class DrawCharter {
                         break;
                 }
                 colonna = this.charter.spriteSheetImage.width / 4 * this.charter.counterAnimation;
-                this.charter.config.ctx.drawImage(this.charter.spriteSheetImage, colonna, riga, this.charter.spriteSheetImage.width / 4, this.charter.spriteSheetImage.height / 4, this.charter.getX() * this.charter.config.w, this.charter.getY() * this.charter.config.h, 70, 90);
+                this.charter.config.ctx.drawImage(this.charter.spriteSheetImage, colonna, riga, this.charter.spriteSheetImage.width / 4, this.charter.spriteSheetImage.height / 4, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h, 70, 90);
                 break;
             case 'attaccando':
                 switch (this.charter.getDirection()) {
@@ -405,7 +405,7 @@ export class DrawCharter {
                         break;
                 }
                 colonna = this.charter.spriteSheetImageAttack.width / 4 * this.charter.counterAnimation;
-                this.charter.config.ctx.drawImage(this.charter.spriteSheetImageAttack, colonna, riga, this.charter.spriteSheetImageAttack.width / 4, this.charter.spriteSheetImageAttack.height / 4, this.charter.getX() * this.charter.config.w, this.charter.getY() * this.charter.config.h, 70, 90);
+                this.charter.config.ctx.drawImage(this.charter.spriteSheetImageAttack, colonna, riga, this.charter.spriteSheetImageAttack.width / 4, this.charter.spriteSheetImageAttack.height / 4, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h, 70, 90);
                 break;
 
             case 'difendendo':
@@ -435,11 +435,11 @@ export class DrawCharter {
                         break;
                 }
                 colonna = this.charter.spriteSheetImageAttack.width / 4 * this.charter.counterAnimation;
-                this.charter.config.ctx.drawImage(this.charter.spriteSheetImageAttack, colonna, riga, this.charter.spriteSheetImageAttack.width / 4, this.charter.spriteSheetImageAttack.height / 4, this.charter.getX() * this.charter.config.w, this.charter.getY() * this.charter.config.h, 70, 90);
+                this.charter.config.ctx.drawImage(this.charter.spriteSheetImageAttack, colonna, riga, this.charter.spriteSheetImageAttack.width / 4, this.charter.spriteSheetImageAttack.height / 4, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h, 70, 90);
                 break;
 
             case 'morendo':
-                this.charter.config.ctx.fillText('morto', this.charter.getX() * this.charter.config.w, this.charter.getY() * this.charter.config.h, 300);
+                this.charter.config.ctx.fillText('morto', this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h, 300);
                 break;
         }
     }

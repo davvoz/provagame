@@ -35,9 +35,9 @@ export class Mondo {
             x: 0,
             y: 0
         });
-        this.camion.setX(29);
-        this.camion.setY(3);
-        this.camion.setVelocita(this.configurazioneMondo.velocitaCamion);
+        this.camion.config.x=29;
+        this.camion.config.y=3;
+        this.camion.config.velocita=this.configurazioneMondo.velocitaCamion;
         this.camion.stand();
         this.pozione = new Pozione({
             color: 'green',
@@ -48,9 +48,9 @@ export class Mondo {
             x: 0,
             y: 0
         });
-        this.pozione.setX(2);
-        this.pozione.setY(2);
-        this.pozione.setVelocita(0);
+        this.pozione.config.x=2;
+        this.pozione.config.y=2;
+        this.pozione.config.velocita=0;
         this.pozione.stand();
         this.scudoBonus = new GeneralSprite({
             color: 'green',
@@ -61,9 +61,9 @@ export class Mondo {
             x: 0,
             y: 0
         }, 'assets/images/scudo.png');
-        this.scudoBonus.setX(4);
-        this.scudoBonus.setY(4);
-        this.scudoBonus.setVelocita(0);
+        this.scudoBonus.config.x=4;
+        this.scudoBonus.config.y=4;
+        this.scudoBonus.config.velocita=0;
         this.scudoBonus.stand();
         this.tesoro = new Treasure({
             color: 'green',
@@ -74,9 +74,9 @@ export class Mondo {
             x: 0,
             y: 0
         });
-        this.tesoro.setX(5);
-        this.tesoro.setY(5);
-        this.tesoro.setVelocita(0);
+        this.tesoro.config.x=5;
+        this.tesoro.config.y=5;
+        this.tesoro.config.velocita=0;
         this.tesoro.stand();
         this.sfondo = new GestioneSfondi({
             color: 'green',
@@ -92,9 +92,9 @@ export class Mondo {
     }
 
     startSchema() {
-        this.sfondo.setX(0);
-        this.sfondo.setY(1);
-        this.sfondo.setVelocita(0);
+        this.sfondo.config.x=0;
+        this.sfondo.config.y=1;
+        this.sfondo.config.velocita=0;
     }
 
     aggiorna() {

@@ -13,6 +13,6 @@ export class Treasure extends Square {
         this.image.src = 'assets/images/treasure.png';
     }
     override draw(): void {
-        this.config.ctx.drawImage(this.image, this.config.w * this.getX(), this.config.h * this.getY(), 50, 75)
+        this.config.ctx.drawImage(this.image, this.config.w * this.config.x, this.config.h * this.config.y, 50, 75)
     }
 }
