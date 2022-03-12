@@ -15,7 +15,7 @@ export class BottonePozione extends Bottone {
         this.config.ctx.drawImage(this.image,
             0, 0,
             this.image.width, this.image.height,
-            this.config.w * this.getX(), this.config.h * this.getY(),
+            this.config.w * this.config.x, this.config.h * this.config.y,
             50, 75);
     }
 

@@ -19,8 +19,8 @@ export class BottoneSceltaCharter extends Bottone {
         this.config.ctx.strokeStyle = 'red';
         this.config.ctx.lineWidth = 3;
         this.config.ctx.strokeRect(
-            this.getX() * this.config.w,
-            this.getY() * this.config.h + this.config.h / 2 -30,
+            this.config.x * this.config.w,
+            this.config.y * this.config.h + this.config.h / 2 -30,
             this.config.w,
             this.config.h);
         this.config.ctx.drawImage(this.image,
@@ -28,8 +28,8 @@ export class BottoneSceltaCharter extends Bottone {
             0,//riga hs
             this.image.width / 4, //ws
             this.image.height / 4,//hs
-            this.getX() * this.config.w,
-            this.getY() * this.config.h + this.config.h / 2 ,
+            this.config.x * this.config.w,
+            this.config.y * this.config.h + this.config.h / 2 ,
             this.config.w,
             this.config.h);
     }
@@ -37,8 +37,8 @@ export class BottoneSceltaCharter extends Bottone {
     override scriviAltriTesti() {
         this.config.ctx.fillText(
             this.terzoText,
-            this.getX() * this.config.w,
-            this.getY() * this.config.h + this.config.h / 2 - 50,
+            this.config.x * this.config.w,
+            this.config.y * this.config.h + this.config.h / 2 - 50,
             60
           );
     }

@@ -27,7 +27,7 @@ export class Bonus extends Square {
 
     override  draw() {
         if (this.plafond > 0) {
-            this.config.ctx.drawImage(this.spriteSheetImage, this.config.w * this.getX(), this.config.h * this.getY(), 60, 80);
+            this.config.ctx.drawImage(this.spriteSheetImage, this.config.w * this.config.x, this.config.h * this.config.y, 60, 80);
         }
     }
     setQuantita(quantita: number) {

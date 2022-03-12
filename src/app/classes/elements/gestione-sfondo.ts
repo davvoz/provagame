@@ -61,7 +61,7 @@ export class GestioneSfondi extends Square {
             this.config.ctx.drawImage(this.image5,
                 0, 0,
                 this.image5.width, this.image5.height,
-                this.getX() * this.config.w + 160 * i, this.getY() * this.config.h - 15,
+                this.config.x * this.config.w + 160 * i, this.config.y * this.config.h - 15,
                 200, 90);
         }
     }
@@ -130,7 +130,7 @@ export class GestioneSfondi extends Square {
             this.config.ctx.drawImage(this.image,
                 0, 0,
                 this.image.width, this.image.height,
-                this.getX() * this.config.w + 100 * i, this.getY() * this.config.h,
+                this.config.x * this.config.w + 100 * i, this.config.y * this.config.h,
                 160, 50);
         }
     }

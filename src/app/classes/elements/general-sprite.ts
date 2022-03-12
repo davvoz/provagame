@@ -10,8 +10,7 @@ export class GeneralSprite extends Square {
     }
 
     override draw(): void {
-        this.config.ctx.drawImage(this.image, this.config.w * this.getX(), this.config.h * this.getY(), this.config.w, this.config.h);
-        this.config.ctx.strokeRect(this.config.w * this.getX(), this.config.h * this.getY(), this.config.w, this.config.h);
-
+        this.config.ctx.drawImage(this.image, this.config.w * this.config.x, this.config.h * this.config.y, this.config.w, this.config.h);
+        this.config.ctx.strokeRect(this.config.w * this.config.x, this.config.h * this.config.y, this.config.w, this.config.h);
     }
 }

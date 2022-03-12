@@ -25,8 +25,8 @@ export class BottoneScudoAttiva extends Bottone {
                 0,//riga hs
                 this.imageScudo.width, //ws
                 this.imageScudo.height,//hs
-                this.getX() * this.config.w,
-                this.getY() * this.config.h,
+                this.config.x * this.config.w,
+                this.config.y * this.config.h,
                 this.config.w,
                 this.config.h);
 
@@ -36,13 +36,13 @@ export class BottoneScudoAttiva extends Bottone {
                 0,//riga hs
                 this.imageScudoBuco.width, //ws
                 this.imageScudoBuco.height,//hs
-                this.getX() * this.config.w,
-                this.getY() * this.config.h,
+                this.config.x * this.config.w,
+                this.config.y * this.config.h,
                 this.config.w,
                 this.config.h);
         }
        
-       // this.config.ctx.strokeRect(this.config.w * this.getX(), this.config.h * this.getY(), this.config.w, this.config.h);
+       // this.config.ctx.strokeRect(this.config.w * this.config.x, this.config.h * this.config.y, this.config.w, this.config.h);
     }
 
     getIsScudoPresente() {

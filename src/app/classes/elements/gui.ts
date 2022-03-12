@@ -79,8 +79,8 @@ export class Gui {
         this.compraBonus.secondText = ' key space';
         this.compraBonus.terzoText = '$ 10';
         this.scudoButton = new BottoneScudoAttiva(Utilities.getSquareConfig(this.ctx, 'red'), true);
-        this.scudoButton.setX(17);
-        this.scudoButton.setY(9.1);
+        this.scudoButton.config.x=17;
+        this.scudoButton.config.y=9.1;
         this.scudoButton.setText('SCUDO');
         this.scudoButton.secondText = ' key 3';
         this.scudoButton.terzoText = 'free';
@@ -93,8 +93,8 @@ export class Gui {
 
         for (let i = 0; i < 3; i++) {
             let pozione = new BottonePozione(Utilities.getSquareConfig(this.ctx, ''), true);
-            pozione.setX(i + 30);
-            pozione.setY(8);
+            pozione.config.x=i + 30;
+            pozione.config.y=8;
             pozione.secondText = ' key ' + (i + 1);
             pozione.terzoText = 'free';
             pozione.stand();
@@ -121,8 +121,8 @@ export class Gui {
                     sc.typeOfCharter = 'BULLO';
                     break;
             }
-            sc.setX(i);
-            sc.setY(6);
+            sc.config.x=i;
+            sc.config.y=6;
             sc.secondText = ' -> ' + (i + 1);
             sc.terzoText = 'free';
             sc.stand();
