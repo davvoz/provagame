@@ -1,11 +1,11 @@
 import { GeneralSprite } from "../elements/general-sprite";
 
 export type classe = 'MAGO' | 'GUERRIERO' | 'ARCERE' | 'SAMURAI' | 'ABSTRACT' | 'BULLO';
-export type classeProiettile = 'PALLADIFUOCO' | 'RAGNO' | 'EDWARD' | 'HAMMER' | 'ABSTRACT';
+export type classeProiettile = 'PALLADIFUOCO' | 'RAGNO' | 'COLTELLO' | 'HAMMER' | 'ABSTRACT';
 
 export type tipoBonus = 'salute' | 'forza' | 'intelligenza';
 export type direzione = 'TOP' | 'BOTTOM' | 'RIGHT' | 'LEFT' | 'STAND';
-export type malus = 'STUN' | 'VENO' | 'FIRE' | 'BLOCK';
+export type malus = 'STUN' | 'VENO' | 'FIRE' | 'BLOCK' | 'BLOOD';
 export interface MaliciusEffect {
     malus: malus;
     value: boolean;
@@ -16,7 +16,8 @@ export interface Malefici {
     stunned: MaliciusEffect;
     poisoned: MaliciusEffect;
     fiery: MaliciusEffect;
-    blocked: MaliciusEffect;
+    slowed: MaliciusEffect;
+    blooding: MaliciusEffect
 }
 export type stato = 'attaccando' | 'difendendo' | 'camminando' | 'morendo';
 export interface FinalState {
@@ -84,4 +85,35 @@ export interface SquareConfig {
     ctx: CanvasRenderingContext2D;
     color: string;
     velocita: number;
+}
+export class CollisionToDirection {
+    isColliding: boolean = false;
+    collisionFromRight: number = 0;
+    collisionFromLeft: number = 0;
+    collisionFromTop: number = 0;
+    collisionFromBottom: number = 0;
+    getBetterDirection(): direzione {
+        let winDirctionLR = 0;
+        let direzioneLR: direzione;
+        if (this.collisionFromRight > this.collisionFromLeft) {
+            winDirctionLR = this.collisionFromRight;
+            direzioneLR = 'RIGHT';
+        } else {
+            winDirctionLR = this.collisionFromLeft;
+            direzioneLR = 'LEFT';
+        }
+        let winDirctionBT = 0;
+        let direzioneBT: direzione;
+        if (this.collisionFromTop > this.collisionFromBottom) {
+            winDirctionBT = this.collisionFromTop;
+            direzioneBT = 'TOP';
+        } else {
+            winDirctionBT = this.collisionFromBottom;
+            direzioneBT = 'BOTTOM';
+        }
+        if (winDirctionBT > winDirctionLR) {
+            return direzioneBT
+        }
+        return direzioneLR
+    }
 }

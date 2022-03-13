@@ -30,8 +30,7 @@ export class Charter extends Square implements CharterParam {
     maxMana: 0
   };
   malefici: Malefici = {
-    stunned:
-    {
+    stunned: {
       malus: 'STUN',
       value: false,
       quantita: 0,
@@ -49,17 +48,21 @@ export class Charter extends Square implements CharterParam {
       quantita: 0,
       totTurni: 0
     },
-    blocked:
-    {
+    slowed: {
       malus: 'BLOCK',
       value: false,
       quantita: 0,
       totTurni: 0,
     },
-
+    blooding: {
+      malus: 'BLOOD',
+      value: false,
+      quantita: 0,
+      totTurni: 0,
+    }
   }
-  override config !:SquareConfig;
-  maxSalute = 1000 * this.parametriFantasy.livello;
+  override config !: SquareConfig;
+  maxSalute = 10000 * this.parametriFantasy.livello;
   genereSprite = 0;//se = 0 then SX = 1 dx = 2 ; se = 1 SX = 2 DX = 1
   exp = 0;
   nextExp = 200;
@@ -84,6 +87,7 @@ export class Charter extends Square implements CharterParam {
   isMorto = false;
   isOggettoInvolo = false;
   isOggettoAtterrato = false;
+  isLogActive = false;
 
   pozioni: Pozione[] = [];
   stato: stato = 'camminando';
@@ -91,8 +95,8 @@ export class Charter extends Square implements CharterParam {
   scudoCounter = new CounterToTrashold(500, false);
   pozioneCounter = new CounterToTrashold(500, false);
   visualizzaDannoCounter = new CounterToTrashold(32, false);
+  haPresoUnaDirezioneCounter = new CounterToTrashold(35, false);
   disegno!: DrawCharter;
-  isLogActive = false;
 
   override draw() {
     if (!this.disegno) {
@@ -149,7 +153,10 @@ export class Charter extends Square implements CharterParam {
           this.malefici.fiery = effettoMalevolo;
           break;
         case 'BLOCK':
-          this.malefici.blocked = effettoMalevolo;
+          this.malefici.slowed = effettoMalevolo;
+          break;
+        case 'BLOOD':
+          this.malefici.blooding = effettoMalevolo;
           break;
       }
     }
@@ -256,7 +263,26 @@ export class Charter extends Square implements CharterParam {
     this.updateParametriFantasy();
   }
 
+  getAurea(): Square {
+    const config: SquareConfig = {
+      color: '',
+      ctx: this.config.ctx,
+      velocita: 0,
+      x: this.config.x * this.config.w - this.config.w,
+      y: this.config.y * this.config.h - this.config.h,
+      h: this.config.w * 4,
+      w: this.config.w * 4
+    }
+    const s = new Square(config);
+    return s;
+  }
+
+  private setAurea(){
+
+  }
+
   private updateTimers() {
+    this.haPresoUnaDirezioneCounter.counting();
     this.scudoCounter.counting();
     this.pozioneCounter.counting();
     this.visualizzaDannoCounter.counting();

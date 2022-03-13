@@ -11,26 +11,14 @@ export class DrawCharter {
     private blockImage = new Image();
     private scudoIcon = new Image();
     private pozioneIcon = new Image();
+    private bloodImage = new Image();
+    private isSanguinante = false;
 
     constructor(charter: Charter) {
         this.charter = charter;
     }
 
-    getVisioneSquare(): Square {
-        const config: SquareConfig = {
-            color: '',
-            ctx: this.charter.config.ctx,
-            velocita: 0,
-            x:this.charter.config.x * this.charter.config.w - this.charter.config.w * 2,
-            y: this.charter.config.y * this.charter.config.h - this.charter.config.w * 2,
-            h:this.charter.config.w * 6,
-            w:this.charter.config.w * 6
-        }
-        const s = new Square(config);
-        this.charter.config.ctx.strokeStyle = 'violet';
-        this.charter.config.ctx.strokeRect(s.config.x * this.charter.config.w, s.config.y * this.charter.config.h, s.config.w - 10, s.config.h - 10);
-        return s;
-    }
+
 
     public drawAll(drowSintesi: boolean) {
         this.drawSprite();
@@ -175,19 +163,20 @@ export class DrawCharter {
     private drawSprite() {
         this.setSpriteFromCharterAndAction();
         this.drawMalefici();
-        this.drawVisione();
+        this.drawAurea();
     }
 
-    private drawVisione() {
+    private drawAurea() {
         const centerOfSpriteX = this.charter.config.x * this.charter.config.w;
         const centerOfSpriteY = this.charter.config.y * this.charter.config.h;
         this.charter.config.ctx.save();
         this.charter.config.ctx.fillStyle = 'rgba(200,120,120,0.4)';
-        this.charter.config.ctx.lineWidth = 5;
+        this.charter.config.ctx.lineWidth = 2;
         this.charter.config.ctx.strokeRect(
-            centerOfSpriteX - this.charter.config.w * 2,
-            centerOfSpriteY - this.charter.config.w * 2,
-            this.charter.config.w * 6, this.charter.config.w * 6);
+            centerOfSpriteX - this.charter.config.w,
+            centerOfSpriteY - this.charter.config.h,
+            this.charter.config.w * 4, 
+            this.charter.config.w* 4);
         this.charter.config.ctx.restore();
     }
 
@@ -243,24 +232,40 @@ export class DrawCharter {
             this.charter.malefici.stunned.totTurni--;
         }
         //situazione block
-        if (this.charter.malefici.blocked.value && this.charter.malefici.blocked.totTurni > 0) {
+        if (this.charter.malefici.slowed.value && this.charter.malefici.slowed.totTurni > 0) {
             this.isRallentato = true;
             //  console.log(this.charter.name + ' riceve danni da ' + this.charter.malefici.blocked.malus + ' : ' + this.charter.malefici.blocked.quantita);
             if (!this.blockImage.src) {
                 this.blockImage.src = 'assets/images/singlespiderweb.png'; //src\assets\images\singlespiderweb.png
             }
-            this.charter.config.velocita =0.05;
-            this.charter.parametriFantasy.salute -= this.charter.malefici.blocked.quantita;
-            this.charter.malefici.blocked.totTurni--;
+            this.charter.config.velocita = 0.05;
+            this.charter.parametriFantasy.salute -= this.charter.malefici.slowed.quantita;
+            this.charter.malefici.slowed.totTurni--;
             this.charter.config.ctx.fillStyle = 'white';
             this.charter.config.ctx.font = "20px Impact";
             this.charter.config.ctx.fillText('BLOCKED', this.charter.config.x * this.charter.config.w - 30, this.charter.config.y * this.charter.config.h + 60, 300);
             this.charter.config.ctx.drawImage(this.blockImage, 0, 0, this.blockImage.width, this.blockImage.height, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h, 70, 90);
         } else {
             if (this.isRallentato) {
-                this.charter.config.velocita =this.charter.velocitaIniziale;
+                this.charter.config.velocita = this.charter.velocitaIniziale;
                 this.isRallentato = false;
             }
+        }
+        //situazione blood
+        if (this.charter.malefici.blooding.value && this.charter.malefici.blooding.totTurni > 0) {
+            this.isSanguinante = true;
+            //  console.log(this.charter.name + ' riceve danni da ' + this.charter.malefici.blocked.malus + ' : ' + this.charter.malefici.blocked.quantita);
+            if (!this.bloodImage.src) {
+                this.bloodImage.src = 'assets/images/blooding2.png'; //src\assets\images\singlespiderweb.png
+            }
+
+            this.charter.parametriFantasy.salute -= this.charter.malefici.blooding.quantita;
+            this.charter.malefici.blooding.totTurni--;
+            this.charter.config.ctx.fillStyle = 'red';
+            this.charter.config.ctx.font = "20px Impact";
+            this.charter.config.ctx.fillText('BLOODING', this.charter.config.x * this.charter.config.w - 30, this.charter.config.y * this.charter.config.h + 60, 300);
+            // this.charter.config.ctx.drawImage(this.bloodImage, 0, 0, this.bloodImage.width , this.bloodImage.height, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h, 70, 90);
+            this.charter.config.ctx.drawImage(this.bloodImage, this.bloodImage.width / 4 * this.charter.counterAnimation, 0, this.bloodImage.width / 4, this.bloodImage.height / 2, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h - 30, 70, 30);
         }
         this.charter.config.ctx.restore();
 

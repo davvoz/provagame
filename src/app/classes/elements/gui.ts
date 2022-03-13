@@ -2,9 +2,10 @@ import { Bottone } from "./bottone";
 import { BottonePozione } from "../buttons/bottone-pozione";
 import { Charter } from "../abstract/charter";
 import { BottoneSceltaCharter } from "../buttons/bottone-scelta-charter";
-import { classe } from "../utils/costants.enum";
+import { classe, classeProiettile } from "../utils/costants.enum";
 import { BottoneScudoAttiva } from "../buttons/bottone-scudo-attiva";
 import { Utilities } from "../utils/utilities";
+import { BottoneSceltaProiettile } from "../buttons/bottone-scelta-proiettile";
 
 export class Gui {
     startButton!: Bottone;
@@ -17,9 +18,15 @@ export class Gui {
     counterAnimationDieText = 0;
     counterAnimationDieTextThO = 200;
     sceltaCharter: BottoneSceltaCharter[] = [];
+    sceltaProiettile: BottoneSceltaProiettile[] = [];
     classeCharterScelto: classe = 'ABSTRACT';
+    classeProiettileScelto: classeProiettile = 'ABSTRACT';
     isRestartTouched = false;
-    private selectedImage = new Image();
+    private selectedImageCharter = new Image();
+    private selectedImageProiettile = new Image();
+    descrizioneProiettile = 'ABSTRACT';
+    descrizioneCharter = 'ABSTRACT';
+
     constructor(public ctx: CanvasRenderingContext2D) {
         this.startButton = new Bottone({
             color: 'yellow',
@@ -79,8 +86,8 @@ export class Gui {
         this.compraBonus.secondText = ' key space';
         this.compraBonus.terzoText = '$ 10';
         this.scudoButton = new BottoneScudoAttiva(Utilities.getSquareConfig(this.ctx, 'red'), true);
-        this.scudoButton.config.x=17;
-        this.scudoButton.config.y=9.1;
+        this.scudoButton.config.x = 17;
+        this.scudoButton.config.y = 9.1;
         this.scudoButton.setText('SCUDO');
         this.scudoButton.secondText = ' key 3';
         this.scudoButton.terzoText = 'free';
@@ -93,8 +100,8 @@ export class Gui {
 
         for (let i = 0; i < 3; i++) {
             let pozione = new BottonePozione(Utilities.getSquareConfig(this.ctx, ''), true);
-            pozione.config.x=i + 30;
-            pozione.config.y=8;
+            pozione.config.x = i + 30;
+            pozione.config.y = 8;
             pozione.secondText = ' key ' + (i + 1);
             pozione.terzoText = 'free';
             pozione.stand();
@@ -121,28 +128,127 @@ export class Gui {
                     sc.typeOfCharter = 'BULLO';
                     break;
             }
-            sc.config.x=i;
-            sc.config.y=6;
+            sc.config.x = i;
+            sc.config.y = 6;
             sc.secondText = ' -> ' + (i + 1);
             sc.terzoText = 'free';
             sc.stand();
             this.sceltaCharter.push(sc);
         }
+        for (let i = 0; i <= 3; i++) {
+            let sc = new BottoneSceltaProiettile(Utilities.getSquareConfig(this.ctx, ''), '', false);
+            switch (i) {
+                case 0:
+                    sc = new BottoneSceltaProiettile(Utilities.getSquareConfig(this.ctx, ''), 'assets/images/coltello.png', false);
+                    sc.typeOfProiettile = 'COLTELLO';
+                    break;
+                case 1:
+                    sc = new BottoneSceltaProiettile(Utilities.getSquareConfig(this.ctx, ''), 'assets/images/hammero.png', false);
+                    sc.typeOfProiettile = 'HAMMER';
+                    break;
+                case 2:
+                    sc = new BottoneSceltaProiettile(Utilities.getSquareConfig(this.ctx, ''), 'assets/images/spidero.png', false);
+                    sc.typeOfProiettile = 'RAGNO';
+                    break;
+                case 3:
+                    sc = new BottoneSceltaProiettile(Utilities.getSquareConfig(this.ctx, ''), 'assets/images/fireball.png', false);
+                    sc.typeOfProiettile = 'PALLADIFUOCO';
+                    break;
+            }
+            sc.config.x = i + 9;
+            sc.config.y = 6;
+            sc.secondText = ' -> ' + (i + 1);
+            sc.terzoText = 'free';
+            sc.stand();
+            this.sceltaProiettile.push(sc);
+        }
     }
 
     aggiornaGui(livelloSchema: number, player: Charter, counterAnimation: number, isFaseScelta: boolean) {
         //rettangolo sotto
+        this.ctx.save();
         this.ctx.fillStyle = 'rgb(200,200,200)';
         this.ctx.fillRect(0, 650, this.ctx.canvas.width, 100);
-
+        this.ctx.restore();
         if (isFaseScelta) {
-
             if (!player || this.isRestartTouched) {
+                this.ctx.save();
                 this.ctx.font = 'italic bolder 75px Orbitron';
                 this.ctx.fillStyle = 'black';
-                this.ctx.fillText('CHIAPPARELLO - alfa', 0, 250, 3000);
-                this.ctx.font = 'italic bolder 45px Orbitron';
-                this.ctx.fillStyle = 'black';
+                this.ctx.fillText('Alfa - alfa', 0, 250, 3000);
+                for (let i = 0; i < this.sceltaProiettile.length; i++) {
+                    this.sceltaProiettile[i].terzoText = this.sceltaProiettile[i].typeOfProiettile;
+                    this.sceltaProiettile[i].counterAnimation = counterAnimation;
+                    this.sceltaProiettile[i].index = i;
+                    this.sceltaProiettile[i].stand();
+                }
+                if (this.classeProiettileScelto !== 'ABSTRACT') {
+                    this.ctx.save();
+                    this.ctx.font = 'italic bolder 45px Orbitron';
+                    this.ctx.fillStyle = 'black';
+
+                    switch (this.classeProiettileScelto) {
+                        case 'RAGNO':
+                            this.selectedImageProiettile.src = 'assets/images/spidero.png';
+                            this.descrizioneProiettile = 'rallenta';
+                            this.ctx.drawImage(this.selectedImageProiettile,
+                                this.selectedImageProiettile.width / 4 * counterAnimation,//colonna ws
+                                0,//riga hs
+                                this.selectedImageProiettile.width / 4, //ws
+                                this.selectedImageProiettile.height / 4,//hs
+                                530, 580,
+                                50,
+                                65);
+                            break;
+                        case 'COLTELLO':
+                            this.selectedImageProiettile.src = 'assets/images/coltello.png';
+                            this.descrizioneProiettile = 'lacera le carni';
+                            this.ctx.drawImage(this.selectedImageProiettile,
+                                this.selectedImageProiettile.width / 4 * counterAnimation,//colonna ws
+                                0,//riga hs
+                                this.selectedImageProiettile.width / 4, //ws
+                                this.selectedImageProiettile.height,//hs
+                                530, 580,
+                                50,
+                                65);
+                            break;
+                        case 'PALLADIFUOCO':
+                            this.selectedImageProiettile.src = 'assets/images/fireball.png';
+                            this.descrizioneProiettile = 'incendia';
+                            this.ctx.drawImage(this.selectedImageProiettile,
+                                this.selectedImageProiettile.width / 4 * counterAnimation,//colonna ws
+                                0,//riga hs
+                                this.selectedImageProiettile.width / 4, //ws
+                                this.selectedImageProiettile.height / 4,//hs
+                                530, 580,
+                                50,
+                                65);
+                            break;
+                        case 'HAMMER':
+                            this.selectedImageProiettile.src = 'assets/images/hammero.png';
+                            this.descrizioneProiettile = 'stunna';
+                            this.ctx.drawImage(this.selectedImageProiettile,
+                                this.selectedImageProiettile.width / 4 * counterAnimation,//colonna ws
+                                0,//riga hs
+                                this.selectedImageProiettile.width / 4, //ws
+                                this.selectedImageProiettile.height,//hs
+                                530, 580,
+                                50,
+                                65);
+                            break;
+                    }
+                    this.ctx.fillText('Proiettile ' + this.classeProiettileScelto + ' ' + this.descrizioneProiettile, 0, 450, 3000);
+
+                    this.ctx.restore();
+                    this.startButton.stand();
+                } else {
+                    this.ctx.save();
+                    this.ctx.font = 'italic bolder 45px Orbitron';
+                    this.ctx.fillStyle = 'black';
+                    this.ctx.fillText('Scegliere proiettile', 600, 550, 300);
+                    this.ctx.restore()
+                }
+
                 for (let i = 0; i < this.sceltaCharter.length; i++) {
                     this.sceltaCharter[i].terzoText = this.sceltaCharter[i].typeOfCharter;
                     this.sceltaCharter[i].counterAnimation = counterAnimation;
@@ -151,29 +257,40 @@ export class Gui {
                 }
                 if (this.classeCharterScelto !== 'ABSTRACT') {
                     //this.ctx.fillText('Hai scelto il ', 0, 450, 3000);
-                    this.ctx.fillText(this.classeCharterScelto, 400, 450, 3000);
+                    this.ctx.save();
+                    this.ctx.font = 'italic bolder 45px Orbitron';
+                    this.ctx.fillStyle = 'black';
                     switch (this.classeCharterScelto) {
-                        case 'SAMURAI': this.selectedImage.src = 'assets/images/samuraiAtk2.png';
+                        case 'SAMURAI': this.selectedImageCharter.src = 'assets/images/samuraiAtk2.png'; this.descrizioneCharter = 'Incendia';
                             break;//samurai
-                        case 'MAGO': this.selectedImage.src = 'assets/images/discotraspooAtck.png';
+                        case 'MAGO': this.selectedImageCharter.src = 'assets/images/discotraspooAtck.png'; this.descrizioneCharter = 'Avvelena e mana veloce';
                             break;//mago
-                        case 'GUERRIERO': this.selectedImage.src = 'assets/images/biondotraspoAtck_1.png';
+                        case 'GUERRIERO': this.selectedImageCharter.src = 'assets/images/biondotraspoAtck_1.png'; this.descrizioneCharter = 'Stunna';
                             break;//guerriero
-                        case 'BULLO': this.selectedImage.src = 'assets/images/edwardAtk.png';
+                        case 'BULLO': this.selectedImageCharter.src = 'assets/images/edwardAtk.png'; this.descrizioneCharter = 'Avvelena';
                             break;//arcere
                     }
-                    this.ctx.drawImage(this.selectedImage,
-                        this.selectedImage.width / 4 * counterAnimation,//colonna ws
+                    this.ctx.fillText('Eroe ' + this.classeCharterScelto + ' ' + this.descrizioneCharter, 0, 350, 3000);
+                    this.ctx.restore()
+                    this.ctx.drawImage(this.selectedImageCharter,
+                        this.selectedImageCharter.width / 4 * counterAnimation,//colonna ws
                         0,//riga hs
-                        this.selectedImage.width / 4, //ws
-                        this.selectedImage.height / 4,//hs
-                        500, 500,
+                        this.selectedImageCharter.width / 4, //ws
+                        this.selectedImageCharter.height / 4,//hs
+                        450, 500,
                         100,
                         140);
                     this.startButton.stand();
                 } else {
-                    this.ctx.fillText('Scegliere eroe', 0, 450, 3000);
+                    this.ctx.save();
+                    this.ctx.font = 'italic bolder 45px Orbitron';
+                    this.ctx.fillStyle = 'black';
+                    this.ctx.fillText('Scegliere eroe', 0, 550, 300);
+                    this.ctx.restore();
+
                 }
+
+
             }
         } else {
             if (!player.isMorto) {
@@ -253,5 +370,7 @@ export class Gui {
                 }
             }
         }
+
+        this.ctx.restore();
     }
 }

@@ -20,6 +20,8 @@ export class Bullo extends Charter {
     this.parametriFantasy.resistenzaMagica = 8;
     this.parametriFantasy.maxMana = 50;
     this.genereSprite = 1;
+    this.maxSalute = this.maxSalute + this.maxSalute ;
+
     this.updateParametriFantasy();
   }
 
@@ -37,8 +39,8 @@ export class Bullo extends Charter {
     charter.updateMalefici(
       {
         malus: 'VENO',
-        quantita: 9 * this.parametriFantasy.livello,
-        totTurni: 200 + this.parametriFantasy.livello * 2,
+        quantita: 90 * this.parametriFantasy.livello,
+        totTurni: 70 + this.parametriFantasy.livello * 2,
         value: true
       }
     )

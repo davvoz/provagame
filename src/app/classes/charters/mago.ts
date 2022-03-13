@@ -7,6 +7,7 @@ export class Mago extends Charter {
   override spriteSheetCharterPath = 'assets/images/discotraspoo.png';
   override spriteSheetAttackPath = 'assets/images/discotraspooAtck.png';
   override genereSprite: number = 0;
+
   constructor(configurazioneInziale:SquareConfig) {
     super(configurazioneInziale);
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
@@ -15,11 +16,12 @@ export class Mago extends Charter {
     this.parametriFantasy.numeriFortunati = [0, 1, 2, 3, 4];
     this.parametriFantasy.agilita = 2;
     this.parametriFantasy.forza = 10;
-    this.parametriFantasy.intelligenza = 10;
+    this.parametriFantasy.intelligenza = 15;
     this.parametriFantasy.mana = 1;
     this.parametriFantasy.resistenzaFisica = 7;
     this.parametriFantasy.resistenzaMagica = 8;
     this.parametriFantasy.maxMana = 10;
+    this.counterForCriticoTreshold = 4 ;
     this.updateParametriFantasy();
 
   }
@@ -37,9 +39,9 @@ export class Mago extends Charter {
     console.log(this.name + ' lancia abilità a ' + charter.name);
     charter.updateMalefici(
       {
-        malus: 'BLOCK',
-        quantita: 2 * this.parametriFantasy.livello,
-        totTurni: 530 + this.parametriFantasy.livello,
+        malus: 'VENO',
+        quantita: 10 * this.parametriFantasy.livello,
+        totTurni: 80 + this.parametriFantasy.livello,
         value: true
       }
     )

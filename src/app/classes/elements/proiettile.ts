@@ -8,7 +8,7 @@ export class Proiettile extends Square {
   image = new Image();
   counterAnimation = 0;
   classe: classeProiettile = 'ABSTRACT';
-  firebalTopBotPath = 'assets/images/fireballs2TB.png';
+  //firebalTopBotPath = 'assets/images/fireballs2TB.png';
   constructor(configurazioneInziale: SquareConfig, srcPath: string, classe: classeProiettile) {
     super(configurazioneInziale);
     this.spriteSheet = srcPath;
@@ -23,16 +23,16 @@ export class Proiettile extends Square {
         {
           malus: 'FIRE',
           quantita: 60,
-          totTurni: 350,
+          totTurni: 150,
           value: true
         }
       )
         break;
-      case 'EDWARD': charter.updateMalefici(
+      case 'COLTELLO': charter.updateMalefici(
         {
-          malus: 'STUN',
-          quantita: 60,
-          totTurni: 350,
+          malus: 'BLOOD',
+          quantita: 120,
+          totTurni: 75,
           value: true
         }
       )
@@ -41,7 +41,7 @@ export class Proiettile extends Square {
         {
           malus: 'BLOCK',
           quantita: 10,
-          totTurni: 750,
+          totTurni: 150,
           value: true
         }
       )
@@ -50,12 +50,13 @@ export class Proiettile extends Square {
         {
           malus: 'STUN',
           quantita: 60,
-          totTurni: 750,
+          totTurni: 150,
           value: true
         }
       )
         break;
     }
+    
 
   }
 
@@ -86,8 +87,8 @@ export class Proiettile extends Square {
       this.drawHammer();
     }
 
-    if (this.classe == 'EDWARD') {
-      this.drawEdward();
+    if (this.classe == 'COLTELLO') {
+      this.drawColtello();
     }
 
     if (this.classe == 'RAGNO') {
@@ -100,61 +101,7 @@ export class Proiettile extends Square {
   }
 
   private drawPallaDiFuoco() {
-    let result = 0;
-    if (this.counterAnimation == 2) {
-      result = 0;
-    }
-    if (this.counterAnimation == 3) {
-      result = 1;
-    } else {
-      result = this.counterAnimation;
-    }
-    switch (this.getDirection()) {
-      case 'BOTTOM':
-        this.image.src = this.firebalTopBotPath;
-        this.config.ctx.drawImage(this.image,
-          this.image.width / 2,
-          this.image.height / 2 * result,
-          this.image.width / 2,
-          this.image.height / 2,
-          this.config.x * this.config.w,
-          this.config.y * this.config.h,
-          30, 90);
-        break;
-      case 'TOP':
-        this.image.src = this.firebalTopBotPath;
-        this.config.ctx.drawImage(this.image,
-          0,
-          this.image.height / 2 * result,
-          this.image.width / 2,
-          this.image.height / 2,
-          this.config.x * this.config.w,
-          this.config.y * this.config.h,
-          30, 90);
-        break;
-      case 'LEFT':
-        this.image.src = this.spriteSheet;
-        this.config.ctx.drawImage(this.image,
-          this.image.width / 2 * result,
-          this.image.height / 2,
-          this.image.width / 2,
-          this.image.height / 2,
-          this.config.x * this.config.w,
-          this.config.y * this.config.h,
-          90, 30);
-        break;
-      case 'RIGHT':
-        this.image.src = this.spriteSheet;
-        this.config.ctx.drawImage(this.image,
-          this.image.width / 2 * result,
-          0,
-          this.image.width / 2,
-          this.image.height / 2,
-          this.config.x * this.config.w,
-          this.config.y * this.config.h,
-          90, 30);
-        break;
-    }
+    this.drawRagno();
   }
 
   private drawRagno() {
@@ -173,7 +120,7 @@ export class Proiettile extends Square {
     this.config.ctx.drawImage(this.image, colonna, riga, this.image.width / 4, this.image.height / 4, this.config.x * this.config.w, this.config.y * this.config.h, 70, 90);
   }
 
-  private drawEdward() {
+  private drawColtello() {
     let riga = 0;
     switch (this.getDirection()) {
       case 'BOTTOM': riga = 0;
@@ -186,7 +133,7 @@ export class Proiettile extends Square {
         break;
     }
     let colonna = this.image.width / 4 * this.counterAnimation;
-    this.config.ctx.drawImage(this.image, colonna, riga, this.image.width / 4, this.image.height / 4, this.config.x * this.config.w, this.config.y * this.config.h, 70, 90);
+    this.config.ctx.drawImage(this.image, colonna, 0, this.image.width / 4, this.image.height, this.config.x * this.config.w, this.config.y * this.config.h, 70, 90);
   }
 
   private drawHammer() {

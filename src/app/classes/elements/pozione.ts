@@ -3,7 +3,6 @@ import { Square } from "./square";
 
 export class Pozione extends Square {
     image = new Image();
-    override config!:SquareConfig;
     constructor(configurazioneInziale:SquareConfig) {
     super(configurazioneInziale);
         this.image.src = 'assets/images/pozioneverde.png'//src\assets\images\.png

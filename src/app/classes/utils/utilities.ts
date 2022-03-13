@@ -1,5 +1,5 @@
 import { Square } from "../elements/square";
-import { direzione, SquareConfig } from './costants.enum';
+import { CollisionToDirection, direzione, SquareConfig } from './costants.enum';
 import { Guerriero } from "../charters/guerriero";
 import { Mago } from "../charters/mago";
 import { Bonus } from "../elements/bonus";
@@ -14,10 +14,10 @@ export class Utilities {
     static createCamionArray(numeroCamion: number, ctx: CanvasRenderingContext2D): Camion[] {
         const ca: Camion[] = [];
         for (let i = 0; i < numeroCamion; i++) {
-            const camion = new Camion(Utilities.getSquareConfig(ctx,'red'));
-            camion.config.x =29;
-            camion.config.y =3;
-            camion.config.velocita =0.1;
+            const camion = new Camion(Utilities.getSquareConfig(ctx, 'red'));
+            camion.config.x = 29;
+            camion.config.y = 3;
+            camion.config.velocita = 0.1;
             camion.stand();
             ca.push(camion);
         }
@@ -34,6 +34,20 @@ export class Utilities {
             rect1.config.y < rect2.config.y + rect2.config.h &&
             rect1.config.h + rect1.config.y > rect2.config.y
     }
+
+    static rectsCollidingToDirection(cacciatore: Square, preda: Square): CollisionToDirection {
+        const cto = new CollisionToDirection();
+        cto.collisionFromBottom = preda.config.h + preda.config.y -(cacciatore.config.h + cacciatore.config.y );
+        cto.collisionFromTop = cacciatore.config.h + cacciatore.config.y -(preda.config.h + preda.config.y );
+        cto.collisionFromLeft = cacciatore.config.x + cacciatore.config.w - (preda.config.x + preda.config.w);
+        cto.collisionFromRight = preda.config.x + preda.config.w - (cacciatore.config.x + cacciatore.config.w);
+        cto.isColliding = cacciatore.config.x < preda.config.x + preda.config.w &&
+            cacciatore.config.x + cacciatore.config.w > preda.config.x &&
+            cacciatore.config.y < preda.config.y + preda.config.h &&
+            cacciatore.config.h + cacciatore.config.y > preda.config.y;
+        return cto;
+    }
+
     static rectsCollidingWrong(r1: Square, r2: Square) {
         return !(
             r1.config.x > r2.config.x + 1 ||
@@ -70,33 +84,33 @@ export class Utilities {
 
     static createBonusArray(j: number, ctx: CanvasRenderingContext2D): Bonus[] {
         const ba: Bonus[] = [];
-        const bonus1 = new Bonus(Utilities.getSquareConfig(ctx,'red'), 'salute', 1000, 1000);
+        const bonus1 = new Bonus(Utilities.getSquareConfig(ctx, 'red'), 'salute', 1000, 1000);
         //bonus1.spriteSheetCharterPath ='assets/images/polloo.png';
         bonus1.spriteSheetImage.src = 'assets/images/polloo.png';
-        bonus1.config.x =Math.floor(Math.random() * 9) + 1;
-        bonus1.config.y =Math.floor(Math.random() * 8) + 1;
-        bonus1.config.velocita =0;
+        bonus1.config.x = Math.floor(Math.random() * 9) + 1;
+        bonus1.config.y = Math.floor(Math.random() * 8) + 1;
+        bonus1.config.velocita = 0;
         bonus1.stand();
         ba.push(bonus1);
-        const bonus2 = new Bonus(Utilities.getSquareConfig(ctx,'red'), 'salute', 200, 200);
+        const bonus2 = new Bonus(Utilities.getSquareConfig(ctx, 'red'), 'salute', 200, 200);
         bonus2.spriteSheetImage.src = 'assets/images/panino.png';
-        bonus2.config.x =Math.floor(Math.random() * 9) + 1;
-        bonus2.config.y =Math.floor(Math.random() * 8) + 1;
-        bonus2.config.velocita =0;
+        bonus2.config.x = Math.floor(Math.random() * 9) + 1;
+        bonus2.config.y = Math.floor(Math.random() * 8) + 1;
+        bonus2.config.velocita = 0;
         bonus2.stand();
         ba.push(bonus2);
-        const bonus3 = new Bonus(Utilities.getSquareConfig(ctx,'red'), 'salute', 300, 300);
+        const bonus3 = new Bonus(Utilities.getSquareConfig(ctx, 'red'), 'salute', 300, 300);
         bonus3.spriteSheetImage.src = 'assets/images/formaggio.png';
-        bonus3.config.x =Math.floor(Math.random() * 9) + 1;
-        bonus3.config.y =Math.floor(Math.random() * 8) + 1;
-        bonus3.config.velocita =0;
+        bonus3.config.x = Math.floor(Math.random() * 9) + 1;
+        bonus3.config.y = Math.floor(Math.random() * 8) + 1;
+        bonus3.config.velocita = 0;
         bonus3.stand();
         ba.push(bonus3);
-        const bonus4 = new Bonus(Utilities.getSquareConfig(ctx,'red'), 'salute', 400, 400);
+        const bonus4 = new Bonus(Utilities.getSquareConfig(ctx, 'red'), 'salute', 400, 400);
         bonus4.spriteSheetImage.src = 'assets/images/uovo.png';
-        bonus4.config.x =Math.floor(Math.random() * 9) + 1;
-        bonus4.config.y =Math.floor(Math.random() * 8) + 1;
-        bonus4.config.velocita =0;
+        bonus4.config.x = Math.floor(Math.random() * 9) + 1;
+        bonus4.config.y = Math.floor(Math.random() * 8) + 1;
+        bonus4.config.velocita = 0;
         bonus4.stand();
         ba.push(bonus4);
         console.log(ba);
@@ -111,22 +125,22 @@ export class Utilities {
             let config;
             switch (i % 4) {
                 case 0:
-                    config = Utilities.getSquareConfig(ctx,'red');
+                    config = Utilities.getSquareConfig(ctx, 'red');
                     enemy = new Guerriero(config);
                     Utilities.setEnemiesArray(enemy, i, livelloNemici, enemies);
                     break;
                 case 1:
-                    config = Utilities.getSquareConfig(ctx,'green');
+                    config = Utilities.getSquareConfig(ctx, 'green');
                     enemy = new Mago(config);
                     Utilities.setEnemiesArray(enemy, i, livelloNemici, enemies);
                     break;
                 case 2:
-                    config = Utilities.getSquareConfig(ctx,'blue');
+                    config = Utilities.getSquareConfig(ctx, 'blue');
                     enemy = new Bullo(config)
                     Utilities.setEnemiesArray(enemy, i, livelloNemici, enemies);
                     break;
                 case 3:
-                    config = Utilities.getSquareConfig(ctx,'violet');
+                    config = Utilities.getSquareConfig(ctx, 'violet');
                     enemy = new Samurai(config)
                     Utilities.setEnemiesArray(enemy, i, livelloNemici, enemies);
                     break;
@@ -135,7 +149,7 @@ export class Utilities {
         return enemies;
     }
 
-     static getSquareConfig(ctx: CanvasRenderingContext2D,color:string) {
+    static getSquareConfig(ctx: CanvasRenderingContext2D, color: string) {
         return {
             color: color,
             ctx: ctx,
@@ -151,9 +165,9 @@ export class Utilities {
         for (let j = 0; j < livelloNemici; j++) {
             enemy.incrementaLivello();
         }
-        enemy.config.x =Math.floor(Math.random() * 15) + 5;
-        enemy.config.y =Math.floor(Math.random() * i) + 1;
-        enemy.config.velocita =0.1;
+        enemy.config.x = Math.floor(Math.random() * 15) + 5;
+        enemy.config.y = Math.floor(Math.random() * i) + 1;
+        enemy.config.velocita = 0.1;
         enemy.posizioneInfoLabelX = 370 + i * 120;
         enemy.posizioneInfoLabelY = 700;
         enemy.dannoCritico = 10 * livelloNemici;
@@ -226,8 +240,8 @@ export class Utilities {
     }
 
     static setRandomXY(square: Square) {
-        square.config.x =Math.floor(Math.random() * 8) + 1;
-        square.config.y =Math.floor(Math.random() * 5) + 1;
+        square.config.x = Math.floor(Math.random() * 8) + 1;
+        square.config.y = Math.floor(Math.random() * 5) + 1;
     }
 
     static log(isActive: boolean, message: string) {

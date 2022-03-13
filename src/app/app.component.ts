@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, NgZone, ViewChild }
 import { Bonus } from './classes/elements/bonus';
 import { Mago } from './classes/charters/mago';
 import { Utilities } from './classes/utils/utilities';
-import { classe, classeProiettile, direzione, FinalState } from './classes/utils/costants.enum';
+import { classeProiettile, CollisionToDirection, direzione, FinalState } from './classes/utils/costants.enum';
 import { Gui } from './classes/elements/gui';
 import { Mondo } from './classes/elements/mondo';
 import { Guerriero } from './classes/charters/guerriero';
@@ -22,6 +22,7 @@ export enum KEY_CODE {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements AfterViewInit {
+
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
     if (this.player) {
@@ -78,7 +79,7 @@ export class AppComponent implements AfterViewInit {
         }
         if (event.keyCode == 32) {//space lancia qualcosa
           this.player.lanciaOggetto();
-          this.newProiettile();
+          this.newProiettile(this.gui.classeProiettileScelto);
           this.proiettile.setDirection(this.player.getDirection());
         }
       }
@@ -126,6 +127,9 @@ export class AppComponent implements AfterViewInit {
   bonus: Bonus[] = [];
   bonusCount = 0;
   finalStates: FinalState[] = [];//sintesi finale matches
+  counterEnemiesCollideSelf = 20;
+  isEnemiesCollideSelf = false;
+
   constructor(private ngZone: NgZone) { }
 
   private animate(): void {
@@ -154,48 +158,67 @@ export class AppComponent implements AfterViewInit {
         && !this.m[this.mn].enemies[i].isMorto
         && Utilities.rectsCollidingWrong(this.m[this.mn].enemies[i], this.player)) {
         //il + agile attacca per primo
-        if (this.player.parametriFantasy.agilita >= this.m[this.mn].enemies[i].parametriFantasy.agilita) {
-          Utilities.algoAttack(this.player, this.m[this.mn].enemies[i]);
-          Utilities.algoAttack(this.m[this.mn].enemies[i], this.player);
-        } else {
-          Utilities.algoAttack(this.m[this.mn].enemies[i], this.player);
-          Utilities.algoAttack(this.player, this.m[this.mn].enemies[i]);
-        }
-        this.player.isOnAttack = true;
-        this.m[this.mn].enemies[i].isOnAttack = true;
-        this.m[this.mn].enemies[i].stand();
+        this.combattimento(i);
       } else {
+
         this.player.isOnAttack = false;
         this.player.stato = 'camminando';
         this.m[this.mn].enemies[i].isOnAttack = false;
         this.m[this.mn].enemies[i].stato = 'camminando';
 
-        //se è rimasto vivo controllo se si contra con il proiettile
+        //se è rimasto vivo controllo se si scontra con il proiettile
         if (this.proiettile && Utilities.rectsCollidingWrong(this.m[this.mn].enemies[i], this.proiettile)) {
-          this.m[this.mn].enemies[i].incrementaSalute(-100 * this.player.parametriFantasy.livello);
-          this.ctx.strokeStyle = 'red';
-          this.ctx.strokeRect(this.m[this.mn].enemies[i].config.x + 10, this.m[this.mn].enemies[i].config.y + 10, 30, 30);
-          this.proiettile.lanciaAbilita(this.m[this.mn].enemies[i]);
-          //se muore mgli rubo i soldi
-          if (this.m[this.mn].enemies[i].isMorto && this.m[this.mn].enemies[i].parametriFantasy.money > 0) {
-            this.player.rubaSoldiA(this.m[this.mn].enemies[i]);
-            this.player.exp = this.player.exp + this.player.parametriFantasy.livello * this.m[this.mn].enemies[i].parametriFantasy.livello * 100;
-          }
+          this.proiettileVs(i);
         }
+
         if (!this.m[this.mn].enemies[i].isMorto) {
           if (this.m[this.mn].enemies[i].malefici.stunned.totTurni > 0) {
             //se è stunnato lo stando
             this.m[this.mn].enemies[i].setDirection('STAND');
             Utilities.directionToMoveSwitch(this.m[this.mn].enemies[i]);
           } else {
-
-            if (Utilities.rectsColliding(this.m[this.mn].enemies[i].disegno.getVisioneSquare(), this.player.disegno.getVisioneSquare())) {
-              this.m[this.mn].enemies[i].setDirection('STAND');
+            //se è attivo il counter direzionale prende la sua direzione
+            if (this.m[this.mn].enemies[i].haPresoUnaDirezioneCounter.isActive()) {
               Utilities.directionToMoveSwitch(this.m[this.mn].enemies[i]);
             } else {
-              Utilities.charterMovmentRandomRoutine(this.m[this.mn].enemies[i], this.counterRoutine, 20);
+              //controllo se le nostre aure si scontrano
+              let cto = Utilities.rectsCollidingToDirection(this.m[this.mn].enemies[i].getAurea(), this.player.getAurea());
+              if (cto.isColliding) {
+                this.m[this.mn].enemies[i].setDirection(cto.getBetterDirection());
+                Utilities.directionToMoveSwitch(this.m[this.mn].enemies[i]);
+                this.m[this.mn].enemies[i].haPresoUnaDirezioneCounter.attiva();
+              } else {
+                //devo controllare se si scontrano tra loro e allonatanarli
+                //per i se i non è morto e se non sta attaccando
+                if (!this.m[this.mn].enemies[i].isMorto && this.m[this.mn].enemies[i].stato !== 'attaccando') {
+                  let iIsColliding = false;
+                  for (let j = 0; j < this.m[this.mn].enemies.length; j++) {
+                    //se i non è se stesso(j) e se j non è morto
+                    if (i !== j && !this.m[this.mn].enemies[j].isMorto) {
+                      let cto = new CollisionToDirection();
+                      cto = Utilities.rectsCollidingToDirection(this.m[this.mn].enemies[i].getAurea(), this.m[this.mn].enemies[j].getAurea());
+                      //se i e j si scontrano
+                      if (cto.isColliding) {
+                        iIsColliding = true;
+                        //mando i dalla parte opposta
+                        switch (cto.getBetterDirection()) {
+                          case 'BOTTOM': this.m[this.mn].enemies[i].setDirection('TOP'); break;
+                          case 'TOP': this.m[this.mn].enemies[i].setDirection('BOTTOM'); break;
+                          case 'LEFT': this.m[this.mn].enemies[i].setDirection('RIGHT'); break;
+                          case 'RIGHT': this.m[this.mn].enemies[i].setDirection('LEFT'); break;
+                        }
+                        break;//non mi serve restare
+                      }
+                    }
+                  }
+                  if (iIsColliding) {
+                    Utilities.directionToMoveSwitch(this.m[this.mn].enemies[i]);
+                  } else {
+                    Utilities.charterMovmentRandomRoutine(this.m[this.mn].enemies[i], this.counterRoutine, 20);
+                  }
+                }
+              }
             }
-            // 
 
           }
         }
@@ -204,6 +227,8 @@ export class AppComponent implements AfterViewInit {
       if (this.m[this.mn].enemies[i].isMorto) {
         this.dieCount++;
       }
+
+
     }
 
     //rilevo collisione player vs camion
@@ -225,6 +250,7 @@ export class AppComponent implements AfterViewInit {
         }
       }
       this.bonusCount += this.bonus[j].getPlafond();
+
     }
 
     //rilevo collisione player vs pozione
@@ -259,11 +285,34 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  private proiettileVs(i: number) {
+    this.m[this.mn].enemies[i].incrementaSalute(-100 * this.player.parametriFantasy.livello);
+    this.proiettile.lanciaAbilita(this.m[this.mn].enemies[i]);
+    //se muore gli rubo i soldi
+    if (this.m[this.mn].enemies[i].isMorto && this.m[this.mn].enemies[i].parametriFantasy.money > 0) {
+      this.player.rubaSoldiA(this.m[this.mn].enemies[i]);
+      this.player.exp = this.player.exp + this.player.parametriFantasy.livello * this.m[this.mn].enemies[i].parametriFantasy.livello * 100;
+    }
+  }
+
+  private combattimento(i: number) {
+    if (this.player.parametriFantasy.agilita >= this.m[this.mn].enemies[i].parametriFantasy.agilita) {
+      Utilities.algoAttack(this.player, this.m[this.mn].enemies[i]);
+      Utilities.algoAttack(this.m[this.mn].enemies[i], this.player);
+    } else {
+      Utilities.algoAttack(this.m[this.mn].enemies[i], this.player);
+      Utilities.algoAttack(this.player, this.m[this.mn].enemies[i]);
+    }
+    this.player.isOnAttack = true;
+    this.m[this.mn].enemies[i].isOnAttack = true;
+    this.m[this.mn].enemies[i].stand();
+  }
+
   private update() {
 
     if (this.player.isOggettoInvolo && !this.giaInvolo) {
       this.giaInvolo = true;
-      this.newProiettile();
+      this.newProiettile(this.gui.classeProiettileScelto);
       this.proiettile.setDirection(this.player.getDirection());
       this.proiettile.config.velocita = 0.1;
     }
@@ -335,9 +384,10 @@ export class AppComponent implements AfterViewInit {
     this.gui = new Gui(this.ctx);
     for (let i = 1; i < 50; i++) {
       for (let j = 1; j < 6; j++) {
-        this.m.push(new Mondo({ livelloNemici: i * j, numeroNemici: j, velocitaCamion: 0.1, id: i }))
+        this.m.push(new Mondo({ livelloNemici: i * j, numeroNemici: j, velocitaCamion: 0.0, id: i }))
       }
     }
+
     this.setCanvasListener();
     if (this.isFaseScelta) {
       this.ngZone.runOutsideAngular(() => this.animate());
@@ -351,8 +401,8 @@ export class AppComponent implements AfterViewInit {
     this.isScudoRaccolto = false;
     this.mn = 1;
     this.m[this.mn].inizialize(this.ctx);
-    this.player.config.x = 2;
-    this.player.config.y = 6;
+    this.player.config.x = 10;
+    this.player.config.y = 10;
     //this.player.config.velocita = 0.1;
     this.player.name = 'BEST PLAYER';
     this.player.posizioneInfoLabelX = 30;
@@ -370,6 +420,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private updateCounter() {
+
     //velocità animazione ogni n frame
     if (this.counterRoutine % 8 == 0) {
       //step animazione 
@@ -392,25 +443,42 @@ export class AppComponent implements AfterViewInit {
     this.ctx.canvas.addEventListener(
       'click',
       (evt) => {
+        const startButtonTouched = Utilities.changeButtonState(evt, this.gui.startButton, this.ctx);
         for (let i = 0; i < this.gui.sceltaCharter.length; i++) {
           const scegliCharterButtonTouched = Utilities.changeButtonState(evt, this.gui.sceltaCharter[i], this.ctx);
           if (scegliCharterButtonTouched) {
             this.gui.classeCharterScelto = this.gui.sceltaCharter[i].typeOfCharter;
           }
           if (this.gui.classeCharterScelto && !this.isStarted) {
-            const startButtonTouched = Utilities.changeButtonState(evt, this.gui.startButton, this.ctx);
+
             if (startButtonTouched) {
               switch (this.gui.classeCharterScelto) {
-                case 'BULLO': this.player = new Bullo(Utilities.getSquareConfig(this.ctx, 'blue')); this.startGame(); break;
-                case 'MAGO': this.player = new Mago(Utilities.getSquareConfig(this.ctx, 'blue')); this.startGame(); break;
-                case 'GUERRIERO': this.player = new Guerriero(Utilities.getSquareConfig(this.ctx, 'blue')); this.startGame(); break;
-                case 'SAMURAI': this.player = new Samurai(Utilities.getSquareConfig(this.ctx, 'blue')); this.startGame(); break;
+                case 'BULLO': this.player = new Bullo(Utilities.getSquareConfig(this.ctx, 'azure')); this.startGame(); break;
+                case 'MAGO': this.player = new Mago(Utilities.getSquareConfig(this.ctx, 'pink')); this.startGame(); break;
+                case 'GUERRIERO': this.player = new Guerriero(Utilities.getSquareConfig(this.ctx, 'violet')); this.startGame(); break;
+                case 'SAMURAI': this.player = new Samurai(Utilities.getSquareConfig(this.ctx, 'gold')); this.startGame(); break;
               }
               this.isStarted = true;
               this.gui.classeCharterScelto = 'ABSTRACT';
             }
           }
         }
+
+        for (let i = 0; i < this.gui.sceltaProiettile.length; i++) {
+          const scegliProiettileButtonTouched = Utilities.changeButtonState(evt, this.gui.sceltaProiettile[i], this.ctx);
+          if (scegliProiettileButtonTouched) {
+            this.gui.classeProiettileScelto = this.gui.sceltaProiettile[i].typeOfProiettile;
+          }
+          if (this.gui.classeProiettileScelto && !this.isStarted) {
+            if (startButtonTouched) {
+              this.newProiettile(this.gui.classeProiettileScelto);
+              this.isStarted = true;
+              this.gui.classeProiettileScelto = 'ABSTRACT';
+            }
+          }
+        }
+
+
         if (this.player) {
           if (this.player.isMorto) {
             const restartButtonTouched = Utilities.changeButtonState(evt, this.gui.restartButton, this.ctx);
@@ -468,14 +536,13 @@ export class AppComponent implements AfterViewInit {
     );
   }
 
-  private newProiettile() {
+  private newProiettile(classeProiettile: classeProiettile) {
     let path;
-    let classeProiettile: classeProiettile;
-    switch (this.player.classe) {
-      case 'BULLO': classeProiettile = 'EDWARD'; path = 'assets/images/edwardAtk.png'; break;//C:\Progetti\AngularProjects\game2022\game2k22\src\assets\images\edwardAtk.png
-      case 'MAGO': classeProiettile = 'PALLADIFUOCO'; path = 'assets/images/fireballs2.png'; break;
-      case 'SAMURAI': classeProiettile = 'RAGNO'; path = 'assets/images/spidero.png'; break;
-      case 'GUERRIERO': classeProiettile = 'HAMMER'; path = 'assets/images/hammero.png'; break;//src\assets\images\hammero.png
+    switch (classeProiettile) {
+      case 'COLTELLO': path = 'assets/images/coltello.png'; break;//C:\Progetti\AngularProjects\game2022\game2k22\src\assets\images\edwardAtk.png
+      case 'PALLADIFUOCO': path = 'assets/images/fireball.png'; break;
+      case 'RAGNO': path = 'assets/images/spidero.png'; break;
+      case 'HAMMER': path = 'assets/images/hammero.png'; break;//src\assets\images\hammero.png
       default: classeProiettile = 'HAMMER'; path = 'assets/images/hammero.png'; break;
     }
     this.proiettile = new Proiettile({
@@ -488,4 +555,6 @@ export class AppComponent implements AfterViewInit {
       y: this.player.config.y
     }, path, classeProiettile);
   }
+
+
 }

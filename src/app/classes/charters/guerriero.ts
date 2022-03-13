@@ -20,6 +20,8 @@ export class Guerriero extends Charter {
     this.parametriFantasy.resistenzaMagica = 8;
     this.parametriFantasy.maxMana = 50;
     this.genereSprite = 0;
+    this.maxSalute = this.maxSalute + this.maxSalute * 4;
+
     this.updateParametriFantasy();
   }
 
@@ -29,7 +31,9 @@ export class Guerriero extends Charter {
     this.parametriFantasy.intelligenza += Math.floor(Math.random() * 2) * this.parametriFantasy.livello;
     this.parametriFantasy.resistenzaMagica += Math.floor(Math.random() * 2) * this.parametriFantasy.livello;
     this.parametriFantasy.agilita += Math.floor(Math.random() * 1) * this.parametriFantasy.livello;
+    
     this.incrementaSalute( Math.floor(Math.random() * 5) * this.parametriFantasy.livello); 
+  
   }
   
   override lanciaAbilita(charter: Charter): void {
@@ -37,8 +41,8 @@ export class Guerriero extends Charter {
     charter.updateMalefici(
       {
         malus: 'STUN',
-        quantita: 6 * this.parametriFantasy.livello,
-        totTurni: 450 + this.parametriFantasy.livello,
+        quantita: 10 * this.parametriFantasy.livello,
+        totTurni: 60 + this.parametriFantasy.livello,
         value: true
       }
     )
