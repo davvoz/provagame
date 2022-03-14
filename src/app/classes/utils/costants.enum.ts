@@ -40,8 +40,11 @@ export interface MondoConfigurations {
 export interface SquareParam {
     x: number;
     y: number;
-    sideX: number;
-    sideY: number
+    h: number;
+    w: number
+}
+export interface GetSquareParam {
+    getSquareParam(): SquareParam
 }
 export interface IOtherAnimations {
     lanciaOggetto(sprite: GeneralSprite): any;

@@ -156,7 +156,7 @@ export class AppComponent implements AfterViewInit {
       this.m[this.mn].enemies[i].counterAnimation = this.counterAnimation;
       if (!this.player.isMorto
         && !this.m[this.mn].enemies[i].isMorto
-        && Utilities.rectsCollidingWrong(this.m[this.mn].enemies[i], this.player)) {
+        && Utilities.rectsCollidingWrong(this.m[this.mn].enemies[i].getSquareParam(), this.player.getSquareParam())) {
         this.combattimento(i);
       } else {
 
@@ -166,7 +166,7 @@ export class AppComponent implements AfterViewInit {
         this.m[this.mn].enemies[i].stato = 'camminando';
 
         //se è rimasto vivo controllo se si scontra con il proiettile
-        if (this.proiettile && Utilities.rectsCollidingWrong(this.m[this.mn].enemies[i], this.proiettile)) {
+        if (this.proiettile && Utilities.rectsCollidingWrong(this.m[this.mn].enemies[i].getSquareParam(), this.proiettile.getSquareParam())) {
           this.proiettileVs(i);
         }
 
@@ -228,7 +228,7 @@ export class AppComponent implements AfterViewInit {
     }
 
     //rilevo collisione player vs camion
-    if (Utilities.rectsCollidingWrong(this.player, this.m[this.mn].camion)) {
+    if (Utilities.rectsCollidingWrong(this.player.getSquareParam(), this.m[this.mn].camion.getSquareParam())) {
       this.player.incrementaSalute(-(500 * this.mn));
       if (this.player.getSalute() <= 0) {
         this.player.isMorto = true;
@@ -240,7 +240,7 @@ export class AppComponent implements AfterViewInit {
     for (let j = 0; j < this.bonus.length; j++) {
       this.bonus[j].stand();
       if (this.bonus[j].getPlafond() > 0) {
-        if (Utilities.rectsCollidingWrong(this.bonus[j], this.player)) {
+        if (Utilities.rectsCollidingWrong(this.bonus[j].getSquareParam(), this.player.getSquareParam())) {
           this.player.incrementaSalute(this.bonus[j].getQuantita() * this.player.parametriFantasy.livello);
           this.bonus[j].setPlafond(this.bonus[j].getPlafond() - this.bonus[j].getQuantita());
         }
@@ -250,7 +250,7 @@ export class AppComponent implements AfterViewInit {
     }
 
     //rilevo collisione player vs pozione
-    if (Utilities.rectsCollidingWrong(this.player, this.m[this.mn].pozione)) {
+    if (Utilities.rectsCollidingWrong(this.player.getSquareParam(), this.m[this.mn].pozione.getSquareParam())) {
       this.player.pozioni.push(this.m[this.mn].pozione);
       for (let i = 0; i < this.gui.pozioniBottoni.length; i++) {
         if (!this.gui.pozioniBottoni[i].isCasellaPiena && !this.aggiungiPozioneAdArray) {
@@ -264,7 +264,7 @@ export class AppComponent implements AfterViewInit {
       this.aggiungiPozioneAdArray = false;
     }
     //rilevo collisione player vs tesoro
-    if ((!this.isTesoroRaccolto && Utilities.rectsCollidingWrong(this.player, this.m[this.mn].tesoro)) && //
+    if ((!this.isTesoroRaccolto && Utilities.rectsCollidingWrong(this.player.getSquareParam(), this.m[this.mn].tesoro.getSquareParam())) && //
       ((this.mn % 3 == 0 && (this.mn % 3 == 0 || this.isTesoroRaccolto == false)))) {
       this.player.parametriFantasy.money += this.m[this.mn].tesoro.money;
       Utilities.setRandomXY(this.m[this.mn].tesoro);
@@ -274,7 +274,7 @@ export class AppComponent implements AfterViewInit {
       this.isTesoroRaccolto = false;
     }
     //rilevo collisione player vs scudo
-    if (!this.isScudoRaccolto && Utilities.rectsCollidingWrong(this.player, this.m[this.mn].scudoBonus)) {
+    if (!this.isScudoRaccolto && Utilities.rectsCollidingWrong(this.player.getSquareParam(), this.m[this.mn].scudoBonus.getSquareParam())) {
       this.gui.scudoButton.riempiScudo();
       this.isScudoRaccolto = true;
       Utilities.setRandomXY(this.m[this.mn].scudoBonus);

@@ -1,5 +1,5 @@
 import { Square } from "../elements/square";
-import { CollisionToDirection, direzione, SquareConfig } from './costants.enum';
+import { CollisionToDirection, direzione, SquareConfig, SquareParam } from './costants.enum';
 import { Guerriero } from "../charters/guerriero";
 import { Mago } from "../charters/mago";
 import { Bonus } from "../elements/bonus";
@@ -35,25 +35,25 @@ export class Utilities {
             rect1.config.h + rect1.config.y > rect2.config.y
     }
 
-    static rectsCollidingToDirection(cacciatore: Square, preda: Square): CollisionToDirection {
+    static rectsCollidingToDirection(cacciatore: SquareParam, preda: SquareParam): CollisionToDirection {
         const cto = new CollisionToDirection();
-        cto.collisionFromBottom = preda.config.h + preda.config.y -(cacciatore.config.h + cacciatore.config.y );
-        cto.collisionFromTop = cacciatore.config.h + cacciatore.config.y -(preda.config.h + preda.config.y );
-        cto.collisionFromLeft = cacciatore.config.x + cacciatore.config.w - (preda.config.x + preda.config.w);
-        cto.collisionFromRight = preda.config.x + preda.config.w - (cacciatore.config.x + cacciatore.config.w);
-        cto.isColliding = cacciatore.config.x < preda.config.x + preda.config.w &&
-            cacciatore.config.x + cacciatore.config.w > preda.config.x &&
-            cacciatore.config.y < preda.config.y + preda.config.h &&
-            cacciatore.config.h + cacciatore.config.y > preda.config.y;
+        cto.collisionFromBottom = preda.h + preda.y -(cacciatore.h + cacciatore.y );
+        cto.collisionFromTop = cacciatore.h + cacciatore.y -(preda.h + preda.y );
+        cto.collisionFromLeft = cacciatore.x + cacciatore.w - (preda.x + preda.w);
+        cto.collisionFromRight = preda.x + preda.w - (cacciatore.x + cacciatore.w);
+        cto.isColliding = cacciatore.x < preda.x + preda.w &&
+            cacciatore.x + cacciatore.w > preda.x &&
+            cacciatore.y < preda.y + preda.h &&
+            cacciatore.h + cacciatore.y > preda.y;
         return cto;
     }
 
-    static rectsCollidingWrong(r1: Square, r2: Square) {
+    static rectsCollidingWrong(r1: SquareParam, r2: SquareParam) {
         return !(
-            r1.config.x > r2.config.x + 1 ||
-            r1.config.x + 1 < r2.config.x ||
-            r1.config.y > r2.config.y + 1 ||
-            r1.config.y + 1 < r2.config.y
+            r1.x > r2.x + 1 ||
+            r1.x + 1 < r2.x ||
+            r1.y > r2.y + 1 ||
+            r1.y + 1 < r2.y
         );
     }
 

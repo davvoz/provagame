@@ -1,4 +1,4 @@
-import { CharterParam, classe, MaliciusEffect, Malefici, ParametriFanatsy, SintesiDati, stato, SquareConfig } from '../utils/costants.enum';
+import { CharterParam, classe, MaliciusEffect, Malefici, ParametriFanatsy, SintesiDati, stato, SquareConfig, SquareParam } from '../utils/costants.enum';
 import { Pozione } from '../elements/pozione';
 import { Square } from '../elements/square';
 import { CounterToTrashold } from '../utils/counter-to-treshold';
@@ -97,7 +97,7 @@ export class Charter extends Square implements CharterParam {
   visualizzaDannoCounter = new CounterToTrashold(32, false);
   haPresoUnaDirezioneCounter = new CounterToTrashold(25, false);
   disegno!: DrawCharter;
-  
+
 
   override draw() {
     if (!this.disegno) {
@@ -218,12 +218,6 @@ export class Charter extends Square implements CharterParam {
       if (isCritico) {
         this.sintesiDati.danniCriticiRicevuti += dannoFisico;
         this.config.ctx.fillStyle = this.config.color;
-        // this.config.ctx.font = '18px Impact';
-        // this.config.ctx.fillText(
-        //   'CRITICO',
-        //   this.config.x * this.config.w,
-        //   this.config.y * this.config.y - 60, 500
-        // );
       }
       let dannoFisicoEffettivo = 0;
       let dannoMagicoEffettivo = 0;
@@ -264,18 +258,13 @@ export class Charter extends Square implements CharterParam {
     this.updateParametriFantasy();
   }
 
-  getAurea(): Square {
-    const config: SquareConfig = {
-      color: '',
-      ctx: this.config.ctx,
-      velocita: 0,
-      x: this.config.x * this.config.w- this.config.w,
-      y: this.config.y * this.config.h -this.config.h ,
-      h: this.config.w *3,
-      w: this.config.h * 3 
+  getAurea(): SquareParam {
+    return {
+      x: this.config.x * this.config.w - this.config.w,
+      y: this.config.y * this.config.h - this.config.h,
+      h: this.config.w * 3,
+      w: this.config.h * 3
     }
-    const s = new Square(config);
-    return s;
   }
 
   private updateTimers() {

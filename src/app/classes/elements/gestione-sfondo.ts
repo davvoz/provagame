@@ -28,8 +28,8 @@ export class GestioneSfondi extends Square {
                 {
                     x: Math.floor(Math.random() * 1100),
                     y: Math.floor(Math.random() * 60),
-                    sideX: a,
-                    sideY: a
+                    h: a,
+                    w: a
                 }
             );
         }
@@ -55,7 +55,7 @@ export class GestioneSfondi extends Square {
         this.config.ctx.fillStyle = 'white';
         this.stelle.forEach((stella) => {
             //this.config.ctx.fillStyle = 'rgb('+(Math.floor(Math.random()*250))+','+(Math.floor(Math.random()*250))+','+(Math.floor(Math.random()*250))+')';
-            this.config.ctx.fillRect(stella.x, stella.y, stella.sideY, stella.sideX);
+            this.config.ctx.fillRect(stella.x, stella.y, stella.h, stella.w);
         });
         for (let i = 0; i < 7; i++) {
             this.config.ctx.drawImage(this.image5,
