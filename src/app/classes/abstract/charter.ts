@@ -97,6 +97,7 @@ export class Charter extends Square implements CharterParam {
   visualizzaDannoCounter = new CounterToTrashold(32, false);
   haPresoUnaDirezioneCounter = new CounterToTrashold(35, false);
   disegno!: DrawCharter;
+  
 
   override draw() {
     if (!this.disegno) {
@@ -268,17 +269,13 @@ export class Charter extends Square implements CharterParam {
       color: '',
       ctx: this.config.ctx,
       velocita: 0,
-      x: this.config.x * this.config.w - this.config.w,
-      y: this.config.y * this.config.h - this.config.h,
-      h: this.config.w * 4,
-      w: this.config.w * 4
+      x: this.config.x * this.config.w- this.config.w,
+      y: this.config.y * this.config.h -this.config.h ,
+      h: this.config.w *3,
+      w: this.config.h * 3 
     }
     const s = new Square(config);
     return s;
-  }
-
-  private setAurea(){
-
   }
 
   private updateTimers() {

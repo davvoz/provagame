@@ -12,7 +12,6 @@ export class DrawCharter {
     private scudoIcon = new Image();
     private pozioneIcon = new Image();
     private bloodImage = new Image();
-    private isSanguinante = false;
 
     constructor(charter: Charter) {
         this.charter = charter;
@@ -33,6 +32,12 @@ export class DrawCharter {
         if (drowSintesi) {
             this.drawSintesi();
         }
+    }
+
+    private drawSprite() {
+        this.setSpriteFromCharterAndAction();
+        this.drawMalefici();
+        this.drawAurea();
     }
 
     private drawSintesi() {
@@ -160,24 +165,17 @@ export class DrawCharter {
 
     }
 
-    private drawSprite() {
-        this.setSpriteFromCharterAndAction();
-        this.drawMalefici();
-        this.drawAurea();
-    }
-
     private drawAurea() {
-        const centerOfSpriteX = this.charter.config.x * this.charter.config.w;
-        const centerOfSpriteY = this.charter.config.y * this.charter.config.h;
         this.charter.config.ctx.save();
         this.charter.config.ctx.fillStyle = 'rgba(200,120,120,0.4)';
         this.charter.config.ctx.lineWidth = 2;
         this.charter.config.ctx.strokeRect(
-            centerOfSpriteX - this.charter.config.w,
-            centerOfSpriteY - this.charter.config.h,
-            this.charter.config.w * 4, 
-            this.charter.config.w* 4);
+            this.charter.config.x * this.charter.config.w - this.charter.config.w,
+            this.charter.config.y * this.charter.config.h -this.charter.config.h ,
+            this.charter.config.w * 3,
+            this.charter.config.h * 3);
         this.charter.config.ctx.restore();
+
     }
 
     private drawMalefici() {
@@ -231,7 +229,7 @@ export class DrawCharter {
             this.charter.parametriFantasy.salute -= this.charter.malefici.stunned.quantita;
             this.charter.malefici.stunned.totTurni--;
         }
-        //situazione block
+        //situazione slow
         if (this.charter.malefici.slowed.value && this.charter.malefici.slowed.totTurni > 0) {
             this.isRallentato = true;
             //  console.log(this.charter.name + ' riceve danni da ' + this.charter.malefici.blocked.malus + ' : ' + this.charter.malefici.blocked.quantita);
@@ -253,12 +251,10 @@ export class DrawCharter {
         }
         //situazione blood
         if (this.charter.malefici.blooding.value && this.charter.malefici.blooding.totTurni > 0) {
-            this.isSanguinante = true;
             //  console.log(this.charter.name + ' riceve danni da ' + this.charter.malefici.blocked.malus + ' : ' + this.charter.malefici.blocked.quantita);
             if (!this.bloodImage.src) {
                 this.bloodImage.src = 'assets/images/blooding2.png'; //src\assets\images\singlespiderweb.png
             }
-
             this.charter.parametriFantasy.salute -= this.charter.malefici.blooding.quantita;
             this.charter.malefici.blooding.totTurni--;
             this.charter.config.ctx.fillStyle = 'red';
