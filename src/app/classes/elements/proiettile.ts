@@ -22,7 +22,7 @@ export class Proiettile extends Square {
       case 'PALLADIFUOCO': charter.updateMalefici(
         {
           malus: 'FIRE',
-          quantita: 60,
+          quantita: 90,
           totTurni: 150,
           value: true
         }

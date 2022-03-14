@@ -6,6 +6,8 @@ export class Bullo extends Charter {
   override classe: classe = 'BULLO';
   override spriteSheetCharterPath = 'assets/images/edwardAtk.png';
   override spriteSheetAttackPath = 'assets/images/edwardAtk.png';
+  override maxSalute =  110000 * this.parametriFantasy.livello;
+
   constructor(configurazioneInziale:SquareConfig) {
     super(configurazioneInziale);
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
@@ -39,7 +41,7 @@ export class Bullo extends Charter {
     charter.updateMalefici(
       {
         malus: 'VENO',
-        quantita: 90 * this.parametriFantasy.livello,
+        quantita: 50 * this.parametriFantasy.livello,
         totTurni: 70 + this.parametriFantasy.livello * 2,
         value: true
       }

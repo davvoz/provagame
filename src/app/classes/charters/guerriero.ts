@@ -6,6 +6,7 @@ export class Guerriero extends Charter {
   override classe: classe = 'GUERRIERO';
   override spriteSheetCharterPath = 'assets/images/biondotraspoAtck_1.png';
   override spriteSheetAttackPath = 'assets/images/biondotraspoAtck_1.png';
+  override maxSalute =  150000 * this.parametriFantasy.livello;
   constructor(configurazioneInziale:SquareConfig) {
     super(configurazioneInziale);
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
@@ -20,14 +21,14 @@ export class Guerriero extends Charter {
     this.parametriFantasy.resistenzaMagica = 8;
     this.parametriFantasy.maxMana = 50;
     this.genereSprite = 0;
-    this.maxSalute = this.maxSalute + this.maxSalute * 4;
+    
 
     this.updateParametriFantasy();
   }
 
   override updateParametriFantasy() {
-    this.parametriFantasy.forza += Math.floor(Math.random() * 6) * this.parametriFantasy.livello;
-    this.parametriFantasy.resistenzaFisica += Math.floor(Math.random() * 2) * this.parametriFantasy.livello;
+    this.parametriFantasy.forza += Math.floor(Math.random() * 8) * this.parametriFantasy.livello;
+    this.parametriFantasy.resistenzaFisica += Math.floor(Math.random() * 4) * this.parametriFantasy.livello;
     this.parametriFantasy.intelligenza += Math.floor(Math.random() * 2) * this.parametriFantasy.livello;
     this.parametriFantasy.resistenzaMagica += Math.floor(Math.random() * 2) * this.parametriFantasy.livello;
     this.parametriFantasy.agilita += Math.floor(Math.random() * 1) * this.parametriFantasy.livello;

@@ -1,6 +1,4 @@
 import { Charter } from "../abstract/charter";
-import { SquareConfig } from "../utils/costants.enum";
-import { Square } from "./square";
 
 export class DrawCharter {
     private charter!: Charter;
@@ -16,8 +14,6 @@ export class DrawCharter {
     constructor(charter: Charter) {
         this.charter = charter;
     }
-
-
 
     public drawAll(drowSintesi: boolean) {
         this.drawSprite();
@@ -37,7 +33,7 @@ export class DrawCharter {
     private drawSprite() {
         this.setSpriteFromCharterAndAction();
         this.drawMalefici();
-        this.drawAurea();
+       // this.drawAurea();
     }
 
     private drawSintesi() {

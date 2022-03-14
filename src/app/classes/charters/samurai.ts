@@ -7,6 +7,8 @@ export class Samurai extends Charter {
   override genereSprite = 1;
   override spriteSheetCharterPath = 'assets/images/samuraiAtk2.png';
   override spriteSheetAttackPath = 'assets/images/samuraiAtk2.png';
+  override maxSalute =  120000 * this.parametriFantasy.livello;
+
   constructor(configurazioneInziale:SquareConfig) {
     super(configurazioneInziale);
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
@@ -21,7 +23,6 @@ export class Samurai extends Charter {
     this.parametriFantasy.resistenzaMagica = 8;
     this.genereSprite = 1;
     this.parametriFantasy.maxMana = 50;
-    this.maxSalute = this.maxSalute + this.maxSalute * 2;
 
     this.updateParametriFantasy();
   }
@@ -40,7 +41,7 @@ export class Samurai extends Charter {
     charter.updateMalefici(
       {
         malus: 'FIRE',
-        quantita: 10 * this.parametriFantasy.livello,
+        quantita: 50 * this.parametriFantasy.livello,
         totTurni: 90 + this.parametriFantasy.livello,
         value: true
       }

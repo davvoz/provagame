@@ -157,7 +157,6 @@ export class AppComponent implements AfterViewInit {
       if (!this.player.isMorto
         && !this.m[this.mn].enemies[i].isMorto
         && Utilities.rectsCollidingWrong(this.m[this.mn].enemies[i], this.player)) {
-        //il + agile attacca per primo
         this.combattimento(i);
       } else {
 
@@ -219,15 +218,12 @@ export class AppComponent implements AfterViewInit {
                 }
               }
             }
-
           }
         }
       }
-
       if (this.m[this.mn].enemies[i].isMorto) {
         this.dieCount++;
       }
-
 
     }
 
@@ -539,10 +535,10 @@ export class AppComponent implements AfterViewInit {
   private newProiettile(classeProiettile: classeProiettile) {
     let path;
     switch (classeProiettile) {
-      case 'COLTELLO': path = 'assets/images/coltello.png'; break;//C:\Progetti\AngularProjects\game2022\game2k22\src\assets\images\edwardAtk.png
+      case 'COLTELLO': path = 'assets/images/coltello.png'; break;
       case 'PALLADIFUOCO': path = 'assets/images/fireball.png'; break;
       case 'RAGNO': path = 'assets/images/spidero.png'; break;
-      case 'HAMMER': path = 'assets/images/hammero.png'; break;//src\assets\images\hammero.png
+      case 'HAMMER': path = 'assets/images/hammero.png'; break;
       default: classeProiettile = 'HAMMER'; path = 'assets/images/hammero.png'; break;
     }
     this.proiettile = new Proiettile({

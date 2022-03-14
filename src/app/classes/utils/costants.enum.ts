@@ -37,7 +37,7 @@ export interface MondoConfigurations {
     velocitaCamion: number;
     id: number
 }
-export interface DrawSquareParam {
+export interface SquareParam {
     x: number;
     y: number;
     sideX: number;

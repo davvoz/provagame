@@ -95,7 +95,7 @@ export class Charter extends Square implements CharterParam {
   scudoCounter = new CounterToTrashold(500, false);
   pozioneCounter = new CounterToTrashold(500, false);
   visualizzaDannoCounter = new CounterToTrashold(32, false);
-  haPresoUnaDirezioneCounter = new CounterToTrashold(35, false);
+  haPresoUnaDirezioneCounter = new CounterToTrashold(25, false);
   disegno!: DrawCharter;
   
 

@@ -7,6 +7,7 @@ export class Mago extends Charter {
   override spriteSheetCharterPath = 'assets/images/discotraspoo.png';
   override spriteSheetAttackPath = 'assets/images/discotraspooAtck.png';
   override genereSprite: number = 0;
+  override maxSalute =  10000 * this.parametriFantasy.livello;
 
   constructor(configurazioneInziale:SquareConfig) {
     super(configurazioneInziale);
@@ -14,23 +15,23 @@ export class Mago extends Charter {
     this.spriteSheetImageAttack.src = this.spriteSheetAttackPath;
     this.parametriFantasy.livello = 1;
     this.parametriFantasy.numeriFortunati = [0, 1, 2, 3, 4];
-    this.parametriFantasy.agilita = 2;
+    this.parametriFantasy.agilita = 3;
     this.parametriFantasy.forza = 10;
-    this.parametriFantasy.intelligenza = 15;
+    this.parametriFantasy.intelligenza = 25;
     this.parametriFantasy.mana = 1;
-    this.parametriFantasy.resistenzaFisica = 7;
-    this.parametriFantasy.resistenzaMagica = 8;
+    this.parametriFantasy.resistenzaFisica = 10;
+    this.parametriFantasy.resistenzaMagica = 15;
     this.parametriFantasy.maxMana = 10;
-    this.counterForCriticoTreshold = 4 ;
+    this.counterForCriticoTreshold = 2 ;
     this.updateParametriFantasy();
 
   }
 
   override updateParametriFantasy() {
     this.parametriFantasy.forza += Math.floor(Math.random() * 1) * this.parametriFantasy.livello;
-    this.parametriFantasy.resistenzaFisica += Math.floor(Math.random() * 1) * this.parametriFantasy.livello;
-    this.parametriFantasy.intelligenza += Math.floor(Math.random() * 5) * this.parametriFantasy.livello;
-    this.parametriFantasy.resistenzaMagica += Math.floor(Math.random() * 2) * this.parametriFantasy.livello;
+    this.parametriFantasy.resistenzaFisica += Math.floor(Math.random() * 2) * this.parametriFantasy.livello;
+    this.parametriFantasy.intelligenza += Math.floor(Math.random() * 8) * this.parametriFantasy.livello;
+    this.parametriFantasy.resistenzaMagica += Math.floor(Math.random() * 4) * this.parametriFantasy.livello;
     this.incrementaSalute(Math.floor(Math.random() * 5) * this.parametriFantasy.livello);
 
   }

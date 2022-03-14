@@ -1,4 +1,4 @@
-import { DrawSquareParam, SquareConfig, tipoSfondo } from "../utils/costants.enum";
+import { SquareParam, SquareConfig, tipoSfondo } from "../utils/costants.enum";
 import { Square } from "./square";
 
 export class GestioneSfondi extends Square {
@@ -10,7 +10,7 @@ export class GestioneSfondi extends Square {
     imageCloud1 = new Image();
     imageSun = new Image();
     imageGrass = new Image();
-    stelle: DrawSquareParam[] = [];
+    stelle: SquareParam[] = [];
 
     override config!:SquareConfig;
     constructor(configurazioneInziale:SquareConfig) {
