@@ -1,10 +1,10 @@
-import { CharterParam, classe, MaliciusEffect, Malefici, ParametriFanatsy, SintesiDati, stato, SquareConfig, SquareParam } from '../utils/costants.enum';
+import { CharterParam, classe, MaliciusEffect, Malefici, ParametriFanatsy, SintesiDati, stato, SquareConfig, SquareParam, IOtherAnimations } from '../utils/costants.enum';
 import { Pozione } from '../elements/pozione';
 import { Square } from '../elements/square';
 import { CounterToTrashold } from '../utils/counter-to-treshold';
 import { DrawCharter } from '../elements/draw-charter';
 
-export class Charter extends Square implements CharterParam {
+export class Charter extends Square implements CharterParam,IOtherAnimations {
   classe: classe = 'ABSTRACT';
   name = 'Abstract cant instantiate';
   sintesiDati: SintesiDati = {
@@ -62,7 +62,7 @@ export class Charter extends Square implements CharterParam {
     }
   }
   override config !: SquareConfig;
-  maxSalute = 10000 * this.parametriFantasy.livello;
+  maxSalute = 1000 * this.parametriFantasy.livello;
   genereSprite = 0;//se = 0 then SX = 1 dx = 2 ; se = 1 SX = 2 DX = 1
   exp = 0;
   nextExp = 200;
@@ -277,7 +277,7 @@ export class Charter extends Square implements CharterParam {
 
   incrementaLivello() {
     this.parametriFantasy.livello++;
-    this.maxSalute = this.parametriFantasy.livello * 10000;
+    this.maxSalute = this.parametriFantasy.livello * 1000;
     this.parametriFantasy.salute = this.maxSalute;
     this.updateParametriFantasy();
   }

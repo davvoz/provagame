@@ -2,7 +2,7 @@ import { Bottone } from "../elements/bottone";
 import { SquareConfig } from "../utils/costants.enum";
 
 export class BottonePozione extends Bottone {
-    spriteSheetCharterPath = 'assets/images/pozionevuota.png';//src\assets\images\treasure.pngsrc\assets\images\src\assets\images\pozioneverde.png.jpg
+    spriteSheetCharterPath = 'assets/images/pozionevuota.png';
     image = new Image();
     isCasellaPiena = false;
     constructor(configurazioneInziale: SquareConfig, isToggle: boolean) {
@@ -21,11 +21,11 @@ export class BottonePozione extends Bottone {
 
     riempiCasella() {
         this.isCasellaPiena = true;
-        this.image.src = 'assets/images/pozioneverde.png'//src\assets\images\.png
+        this.image.src = 'assets/images/pozioneverde.png'
     }
 
     svuotaCasella() {
         this.isCasellaPiena = false;
-        this.image.src = 'assets/images/pozionevuota.png'//src\assets\images\.png
+        this.image.src = 'assets/images/pozionevuota.png'
     }
 }

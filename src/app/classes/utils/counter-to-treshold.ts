@@ -12,7 +12,7 @@ export class CounterToTrashold {
     counting() {
         if (this.isCountingActive) {
             this.isReverseMode ? this.reverseCounting() : this.normalCounting()
-        };
+        }
     }
     private normalCounting() {
         if (this.counter != 0) {

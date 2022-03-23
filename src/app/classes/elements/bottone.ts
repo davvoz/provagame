@@ -15,12 +15,10 @@ export class Bottone extends Square {
   override draw() {
    
     this.disegnaMe();
-   // this.scriviAltriTesti();
   }
 
   disegnaMe() {
     this.config.ctx.fillStyle = this.config.color;
-    //this.config.ctx.fillRect(this.config.w * this.config.x, this.config.h * this.config.y, this.config.w, this.config.h);
     this.config.ctx.strokeRect(this.config.w * this.config.x, this.config.h * this.config.y, this.config.w, this.config.h);
     this.config.ctx.font = 'normal bolder 15px Orbitron';
     this.config.ctx.fillStyle = 'black';

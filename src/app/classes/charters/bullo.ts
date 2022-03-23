@@ -6,7 +6,7 @@ export class Bullo extends Charter {
   override classe: classe = 'BULLO';
   override spriteSheetCharterPath = 'assets/images/edwardAtk.png';
   override spriteSheetAttackPath = 'assets/images/edwardAtk.png';
-  override maxSalute =  110000 * this.parametriFantasy.livello;
+  override maxSalute =  11000 * this.parametriFantasy.livello;
 
   constructor(configurazioneInziale:SquareConfig) {
     super(configurazioneInziale);

@@ -7,7 +7,6 @@ export class Treasure extends Square {
     override config!:SquareConfig;
         constructor(configurazioneInziale:SquareConfig) {
         super(configurazioneInziale);
-        this.config = configurazioneInziale
         this.money = Math.floor(Math.random() * 1000);
         
         this.image.src = 'assets/images/treasure.png';

@@ -12,7 +12,7 @@ export class BottoneScudoAttiva extends Bottone {
     constructor(configurazioneInziale: SquareConfig,isToggle:boolean) {
         super(configurazioneInziale, isToggle);
         this.imageScudo.src = 'assets/images/scudo.png';
-        this.imageScudoBuco.src = 'assets/images/scudobuco.png';//src\assets\images\scudobuco.png
+        this.imageScudoBuco.src = 'assets/images/scudobuco.png';
         this.config = configurazioneInziale;
         this.config.w = 50;
         this.config.h = 70;
@@ -40,9 +40,7 @@ export class BottoneScudoAttiva extends Bottone {
                 this.config.y * this.config.h,
                 this.config.w,
                 this.config.h);
-        }
-       
-       // this.config.ctx.strokeRect(this.config.w * this.config.x, this.config.h * this.config.y, this.config.w, this.config.h);
+        }       
     }
 
     getIsScudoPresente() {

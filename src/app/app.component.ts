@@ -127,7 +127,7 @@ export class AppComponent implements AfterViewInit {
     }
     this.player.counterAnimation = this.counterAnimation;
   }
-  
+
   private setPozioni(index: number) {
     this.player.pozioneCounter.attiva();
     this.player.pozioni.pop();
@@ -178,7 +178,7 @@ export class AppComponent implements AfterViewInit {
           this.player.parametriFantasy.money -= 500 * this.player.parametriFantasy.livello;
         }
         break;
-      case 'e':
+      case ' ':
         this.player.lanciaOggetto();
         this.newProiettile(this.gui.classeProiettileScelto);
         this.proiettile.setDirection(this.player.getDirection());
@@ -272,7 +272,7 @@ export class AppComponent implements AfterViewInit {
         this.player.stato = 'camminando';
         this.m[this.mn].enemies[i].isOnAttack = false;
         this.m[this.mn].enemies[i].stato = 'camminando';
-        //se è rimasto vivo controllo se si scontra con il proiettile
+        //controllo se si scontra con il proiettile
         if (this.proiettile && Utilities.rectsCollidingWrong(this.m[this.mn].enemies[i].getSquareParam(), this.proiettile.getSquareParam())) {
           this.proiettileVs(i);
         }

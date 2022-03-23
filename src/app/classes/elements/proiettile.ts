@@ -21,7 +21,7 @@ export class Proiettile extends Square {
       case 'PALLADIFUOCO': charter.updateMalefici(
         {
           malus: 'FIRE',
-          quantita: 90,
+          quantita: 9,
           totTurni: 150,
           value: true
         }
@@ -30,7 +30,7 @@ export class Proiettile extends Square {
       case 'COLTELLO': charter.updateMalefici(
         {
           malus: 'BLOOD',
-          quantita: 120,
+          quantita: 12,
           totTurni: 75,
           value: true
         }
@@ -39,7 +39,7 @@ export class Proiettile extends Square {
       case 'RAGNO': charter.updateMalefici(
         {
           malus: 'BLOCK',
-          quantita: 10,
+          quantita: 9,
           totTurni: 150,
           value: true
         }
@@ -48,8 +48,8 @@ export class Proiettile extends Square {
       case 'HAMMER': charter.updateMalefici(
         {
           malus: 'STUN',
-          quantita: 60,
-          totTurni: 150,
+          quantita: 5,
+          totTurni: 190,
           value: true
         }
       )
