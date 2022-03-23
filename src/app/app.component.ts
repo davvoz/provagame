@@ -17,7 +17,7 @@ import { Charter } from './classes/abstract/charter';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements AfterViewInit {
-
+  title = 'game2k22';
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
     if (this.player && !this.player.isMorto) {
