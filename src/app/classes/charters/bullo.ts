@@ -1,14 +1,15 @@
 import { Charter } from '../abstract/charter';
 import { classe, SquareConfig } from '../utils/costants.enum';
+import { Utilities } from '../utils/utilities';
 
 export class Bullo extends Charter {
   override name = 'Bull default name';
   override classe: classe = 'BULLO';
   override spriteSheetCharterPath = 'assets/images/edwardAtk.png';
   override spriteSheetAttackPath = 'assets/images/edwardAtk.png';
-  override maxSalute =  11000 * this.parametriFantasy.livello;
+  override maxSalute = 11000 * this.parametriFantasy.livello;
 
-  constructor(configurazioneInziale:SquareConfig) {
+  constructor(configurazioneInziale: SquareConfig) {
     super(configurazioneInziale);
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
     this.spriteSheetImageAttack.src = this.spriteSheetAttackPath;
@@ -22,18 +23,18 @@ export class Bullo extends Charter {
     this.parametriFantasy.resistenzaMagica = 8;
     this.parametriFantasy.maxMana = 50;
     this.genereSprite = 1;
-    this.maxSalute = this.maxSalute + this.maxSalute ;
+    this.maxSalute = this.maxSalute + this.maxSalute;
 
     this.updateParametriFantasy();
   }
 
   override updateParametriFantasy() {
-    this.parametriFantasy.forza += Math.floor(Math.random() * 2) * this.parametriFantasy.livello;
-    this.parametriFantasy.resistenzaFisica += Math.floor(Math.random() * 5) * this.parametriFantasy.livello;
-    this.parametriFantasy.intelligenza += Math.floor(Math.random() * 5) * this.parametriFantasy.livello;
-    this.parametriFantasy.resistenzaMagica += Math.floor(Math.random() * 2) * this.parametriFantasy.livello;
-    this.parametriFantasy.agilita += Math.floor(Math.random() * 5) * this.parametriFantasy.livello;
-    this.incrementaSalute(Math.floor(Math.random() * 5) * this.parametriFantasy.livello);
+    this.parametriFantasy.forza +=Utilities.getSecureRandom(2) * this.parametriFantasy.livello;
+    this.parametriFantasy.resistenzaFisica += Utilities.getSecureRandom(5) * this.parametriFantasy.livello;
+    this.parametriFantasy.intelligenza += Utilities.getSecureRandom(5) * this.parametriFantasy.livello;
+    this.parametriFantasy.resistenzaMagica += Utilities.getSecureRandom(2) * this.parametriFantasy.livello;
+    this.parametriFantasy.agilita += Utilities.getSecureRandom(5) * this.parametriFantasy.livello;
+    this.incrementaSalute(Utilities.getSecureRandom(5) * this.parametriFantasy.livello);
   }
 
   override lanciaAbilita(charter: Charter): void {

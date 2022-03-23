@@ -1,5 +1,6 @@
 import { Charter } from '../abstract/charter';
 import { classe, SquareConfig } from '../utils/costants.enum';
+import { Utilities } from '../utils/utilities';
 
 export class Mago extends Charter {
   override name = 'Mago default name';
@@ -28,11 +29,12 @@ export class Mago extends Charter {
   }
 
   override updateParametriFantasy() {
-    this.parametriFantasy.forza += Math.floor(Math.random() * 1) * this.parametriFantasy.livello;
-    this.parametriFantasy.resistenzaFisica += Math.floor(Math.random() * 2) * this.parametriFantasy.livello;
-    this.parametriFantasy.intelligenza += Math.floor(Math.random() * 8) * this.parametriFantasy.livello;
-    this.parametriFantasy.resistenzaMagica += Math.floor(Math.random() * 4) * this.parametriFantasy.livello;
-    this.incrementaSalute(Math.floor(Math.random() * 5) * this.parametriFantasy.livello);
+    this.parametriFantasy.forza +=Utilities.getSecureRandom(1) * this.parametriFantasy.livello;
+    this.parametriFantasy.resistenzaFisica += Utilities.getSecureRandom(2) * this.parametriFantasy.livello;
+    this.parametriFantasy.intelligenza += Utilities.getSecureRandom(8) * this.parametriFantasy.livello;
+    this.parametriFantasy.resistenzaMagica += Utilities.getSecureRandom(4) * this.parametriFantasy.livello;
+    this.parametriFantasy.agilita += Utilities.getSecureRandom(5) * this.parametriFantasy.livello;
+    this.incrementaSalute(Utilities.getSecureRandom(5) * this.parametriFantasy.livello);
 
   }
 

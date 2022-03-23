@@ -1,5 +1,6 @@
 import { Charter } from '../abstract/charter';
 import { classe, SquareConfig } from '../utils/costants.enum';
+import { Utilities } from '../utils/utilities';
 
 export class Samurai extends Charter {
   override name = 'SAMURAI default name';
@@ -7,12 +8,12 @@ export class Samurai extends Charter {
   override genereSprite = 1;
   override spriteSheetCharterPath = 'assets/images/samuraiAtk2.png';
   override spriteSheetAttackPath = 'assets/images/samuraiAtk2.png';
-  override maxSalute =  12000 * this.parametriFantasy.livello;
+  override maxSalute = 12000 * this.parametriFantasy.livello;
 
-  constructor(configurazioneInziale:SquareConfig) {
+  constructor(configurazioneInziale: SquareConfig) {
     super(configurazioneInziale);
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
-    this.spriteSheetImageAttack.src = this.spriteSheetAttackPath;  
+    this.spriteSheetImageAttack.src = this.spriteSheetAttackPath;
     this.parametriFantasy.livello = 1;
     this.parametriFantasy.numeriFortunati = [0, 1, 2, 3, 4, 5, 6];
     this.parametriFantasy.agilita = 2;
@@ -28,12 +29,12 @@ export class Samurai extends Charter {
   }
 
   override updateParametriFantasy() {
-    this.parametriFantasy.forza += Math.floor(Math.random() * 5) * this.parametriFantasy.livello;
-    this.parametriFantasy.resistenzaFisica += Math.floor(Math.random() * 3) * this.parametriFantasy.livello;
-    this.parametriFantasy.intelligenza += Math.floor(Math.random() * 4) * this.parametriFantasy.livello;
-    this.parametriFantasy.resistenzaMagica += Math.floor(Math.random() * 4) * this.parametriFantasy.livello;
-    this.parametriFantasy.agilita += Math.floor(Math.random() * 5) * this.parametriFantasy.livello;  
-    this.incrementaSalute(Math.floor(Math.random() * 50) * this.parametriFantasy.livello);
+    this.parametriFantasy.forza += Utilities.getSecureRandom(5) * this.parametriFantasy.livello;
+    this.parametriFantasy.resistenzaFisica += Utilities.getSecureRandom(3) * this.parametriFantasy.livello;
+    this.parametriFantasy.intelligenza += Utilities.getSecureRandom(4) * this.parametriFantasy.livello;
+    this.parametriFantasy.resistenzaMagica += Utilities.getSecureRandom(4) * this.parametriFantasy.livello;
+    this.parametriFantasy.agilita += Utilities.getSecureRandom(5) * this.parametriFantasy.livello;
+    this.incrementaSalute(Utilities.getSecureRandom(5) * this.parametriFantasy.livello);
   }
 
   override lanciaAbilita(charter: Charter): void {
