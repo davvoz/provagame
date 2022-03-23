@@ -25,7 +25,7 @@ export class Utilities {
     }
 
     static arrayRandomicoNumerico(array: number[]): number {
-        return array[Math.floor(Math.random() * array.length)];
+        return array[Utilities.getSecureRandom(array.length)];
     }
 
     static rectsColliding(rect1: Square, rect2: Square) {
@@ -59,7 +59,7 @@ export class Utilities {
 
     static direzionaRandomicamenteCharter(charter: Square) {
         const d: direzione[] = ["TOP", "BOTTOM", "LEFT", "RIGHT", "STAND"];
-        const random = Math.floor(Math.random() * d.length);
+        const random = Utilities.getSecureRandom(d.length);
         charter.setDirection(d[random]);
     }
 
@@ -86,29 +86,29 @@ export class Utilities {
         const ba: Bonus[] = [];
         const bonus1 = new Bonus(Utilities.getSquareConfig(ctx, 'red'), 'salute', 1000, 1000);
         bonus1.spriteSheetImage.src = 'assets/images/polloo.png';
-        bonus1.config.x = Math.floor(Math.random() * 9) + 1;
-        bonus1.config.y = Math.floor(Math.random() * 8) + 1;
+        bonus1.config.x = Utilities.getSecureRandom(9) + 1;
+        bonus1.config.y = Utilities.getSecureRandom(8) + 1;
         bonus1.config.velocita = 0;
         bonus1.stand();
         ba.push(bonus1);
         const bonus2 = new Bonus(Utilities.getSquareConfig(ctx, 'red'), 'salute', 200, 200);
         bonus2.spriteSheetImage.src = 'assets/images/panino.png';
-        bonus2.config.x = Math.floor(Math.random() * 9) + 1;
-        bonus2.config.y = Math.floor(Math.random() * 8) + 1;
+        bonus2.config.x = Utilities.getSecureRandom(9) + 1;
+        bonus2.config.y = Utilities.getSecureRandom(8) + 1;
         bonus2.config.velocita = 0;
         bonus2.stand();
         ba.push(bonus2);
         const bonus3 = new Bonus(Utilities.getSquareConfig(ctx, 'red'), 'salute', 300, 300);
         bonus3.spriteSheetImage.src = 'assets/images/formaggio.png';
-        bonus3.config.x = Math.floor(Math.random() * 9) + 1;
-        bonus3.config.y = Math.floor(Math.random() * 8) + 1;
+        bonus3.config.x = Utilities.getSecureRandom(9) + 1;
+        bonus3.config.y = Utilities.getSecureRandom(8) + 1;
         bonus3.config.velocita = 0;
         bonus3.stand();
         ba.push(bonus3);
         const bonus4 = new Bonus(Utilities.getSquareConfig(ctx, 'red'), 'salute', 400, 400);
         bonus4.spriteSheetImage.src = 'assets/images/uovo.png';
-        bonus4.config.x = Math.floor(Math.random() * 9) + 1;
-        bonus4.config.y = Math.floor(Math.random() * 8) + 1;
+        bonus4.config.x = Utilities.getSecureRandom(9) + 1;
+        bonus4.config.y = Utilities.getSecureRandom(8) + 1;
         bonus4.config.velocita = 0;
         bonus4.stand();
         ba.push(bonus4);
@@ -164,15 +164,15 @@ export class Utilities {
         for (let j = 0; j < livelloNemici; j++) {
             enemy.incrementaLivello();
         }
-        enemy.config.x = Math.floor(Math.random() * 15) + 5;
-        enemy.config.y = Math.floor(Math.random() * i) + 1;
+        enemy.config.x = Utilities.getSecureRandom(15) + 5;
+        enemy.config.y = Utilities.getSecureRandom(i) + 1;
         enemy.config.velocita = 0.1;
         enemy.posizioneInfoLabelX = 370 + i * 120;
         enemy.posizioneInfoLabelY = 700;
         enemy.dannoCritico = 10 * livelloNemici;
         enemy.counterForCriticoTreshold = 10;
         enemy.name = this.nomeRandomico();
-        enemy.parametriFantasy.money = Math.floor(Math.random() * 100);
+        enemy.parametriFantasy.money = Utilities.getSecureRandom(100);
         enemy.stand();
         enemies.push(enemy);
     }
@@ -202,7 +202,7 @@ export class Utilities {
     }
 
     static arrayRandomico(array: string[]): any {
-        return array[Math.floor(Math.random() * array.length)];
+        return array[Utilities.getSecureRandom(array.length)];
     }
 
     static changeButtonState(evt: MouseEvent, button: Bottone, ctx: CanvasRenderingContext2D): boolean {
@@ -239,8 +239,8 @@ export class Utilities {
     }
 
     static setRandomXY(square: Square) {
-        square.config.x = Math.floor(Math.random() * 8) + 1;
-        square.config.y = Math.floor(Math.random() * 5) + 1;
+        square.config.x = Utilities.getSecureRandom(8) + 1;
+        square.config.y = Utilities.getSecureRandom(5) + 1;
     }
 
     static getSecureRandom(max: number) {

@@ -1,4 +1,5 @@
 import { SquareConfig } from "../utils/costants.enum";
+import { Utilities } from "../utils/utilities";
 import { Square } from "./square";
 
 export class Treasure extends Square {
@@ -7,8 +8,7 @@ export class Treasure extends Square {
     override config!:SquareConfig;
         constructor(configurazioneInziale:SquareConfig) {
         super(configurazioneInziale);
-        this.money = Math.floor(Math.random() * 1000);
-        
+        this.money = Utilities.getSecureRandom(1000);
         this.image.src = 'assets/images/treasure.png';
     }
     override draw(): void {

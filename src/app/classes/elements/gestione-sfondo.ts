@@ -1,10 +1,11 @@
 import { SquareParam, SquareConfig, tipoSfondo } from "../utils/costants.enum";
+import { Utilities } from "../utils/utilities";
 import { Square } from "./square";
 
 export class GestioneSfondi extends Square {
     spriteSheetPath = 'assets/images/alberi.png';
     spriteSheetPath5 = 'assets/images/skyline.png';
-    tipoSfondo:tipoSfondo ='GIORNO';
+    tipoSfondo: tipoSfondo = 'GIORNO';
     image = new Image();
     image5 = new Image();
     imageCloud1 = new Image();
@@ -12,9 +13,9 @@ export class GestioneSfondi extends Square {
     imageGrass = new Image();
     stelle: SquareParam[] = [];
 
-    override config!:SquareConfig;
-    constructor(configurazioneInziale:SquareConfig) {
-    super(configurazioneInziale);
+    override config!: SquareConfig;
+    constructor(configurazioneInziale: SquareConfig) {
+        super(configurazioneInziale);
         this.image.src = this.spriteSheetPath;
         this.image5.src = this.spriteSheetPath5;
         this.imageCloud1.src = 'assets/images/cloud.png';
@@ -23,11 +24,11 @@ export class GestioneSfondi extends Square {
         this.config.h = this.config.w;
         this.config.ctx.fillStyle = 'yellow';
         for (let i = 0; i < 250; i++) {
-            const a = Math.random() * 3;
+            const a = Utilities.getSecureRandom(3);
             this.stelle.push(
                 {
-                    x: Math.floor(Math.random() * 1100),
-                    y: Math.floor(Math.random() * 60),
+                    x: Utilities.getSecureRandom(1100),
+                    y: Utilities.getSecureRandom(60),
                     h: a,
                     w: a
                 }
@@ -36,7 +37,7 @@ export class GestioneSfondi extends Square {
     }
 
     override draw(): void {
-        if (this.tipoSfondo  === 'GIORNO') {
+        if (this.tipoSfondo === 'GIORNO') {
             this.disegnaGiorno();
         } else {
             this.disegnaNotte();

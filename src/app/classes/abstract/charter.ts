@@ -3,6 +3,7 @@ import { Pozione } from '../elements/pozione';
 import { Square } from '../elements/square';
 import { CounterToTrashold } from '../utils/counter-to-treshold';
 import { DrawCharter } from '../elements/draw-charter';
+import { Utilities } from '../utils/utilities';
 
 export class Charter extends Square implements CharterParam,IOtherAnimations {
   classe: classe = 'ABSTRACT';
@@ -215,7 +216,7 @@ export class Charter extends Square implements CharterParam,IOtherAnimations {
   }
 
   difendere(dannoMagico: number, dannoFisico: number, isCritico: boolean) {
-    const schiva = Math.floor(Math.random() * 10);
+    const schiva = Utilities.getSecureRandom(10);
     let schivata = false;
     this.stato = 'difendendo';
     schivata = this.getSchivata(isCritico, schiva, schivata);
