@@ -54,7 +54,6 @@ export class GestioneSfondi extends Square {
         this.config.ctx.fillRect(800, 300, 300, 50);
         this.config.ctx.fillStyle = 'white';
         this.stelle.forEach((stella) => {
-            //this.config.ctx.fillStyle = 'rgb('+(Math.floor(Math.random()*250))+','+(Math.floor(Math.random()*250))+','+(Math.floor(Math.random()*250))+')';
             this.config.ctx.fillRect(stella.x, stella.y, stella.h, stella.w);
         });
         for (let i = 0; i < 7; i++) {

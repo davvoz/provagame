@@ -41,7 +41,7 @@ export class Bullo extends Charter {
     charter.updateMalefici(
       {
         malus: 'VENO',
-        quantita: 50 * this.parametriFantasy.livello,
+        quantita: 5 * this.parametriFantasy.livello,
         totTurni: 70 + this.parametriFantasy.livello * 2,
         value: true
       }

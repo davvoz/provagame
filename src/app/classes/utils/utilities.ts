@@ -1,5 +1,5 @@
 import { Square } from "../elements/square";
-import { CollisionToDirection, direzione, SquareConfig, SquareParam } from './costants.enum';
+import { CollisionToDirection, Coordinate, direzione, SquareConfig, SquareParam } from './costants.enum';
 import { Guerriero } from "../charters/guerriero";
 import { Mago } from "../charters/mago";
 import { Bonus } from "../elements/bonus";
@@ -37,8 +37,8 @@ export class Utilities {
 
     static rectsCollidingToDirection(cacciatore: SquareParam, preda: SquareParam): CollisionToDirection {
         const cto = new CollisionToDirection();
-        cto.collisionFromBottom = preda.h + preda.y -(cacciatore.h + cacciatore.y );
-        cto.collisionFromTop = cacciatore.h + cacciatore.y -(preda.h + preda.y );
+        cto.collisionFromBottom = preda.h + preda.y - (cacciatore.h + cacciatore.y);
+        cto.collisionFromTop = cacciatore.h + cacciatore.y - (preda.h + preda.y);
         cto.collisionFromLeft = cacciatore.x + cacciatore.w - (preda.x + preda.w);
         cto.collisionFromRight = preda.x + preda.w - (cacciatore.x + cacciatore.w);
         cto.isColliding = cacciatore.x < preda.x + preda.w &&
@@ -58,9 +58,9 @@ export class Utilities {
     }
 
     static direzionaRandomicamenteCharter(charter: Square) {
-        const direzione: direzione[] = ["TOP", "BOTTOM", "LEFT", "RIGHT", "STAND"];
-        const random = Math.floor(Math.random() * direzione.length);
-        charter.setDirection(direzione[random]);
+        const d: direzione[] = ["TOP", "BOTTOM", "LEFT", "RIGHT", "STAND"];
+        const random = Math.floor(Math.random() * d.length);
+        charter.setDirection(d[random]);
     }
 
     static directionToMoveSwitch(charter: Square) {
@@ -77,7 +77,7 @@ export class Utilities {
             case 'RIGHT':
                 charter.moveRight();
                 break;
-            case 'STAND'://console.log('charter direction'+charter.getDirection())
+            case 'STAND':
                 charter.stand();
         }
     }
@@ -85,7 +85,6 @@ export class Utilities {
     static createBonusArray(j: number, ctx: CanvasRenderingContext2D): Bonus[] {
         const ba: Bonus[] = [];
         const bonus1 = new Bonus(Utilities.getSquareConfig(ctx, 'red'), 'salute', 1000, 1000);
-        //bonus1.spriteSheetCharterPath ='assets/images/polloo.png';
         bonus1.spriteSheetImage.src = 'assets/images/polloo.png';
         bonus1.config.x = Math.floor(Math.random() * 9) + 1;
         bonus1.config.y = Math.floor(Math.random() * 8) + 1;
@@ -149,7 +148,7 @@ export class Utilities {
         return enemies;
     }
 
-    static getSquareConfig(ctx: CanvasRenderingContext2D, color: string) {
+    static getSquareConfig(ctx: CanvasRenderingContext2D, color: string): SquareConfig {
         return {
             color: color,
             ctx: ctx,
@@ -178,7 +177,7 @@ export class Utilities {
         enemies.push(enemy);
     }
 
-    static getMousePos(canvas: HTMLCanvasElement, event: MouseEvent) {
+    static getMousePos(canvas: HTMLCanvasElement, event: MouseEvent): Coordinate {
         var rect = canvas.getBoundingClientRect();
         return {
             x: event.clientX - rect.left,
@@ -186,11 +185,11 @@ export class Utilities {
         };
     }
 
-    static isInside(mousePosition: { x: any; y: any; }, rect: { x: any; y: any; width: any; height: any; }) {
+    static isInside(mousePosition: { x: number; y: number; }, rect: SquareParam) {
         return (
             mousePosition.x > rect.x &&
-            mousePosition.x < rect.x + rect.width &&
-            mousePosition.y < rect.y + rect.height &&
+            mousePosition.x < rect.x + rect.w &&
+            mousePosition.y < rect.y + rect.h &&
             mousePosition.y > rect.y
         );
     }
@@ -202,7 +201,7 @@ export class Utilities {
             'Aldo', 'Maria', 'Marco', 'Derrer', 'Skutillo', 'Rafranco', 'Tetramarco']);
     }
 
-    static arrayRandomico(array: string[]): string {
+    static arrayRandomico(array: string[]): any {
         return array[Math.floor(Math.random() * array.length)];
     }
 
@@ -211,12 +210,12 @@ export class Utilities {
         const rect = {
             x: button.config.x * button.config.w,
             y: button.config.y * button.config.h,
-            width: button.config.w,
-            height: button.config.h,
+            w: button.config.w,
+            h: button.config.h,
         };
         let out = false;
         if (Utilities.isInside(mousePos, rect)) {
-            button.state == 'ON' ? button.state = 'OFF' : button.state = 'ON';
+            if (button.state == 'ON') { button.state = 'OFF' } else { button.state = 'ON' }
             out = true;
         }
         return out;
@@ -244,7 +243,4 @@ export class Utilities {
         square.config.y = Math.floor(Math.random() * 5) + 1;
     }
 
-    static log(isActive: boolean, message: string) {
-        isActive ? console.log(message) : null;
-    }
 }

@@ -41,7 +41,7 @@ export class Samurai extends Charter {
     charter.updateMalefici(
       {
         malus: 'FIRE',
-        quantita: 50 * this.parametriFantasy.livello,
+        quantita: 5 * this.parametriFantasy.livello,
         totTurni: 90 + this.parametriFantasy.livello,
         value: true
       }

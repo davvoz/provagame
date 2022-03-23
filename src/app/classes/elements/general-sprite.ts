@@ -3,7 +3,6 @@ import { Square } from "./square";
 
 export class GeneralSprite extends Square {
     image = new Image();
-    override config!:SquareConfig;
     constructor(configurazioneInziale:SquareConfig,path:string) {
     super(configurazioneInziale);
         this.image.src = path;

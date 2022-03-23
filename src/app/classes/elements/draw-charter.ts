@@ -33,7 +33,6 @@ export class DrawCharter {
     private drawSprite() {
         this.setSpriteFromCharterAndAction();
         this.drawMalefici();
-       // this.drawAurea();
     }
 
     private drawSintesi() {
@@ -167,7 +166,7 @@ export class DrawCharter {
         this.charter.config.ctx.lineWidth = 2;
         this.charter.config.ctx.strokeRect(
             this.charter.config.x * this.charter.config.w - this.charter.config.w,
-            this.charter.config.y * this.charter.config.h -this.charter.config.h ,
+            this.charter.config.y * this.charter.config.h - this.charter.config.h,
             this.charter.config.w * 3,
             this.charter.config.h * 3);
         this.charter.config.ctx.restore();
@@ -178,33 +177,77 @@ export class DrawCharter {
         this.charter.config.ctx.save();
         this.charter.config.ctx.strokeStyle = 'black';
         this.charter.config.ctx.lineWidth = 5;
-        //situazione fire
-        if (this.charter.malefici.fiery.value && this.charter.malefici.fiery.totTurni > 0) {
-            this.charter.malefici.fiery.totTurni--;
+        this.fire();
+        this.poison();
+        this.stun();
+        this.slow();
+        this.blood();
+        this.charter.config.ctx.restore();
+    }
+
+    private blood() {
+        if (this.charter.malefici.blooding.value && this.charter.malefici.blooding.totTurni > 0) {
+            if (!this.bloodImage.src) {
+                this.bloodImage.src = 'assets/images/blooding2.png';
+            }
+            this.charter.parametriFantasy.salute -= this.charter.malefici.blooding.quantita;
+            this.charter.malefici.blooding.totTurni--;
             this.charter.config.ctx.fillStyle = 'red';
             this.charter.config.ctx.font = "20px Impact";
-            this.charter.config.ctx.fillText('ON FIRE !!!', this.charter.config.x * this.charter.config.w - 50, this.charter.config.y * this.charter.config.h, 300);
-            if (!this.fiammeImage.src) {
-                this.fiammeImage.src = 'assets/images/FUOCO.png';
-            }
-
-            this.charter.config.ctx.drawImage(this.fiammeImage, this.fiammeImage.width / 4 * this.charter.counterAnimation, 0, this.fiammeImage.width / 4, this.fiammeImage.height / 2, this.charter.config.x * this.charter.config.w - 30, this.charter.config.y * this.charter.config.h, 70, 90);
-            //  console.log(this.charter.name + ' riceve danni da ' + this.charter.malefici.fiery.malus + ' : ' + this.charter.malefici.fiery.quantita);
-            this.charter.parametriFantasy.salute -= this.charter.malefici.fiery.quantita;
+            this.charter.config.ctx.fillText('BLOODING ' + this.charter.malefici.blooding.quantita, this.charter.config.x * this.charter.config.w - 30, this.charter.config.y * this.charter.config.h + 60, 300);
+            this.charter.config.ctx.drawImage(this.bloodImage, this.bloodImage.width / 4 * this.charter.counterAnimation, 0, this.bloodImage.width / 4, this.bloodImage.height / 2, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h - 30, 70, 30);
 
         }
-        //situazione poison
+    }
+
+    private slow() {
+        if (this.charter.malefici.slowed.value && this.charter.malefici.slowed.totTurni > 0) {
+            this.isRallentato = true;
+            if (!this.blockImage.src) {
+                this.blockImage.src = 'assets/images/singlespiderweb.png';
+            }
+            this.charter.config.velocita = 0.05;
+            this.charter.parametriFantasy.salute -= this.charter.malefici.slowed.quantita;
+            this.charter.malefici.slowed.totTurni--;
+            this.charter.config.ctx.fillStyle = 'white';
+            this.charter.config.ctx.font = "20px Impact";
+            this.charter.config.ctx.fillText('BLOCKED ' + this.charter.malefici.slowed.quantita, this.charter.config.x * this.charter.config.w - 30, this.charter.config.y * this.charter.config.h + 60, 300);
+            this.charter.config.ctx.drawImage(this.blockImage, 0, 0, this.blockImage.width, this.blockImage.height, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h, 70, 90);
+
+        } else {
+            if (this.isRallentato) {
+                this.charter.config.velocita = this.charter.velocitaIniziale;
+                this.isRallentato = false;
+            }
+        }
+    }
+
+    private stun() {
+        if (this.charter.malefici.stunned.value && this.charter.malefici.stunned.totTurni > 0) {
+            if (!this.stunnoImage.src) {
+                this.stunnoImage.src = 'assets/images/hammero.png';
+            }
+            this.charter.config.ctx.fillStyle = 'gold';
+            this.charter.config.ctx.font = "20px Impact";
+            this.charter.config.ctx.fillText('STUNNED ' + this.charter.malefici.stunned.quantita, this.charter.config.x * this.charter.config.w + this.charter.config.w, this.charter.config.y * this.charter.config.h + 60, 300);
+            this.charter.config.ctx.drawImage(this.stunnoImage, this.stunnoImage.width / 4 * this.charter.counterAnimation, 0, this.stunnoImage.width / 4, this.stunnoImage.height, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h - 30, 70, 90);
+            this.charter.parametriFantasy.salute -= this.charter.malefici.stunned.quantita;
+            this.charter.malefici.stunned.totTurni--;
+
+        }
+    }
+
+    private poison() {
         if (this.charter.malefici.poisoned.value && this.charter.malefici.poisoned.totTurni > 0) {
             this.charter.malefici.poisoned.totTurni--;
             this.charter.config.ctx.fillStyle = 'green';
             this.charter.config.ctx.font = "20px Impact";
-            this.charter.config.ctx.fillText('POISONED', this.charter.config.x * this.charter.config.w - 70, this.charter.config.y * this.charter.config.h + 60, 300);
+            this.charter.config.ctx.fillText('POISONED  ' + this.charter.malefici.poisoned.quantita, this.charter.config.x * this.charter.config.w - 70, this.charter.config.y * this.charter.config.h + 60, 300);
             this.charter.config.ctx.drawImage(this.velenoImage, this.velenoImage.width / 4 * this.charter.counterAnimation, 0, this.velenoImage.width / 4, this.velenoImage.height / 2, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h - 30, 70, 90);
 
             if (!this.velenoImage.src) {
                 this.velenoImage.src = 'assets/images/avvelenamento.png';
             }
-            //  console.log(this.charter.name + ' riceve danni da ' + this.charter.malefici.poisoned.malus + ' : ' + this.charter.malefici.poisoned.quantita);
             this.charter.parametriFantasy.salute -= this.charter.malefici.poisoned.quantita;
             if (!this.charter.isVelenoApplicato) {
                 this.charter.isVelenoApplicato = true;
@@ -212,55 +255,21 @@ export class DrawCharter {
         } else {
             this.charter.isVelenoApplicato = false;
         }
-        //situazione stun
-        if (this.charter.malefici.stunned.value && this.charter.malefici.stunned.totTurni > 0) {
-            //    console.log(this.charter.name + ' riceve danni da ' + this.charter.malefici.stunned.malus + ' : ' + this.charter.malefici.stunned.quantita);
-            if (!this.stunnoImage.src) {
-                this.stunnoImage.src = 'assets/images/hammero.png';
-            }
-            this.charter.config.ctx.fillStyle = 'gold';
-            this.charter.config.ctx.font = "20px Impact";
-            this.charter.config.ctx.fillText('STUNNED', this.charter.config.x * this.charter.config.w + this.charter.config.w, this.charter.config.y * this.charter.config.h + 60, 300);
-            this.charter.config.ctx.drawImage(this.stunnoImage, this.stunnoImage.width / 4 * this.charter.counterAnimation, 0, this.stunnoImage.width / 4, this.stunnoImage.height, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h - 30, 70, 90);
-            this.charter.parametriFantasy.salute -= this.charter.malefici.stunned.quantita;
-            this.charter.malefici.stunned.totTurni--;
-        }
-        //situazione slow
-        if (this.charter.malefici.slowed.value && this.charter.malefici.slowed.totTurni > 0) {
-            this.isRallentato = true;
-            //  console.log(this.charter.name + ' riceve danni da ' + this.charter.malefici.blocked.malus + ' : ' + this.charter.malefici.blocked.quantita);
-            if (!this.blockImage.src) {
-                this.blockImage.src = 'assets/images/singlespiderweb.png'; //src\assets\images\singlespiderweb.png
-            }
-            this.charter.config.velocita = 0.05;
-            this.charter.parametriFantasy.salute -= this.charter.malefici.slowed.quantita;
-            this.charter.malefici.slowed.totTurni--;
-            this.charter.config.ctx.fillStyle = 'white';
-            this.charter.config.ctx.font = "20px Impact";
-            this.charter.config.ctx.fillText('BLOCKED', this.charter.config.x * this.charter.config.w - 30, this.charter.config.y * this.charter.config.h + 60, 300);
-            this.charter.config.ctx.drawImage(this.blockImage, 0, 0, this.blockImage.width, this.blockImage.height, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h, 70, 90);
-        } else {
-            if (this.isRallentato) {
-                this.charter.config.velocita = this.charter.velocitaIniziale;
-                this.isRallentato = false;
-            }
-        }
-        //situazione blood
-        if (this.charter.malefici.blooding.value && this.charter.malefici.blooding.totTurni > 0) {
-            //  console.log(this.charter.name + ' riceve danni da ' + this.charter.malefici.blocked.malus + ' : ' + this.charter.malefici.blocked.quantita);
-            if (!this.bloodImage.src) {
-                this.bloodImage.src = 'assets/images/blooding2.png'; //src\assets\images\singlespiderweb.png
-            }
-            this.charter.parametriFantasy.salute -= this.charter.malefici.blooding.quantita;
-            this.charter.malefici.blooding.totTurni--;
+    }
+
+    private fire() {
+        if (this.charter.malefici.fiery.value && this.charter.malefici.fiery.totTurni > 0) {
+            this.charter.malefici.fiery.totTurni--;
             this.charter.config.ctx.fillStyle = 'red';
             this.charter.config.ctx.font = "20px Impact";
-            this.charter.config.ctx.fillText('BLOODING', this.charter.config.x * this.charter.config.w - 30, this.charter.config.y * this.charter.config.h + 60, 300);
-            // this.charter.config.ctx.drawImage(this.bloodImage, 0, 0, this.bloodImage.width , this.bloodImage.height, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h, 70, 90);
-            this.charter.config.ctx.drawImage(this.bloodImage, this.bloodImage.width / 4 * this.charter.counterAnimation, 0, this.bloodImage.width / 4, this.bloodImage.height / 2, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h - 30, 70, 30);
-        }
-        this.charter.config.ctx.restore();
+            this.charter.config.ctx.fillText('ON FIRE !!!' + this.charter.malefici.fiery.quantita, this.charter.config.x * this.charter.config.w - 50, this.charter.config.y * this.charter.config.h, 300);
 
+            if (!this.fiammeImage.src) {
+                this.fiammeImage.src = 'assets/images/FUOCO.png';
+            }
+            this.charter.config.ctx.drawImage(this.fiammeImage, this.fiammeImage.width / 4 * this.charter.counterAnimation, 0, this.fiammeImage.width / 4, this.fiammeImage.height / 2, this.charter.config.x * this.charter.config.w - 30, this.charter.config.y * this.charter.config.h, 70, 90);
+            this.charter.parametriFantasy.salute -= this.charter.malefici.fiery.quantita;
+        }
     }
 
     private drawBarre() {
@@ -322,7 +331,7 @@ export class DrawCharter {
         );
         this.charter.config.ctx.font = '18px Impact';
         this.charter.config.ctx.fillText(
-            'F' + this.charter.parametriFantasy.forza + ' I ' + this.charter.parametriFantasy.intelligenza + 'A' + this.charter.parametriFantasy.agilita + ' RF ' + this.charter.parametriFantasy.resistenzaFisica + ' RM ' + this.charter.parametriFantasy.resistenzaMagica,
+            'F' + this.charter.parametriFantasy.forza + ' I ' + this.charter.parametriFantasy.intelligenza + ' A ' + this.charter.parametriFantasy.agilita + ' RF ' + this.charter.parametriFantasy.resistenzaFisica + ' RM ' + this.charter.parametriFantasy.resistenzaMagica,
             this.charter.config.x * this.charter.config.w,
             this.charter.config.y * this.charter.config.h - 75, 500
         );
@@ -342,102 +351,77 @@ export class DrawCharter {
     }
 
     private setSpriteFromCharterAndAction() {
-        let colonna = 0;
-        let riga = 0;
         switch (this.charter.stato) {
-
             case 'camminando':
-                switch (this.charter.getDirection()) {
-                    case 'TOP': riga = this.charter.spriteSheetImage.height / 4 * 3; //riga 4
-                        break;
-                    case 'BOTTOM': riga = 0; //riga 1
-                        break;
-                    case 'LEFT': ; //riga 2
-
-                        //se = 0 then SX = 1; se = 1 SX = 2 
-                        if (this.charter.genereSprite === 0) {
-                            riga = this.charter.spriteSheetImage.height / 4 * 2;
-
-                        } else {
-                            riga = this.charter.spriteSheetImage.height / 4;
-                        }
-                        break;
-                    case 'RIGHT': ; //riga 3
-
-                        //se = 0  dx = 2 ; se = 1 DX = 1
-                        if (this.charter.genereSprite === 0) {
-                            riga = this.charter.spriteSheetImage.height / 4;
-                        } else {
-                            riga = this.charter.spriteSheetImage.height / 4 * 2;
-                        }
-                        break;
-                }
-                colonna = this.charter.spriteSheetImage.width / 4 * this.charter.counterAnimation;
-                this.charter.config.ctx.drawImage(this.charter.spriteSheetImage, colonna, riga, this.charter.spriteSheetImage.width / 4, this.charter.spriteSheetImage.height / 4, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h, 70, 90);
+                this.setCamminando();
                 break;
             case 'attaccando':
-                switch (this.charter.getDirection()) {
-                    case 'TOP': riga = this.charter.spriteSheetImageAttack.height / 4 * 3; //riga 4
-                        break;
-                    case 'BOTTOM': riga = 0; //riga 1
-                        break;
-                    case 'LEFT': ; //riga 2
-
-                        //se = 0 then SX = 1; se = 1 SX = 2 
-                        if (this.charter.genereSprite === 0) {
-                            riga = this.charter.spriteSheetImageAttack.height / 4 * 2;
-
-                        } else {
-                            riga = this.charter.spriteSheetImageAttack.height / 4;
-                        }
-                        break;
-                    case 'RIGHT': ; //riga 3
-
-                        //se = 0  dx = 2 ; se = 1 DX = 1
-                        if (this.charter.genereSprite === 0) {
-                            riga = this.charter.spriteSheetImageAttack.height / 4;
-                        } else {
-                            riga = this.charter.spriteSheetImageAttack.height / 4 * 2;
-                        }
-                        break;
-                }
-                colonna = this.charter.spriteSheetImageAttack.width / 4 * this.charter.counterAnimation;
-                this.charter.config.ctx.drawImage(this.charter.spriteSheetImageAttack, colonna, riga, this.charter.spriteSheetImageAttack.width / 4, this.charter.spriteSheetImageAttack.height / 4, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h, 70, 90);
+                this.setAttaccando();
                 break;
-
             case 'difendendo':
-                switch (this.charter.getDirection()) {
-                    case 'TOP': riga = this.charter.spriteSheetImageAttack.height / 4 * 3; //riga 4
-                        break;
-                    case 'BOTTOM': riga = 0; //riga 1
-                        break;
-                    case 'LEFT': ; //riga 2
-
-                        //se = 0 then SX = 1; se = 1 SX = 2 
-                        if (this.charter.genereSprite === 0) {
-                            riga = this.charter.spriteSheetImageAttack.height / 4 * 2;
-
-                        } else {
-                            riga = this.charter.spriteSheetImageAttack.height / 4;
-                        }
-                        break;
-                    case 'RIGHT': ; //riga 3
-
-                        //se = 0  dx = 2 ; se = 1 DX = 1
-                        if (this.charter.genereSprite === 0) {
-                            riga = this.charter.spriteSheetImageAttack.height / 4;
-                        } else {
-                            riga = this.charter.spriteSheetImageAttack.height / 4 * 2;
-                        }
-                        break;
-                }
-                colonna = this.charter.spriteSheetImageAttack.width / 4 * this.charter.counterAnimation;
-                this.charter.config.ctx.drawImage(this.charter.spriteSheetImageAttack, colonna, riga, this.charter.spriteSheetImageAttack.width / 4, this.charter.spriteSheetImageAttack.height / 4, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h, 70, 90);
+                this.setAttaccando();
                 break;
-
             case 'morendo':
                 this.charter.config.ctx.fillText('morto', this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h, 300);
                 break;
         }
+    }
+
+    private setAttaccando() {
+        let riga = 0; let colonna = 0;
+        switch (this.charter.getDirection()) {
+            case 'TOP': riga = this.charter.spriteSheetImageAttack.height / 4 * 3; //riga 4
+                break;
+            case 'BOTTOM': //riga 1
+                break;
+            case 'LEFT': //riga 2
+                //se = 0 then SX = 1; se = 1 SX = 2 
+                if (this.charter.genereSprite === 0) {
+                    riga = this.charter.spriteSheetImageAttack.height / 4 * 2;
+
+                } else {
+                    riga = this.charter.spriteSheetImageAttack.height / 4;
+                }
+                break;
+            case 'RIGHT':  //riga 3
+                //se = 0  dx = 2 ; se = 1 DX = 1
+                if (this.charter.genereSprite === 0) {
+                    riga = this.charter.spriteSheetImageAttack.height / 4;
+                } else {
+                    riga = this.charter.spriteSheetImageAttack.height / 4 * 2;
+                }
+                break;
+        }
+        colonna = this.charter.spriteSheetImageAttack.width / 4 * this.charter.counterAnimation;
+        this.charter.config.ctx.drawImage(this.charter.spriteSheetImageAttack, colonna, riga, this.charter.spriteSheetImageAttack.width / 4, this.charter.spriteSheetImageAttack.height / 4, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h, 70, 90);
+    }
+
+    private setCamminando() {
+        let riga = 0; let colonna = 0;
+        switch (this.charter.getDirection()) {
+            case 'TOP': riga = this.charter.spriteSheetImage.height / 4 * 3; //riga 4
+                break;
+            case 'BOTTOM': //riga 1
+                break;
+            case 'LEFT': //riga 2
+                //se = 0 then SX = 1; se = 1 SX = 2 
+                if (this.charter.genereSprite === 0) {
+                    riga = this.charter.spriteSheetImage.height / 4 * 2;
+
+                } else {
+                    riga = this.charter.spriteSheetImage.height / 4;
+                }
+                break;
+            case 'RIGHT': //riga 3
+                //se = 0  dx = 2 ; se = 1 DX = 1
+                if (this.charter.genereSprite === 0) {
+                    riga = this.charter.spriteSheetImage.height / 4;
+                } else {
+                    riga = this.charter.spriteSheetImage.height / 4 * 2;
+                }
+                break;
+        }
+        colonna = this.charter.spriteSheetImage.width / 4 * this.charter.counterAnimation;
+        this.charter.config.ctx.drawImage(this.charter.spriteSheetImage, colonna, riga, this.charter.spriteSheetImage.width / 4, this.charter.spriteSheetImage.height / 4, this.charter.config.x * this.charter.config.w, this.charter.config.y * this.charter.config.h, 70, 90);
     }
 }

@@ -9,7 +9,6 @@ export class BottoneSceltaCharter extends Bottone {
 
     constructor(configurazioneInziale: SquareConfig, path: string, isToggle: boolean) {
         super(configurazioneInziale, isToggle);
-        this.config = configurazioneInziale;
         this.image.src = path;
         this.config.w = 70;
         this.config.h = 90;

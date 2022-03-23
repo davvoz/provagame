@@ -42,7 +42,7 @@ export class Gui {
         this.restartButton = new Bottone({
             color: 'orangered',
             ctx: ctx,
-            velocita: 0.1,
+            velocita: 0.0,
             h: 90,
             w: 70,
             x: 0,
@@ -53,7 +53,7 @@ export class Gui {
         this.pauseButton = new Bottone({
             color: 'orangered',
             ctx: ctx,
-            velocita: 0.1,
+            velocita: 0.0,
             h: 90,
             w: 70,
             x: 2,
@@ -65,7 +65,7 @@ export class Gui {
         this.incrementaLivelloButton = new Bottone({
             color: 'yellow',
             ctx: ctx,
-            velocita: 0.1,
+            velocita: 0.0,
             h: 90,
             w: 70,
             x: 1,
@@ -76,7 +76,7 @@ export class Gui {
         this.compraBonus = new Bottone({
             color: 'yellow',
             ctx: ctx,
-            velocita: 0.1,
+            velocita: 0.0,
             h: 90,
             w: 70,
             x: 0,
@@ -171,206 +171,217 @@ export class Gui {
         this.ctx.fillRect(0, 650, this.ctx.canvas.width, 100);
         this.ctx.restore();
         if (isFaseScelta) {
-            if (!player || this.isRestartTouched) {
-                this.ctx.save();
-                this.ctx.font = 'italic bolder 75px Orbitron';
-                this.ctx.fillStyle = 'black';
-                this.ctx.fillText('Alfa - alfa', 0, 250, 3000);
-                for (let i = 0; i < this.sceltaProiettile.length; i++) {
-                    this.sceltaProiettile[i].terzoText = this.sceltaProiettile[i].typeOfProiettile;
-                    this.sceltaProiettile[i].counterAnimation = counterAnimation;
-                    this.sceltaProiettile[i].index = i;
-                    this.sceltaProiettile[i].stand();
-                }
-                if (this.classeProiettileScelto !== 'ABSTRACT') {
-                    this.ctx.save();
-                    this.ctx.font = 'italic bolder 45px Orbitron';
-                    this.ctx.fillStyle = 'black';
-
-                    switch (this.classeProiettileScelto) {
-                        case 'RAGNO':
-                            this.selectedImageProiettile.src = 'assets/images/spidero.png';
-                            this.descrizioneProiettile = 'rallenta';
-                            this.ctx.drawImage(this.selectedImageProiettile,
-                                this.selectedImageProiettile.width / 4 * counterAnimation,//colonna ws
-                                0,//riga hs
-                                this.selectedImageProiettile.width / 4, //ws
-                                this.selectedImageProiettile.height / 4,//hs
-                                530, 580,
-                                50,
-                                65);
-                            break;
-                        case 'COLTELLO':
-                            this.selectedImageProiettile.src = 'assets/images/coltello.png';
-                            this.descrizioneProiettile = 'lacera le carni';
-                            this.ctx.drawImage(this.selectedImageProiettile,
-                                this.selectedImageProiettile.width / 4 * counterAnimation,//colonna ws
-                                0,//riga hs
-                                this.selectedImageProiettile.width / 4, //ws
-                                this.selectedImageProiettile.height,//hs
-                                530, 580,
-                                50,
-                                65);
-                            break;
-                        case 'PALLADIFUOCO':
-                            this.selectedImageProiettile.src = 'assets/images/fireball.png';
-                            this.descrizioneProiettile = 'incendia';
-                            this.ctx.drawImage(this.selectedImageProiettile,
-                                this.selectedImageProiettile.width / 4 * counterAnimation,//colonna ws
-                                0,//riga hs
-                                this.selectedImageProiettile.width / 4, //ws
-                                this.selectedImageProiettile.height / 4,//hs
-                                530, 580,
-                                50,
-                                65);
-                            break;
-                        case 'HAMMER':
-                            this.selectedImageProiettile.src = 'assets/images/hammero.png';
-                            this.descrizioneProiettile = 'stunna';
-                            this.ctx.drawImage(this.selectedImageProiettile,
-                                this.selectedImageProiettile.width / 4 * counterAnimation,//colonna ws
-                                0,//riga hs
-                                this.selectedImageProiettile.width / 4, //ws
-                                this.selectedImageProiettile.height,//hs
-                                530, 580,
-                                50,
-                                65);
-                            break;
-                    }
-                    this.ctx.fillText('Proiettile ' + this.classeProiettileScelto + ' ' + this.descrizioneProiettile, 0, 450, 3000);
-
-                    this.ctx.restore();
-                    this.startButton.stand();
-                } else {
-                    this.ctx.save();
-                    this.ctx.font = 'italic bolder 45px Orbitron';
-                    this.ctx.fillStyle = 'black';
-                    this.ctx.fillText('Scegliere proiettile', 600, 550, 300);
-                    this.ctx.restore()
-                }
-
-                for (let i = 0; i < this.sceltaCharter.length; i++) {
-                    this.sceltaCharter[i].terzoText = this.sceltaCharter[i].typeOfCharter;
-                    this.sceltaCharter[i].counterAnimation = counterAnimation;
-                    this.sceltaCharter[i].index = i;
-                    this.sceltaCharter[i].stand();
-                }
-                if (this.classeCharterScelto !== 'ABSTRACT') {
-                    //this.ctx.fillText('Hai scelto il ', 0, 450, 3000);
-                    this.ctx.save();
-                    this.ctx.font = 'italic bolder 45px Orbitron';
-                    this.ctx.fillStyle = 'black';
-                    switch (this.classeCharterScelto) {
-                        case 'SAMURAI': this.selectedImageCharter.src = 'assets/images/samuraiAtk2.png'; this.descrizioneCharter = 'Incendia';
-                            break;//samurai
-                        case 'MAGO': this.selectedImageCharter.src = 'assets/images/discotraspooAtck.png'; this.descrizioneCharter = 'Avvelena e mana veloce';
-                            break;//mago
-                        case 'GUERRIERO': this.selectedImageCharter.src = 'assets/images/biondotraspoAtck_1.png'; this.descrizioneCharter = 'Stunna';
-                            break;//guerriero
-                        case 'BULLO': this.selectedImageCharter.src = 'assets/images/edwardAtk.png'; this.descrizioneCharter = 'Avvelena';
-                            break;//arcere
-                    }
-                    this.ctx.fillText('Eroe ' + this.classeCharterScelto + ' ' + this.descrizioneCharter, 0, 350, 3000);
-                    this.ctx.restore()
-                    this.ctx.drawImage(this.selectedImageCharter,
-                        this.selectedImageCharter.width / 4 * counterAnimation,//colonna ws
-                        0,//riga hs
-                        this.selectedImageCharter.width / 4, //ws
-                        this.selectedImageCharter.height / 4,//hs
-                        450, 500,
-                        100,
-                        140);
-                    this.startButton.stand();
-                } else {
-                    this.ctx.save();
-                    this.ctx.font = 'italic bolder 45px Orbitron';
-                    this.ctx.fillStyle = 'black';
-                    this.ctx.fillText('Scegliere eroe', 0, 550, 300);
-                    this.ctx.restore();
-
-                }
-
-
-            }
+            this.faseSceltaProcedure(player, counterAnimation);
         } else {
             if (!player.isMorto) {
                 this.incrementaLivelloButton.stand();
                 this.pauseButton.stand()
                 this.compraBonus.stand();
                 this.scudoButton.stand();
-                for (let i = 0; i < this.pozioniBottoni.length; i++) {
-                    this.pozioniBottoni[i].stand();
+                for (const pozioneBottone of this.pozioniBottoni) {
+                    pozioneBottone.stand();
                 }
             }
         }
 
         if (player) {
 
-            if (!player.isMorto) {
-                this.ctx.font = 'italic bolder 45px Orbitron';
-                this.ctx.fillStyle = 'rgb(200,200,200)';
-                this.ctx.fillText('Mondo  ' + livelloSchema, 753, 53, 500);
-                this.ctx.fillText('$' + player.parametriFantasy.money, 23, 53, 500);
-                this.ctx.fillStyle = 'rgb(250,150,10)';
-                this.ctx.strokeStyle = 'black';
-                this.ctx.fillText('$' + player.parametriFantasy.money, 20, 50, 500);
-                this.ctx.strokeText('$' + player.parametriFantasy.money, 20, 50, 500);
-                this.ctx.fillText('Mondo  ' + livelloSchema, 750, 50, 500);
-                this.ctx.strokeText('Mondo  ' + livelloSchema, 750, 50, 500);
-                let maxLength = 100;
-                const perCent = maxLength * player.exp / player.nextExp;
-                this.ctx.fillStyle = 'green';
-                this.ctx.fillRect(300, 650, perCent, 10);
-                this.ctx.fillStyle = 'white';
-                this.ctx.fillRect(300 + maxLength, 650, 5, 10);
-                this.ctx.font = 'italic bolder 15px Orbitron';
-                this.ctx.fillStyle = 'rgb(60,160,60)';
-                this.ctx.fillText('EXP ' + player.classe + ' ' + player.parametriFantasy.livello + ' - NOW  ' + player.exp + ' NEXT ' + player.nextExp, maxLength / player.nextExp + 300, 690 + 10, 500);
-
-            }
-            if (player.isMorto && !this.isRestartTouched) {
-                this.ctx.font = 'normal bolder 115px Orbitron';
-                this.ctx.save();
-                this.ctx.translate(0, 19);
-                this.ctx.rotate(-Math.PI / -this.counterAnimationDieText);
-                this.ctx.fillStyle = 'rgb(200,150,10)';
-                this.ctx.fillText('YOU ARE DEAD', 5, this.ctx.canvas.width / 2 + 5, this.counterAnimationDieText * 100);
-                this.ctx.fillStyle = 'black';
-                this.ctx.strokeStyle = 'black';
-                this.ctx.strokeText('YOU ARE DEAD', 0, this.ctx.canvas.width / 2, this.counterAnimationDieText * 100);
-                this.ctx.fillText('YOU ARE DEAD', 0, this.ctx.canvas.width / 2, this.counterAnimationDieText * 100);
-                this.ctx.restore();
-                this.ctx.save();
-                this.ctx.translate(0, 19);
-                this.ctx.rotate(-Math.PI / this.counterAnimationDieText);
-                this.ctx.fillStyle = 'rgb(200,150,10)';
-                this.ctx.fillText('Game - Over', 100 + 5, 350 + 5, this.counterAnimationDieText * 100);
-                this.ctx.fillStyle = 'black';
-                this.ctx.strokeStyle = 'black';
-                this.ctx.strokeText('Game - Over', 100, 350, this.counterAnimationDieText * 100);
-                this.ctx.fillText('Game - Over', 100, 350, this.counterAnimationDieText * 100);
-                this.ctx.restore();
-                this.ctx.save();
-                this.ctx.translate(10, 19);
-                this.ctx.rotate(-Math.PI / 4);
-                this.ctx.font = 'normal bolder 115px Orbitron';
-                this.ctx.textAlign = "center";
-                this.ctx.fillStyle = 'rgb(20,100,70)';
-                this.ctx.fillRect(-100, 1020, 1000, 110);
-                this.ctx.fillStyle = 'rgb(252, 101, 23)';
-                this.ctx.strokeStyle = 'black';
-                this.ctx.strokeText("FAiL", 200, 1120, 1500);
-                this.ctx.fillText("FAiL", 200, 1120, 1500);
-                this.ctx.restore();
-                this.restartButton.stand();
-                if (this.counterAnimationDieText < this.counterAnimationDieTextThO) {
-                    this.counterAnimationDieText++;
-                } else {
-                    this.counterAnimationDieText = this.counterAnimationDieTextThO + 1;
-                }
-            }
+            this.notMortoProcedure(player, livelloSchema);
+            this.mortoAndNotRestartProcedure(player);
         }
 
         this.ctx.restore();
+    }
+
+    private notMortoProcedure(player: Charter, livelloSchema: number) {
+        if (!player.isMorto) {
+            this.ctx.font = 'italic bolder 45px Orbitron';
+            this.ctx.fillStyle = 'rgb(200,200,200)';
+            this.ctx.fillText('Mondo  ' + livelloSchema, 753, 53, 500);
+            this.ctx.fillText('$' + player.parametriFantasy.money, 23, 53, 500);
+            this.ctx.fillStyle = 'rgb(250,150,10)';
+            this.ctx.strokeStyle = 'black';
+            this.ctx.fillText('$' + player.parametriFantasy.money, 20, 50, 500);
+            this.ctx.strokeText('$' + player.parametriFantasy.money, 20, 50, 500);
+            this.ctx.fillText('Mondo  ' + livelloSchema, 750, 50, 500);
+            this.ctx.strokeText('Mondo  ' + livelloSchema, 750, 50, 500);
+            let maxLength = 100;
+            const perCent = maxLength * player.exp / player.nextExp;
+            this.ctx.fillStyle = 'green';
+            this.ctx.fillRect(300, 650, perCent, 10);
+            this.ctx.fillStyle = 'white';
+            this.ctx.fillRect(300 + maxLength, 650, 5, 10);
+            this.ctx.font = 'italic bolder 15px Orbitron';
+            this.ctx.fillStyle = 'rgb(60,160,60)';
+            this.ctx.fillText('EXP ' + player.classe + ' ' + player.parametriFantasy.livello + ' - NOW  ' + player.exp + ' NEXT ' + player.nextExp, maxLength / player.nextExp + 300, 690 + 10, 500);
+
+        }
+    }
+
+    private mortoAndNotRestartProcedure(player: Charter) {
+        if (player.isMorto && !this.isRestartTouched) {
+            this.ctx.font = 'normal bolder 115px Orbitron';
+            this.ctx.save();
+            this.ctx.translate(0, 19);
+            this.ctx.rotate(-Math.PI / -this.counterAnimationDieText);
+            this.ctx.fillStyle = 'rgb(200,150,10)';
+            this.ctx.fillText('YOU ARE DEAD', 5, this.ctx.canvas.width / 2 + 5, this.counterAnimationDieText * 100);
+            this.ctx.fillStyle = 'black';
+            this.ctx.strokeStyle = 'black';
+            this.ctx.strokeText('YOU ARE DEAD', 0, this.ctx.canvas.width / 2, this.counterAnimationDieText * 100);
+            this.ctx.fillText('YOU ARE DEAD', 0, this.ctx.canvas.width / 2, this.counterAnimationDieText * 100);
+            this.ctx.restore();
+            this.ctx.save();
+            this.ctx.translate(0, 19);
+            this.ctx.rotate(-Math.PI / this.counterAnimationDieText);
+            this.ctx.fillStyle = 'rgb(200,150,10)';
+            this.ctx.fillText('Game - Over', 100 + 5, 350 + 5, this.counterAnimationDieText * 100);
+            this.ctx.fillStyle = 'black';
+            this.ctx.strokeStyle = 'black';
+            this.ctx.strokeText('Game - Over', 100, 350, this.counterAnimationDieText * 100);
+            this.ctx.fillText('Game - Over', 100, 350, this.counterAnimationDieText * 100);
+            this.ctx.restore();
+            this.ctx.save();
+            this.ctx.translate(10, 19);
+            this.ctx.rotate(-Math.PI / 4);
+            this.ctx.font = 'normal bolder 115px Orbitron';
+            this.ctx.textAlign = "center";
+            this.ctx.fillStyle = 'rgb(20,100,70)';
+            this.ctx.fillRect(-100, 1020, 1000, 110);
+            this.ctx.fillStyle = 'rgb(252, 101, 23)';
+            this.ctx.strokeStyle = 'black';
+            this.ctx.strokeText("FAiL", 200, 1120, 1500);
+            this.ctx.fillText("FAiL", 200, 1120, 1500);
+            this.ctx.restore();
+            this.restartButton.stand();
+
+            if (this.counterAnimationDieText < this.counterAnimationDieTextThO) {
+                this.counterAnimationDieText++;
+            } else {
+                this.counterAnimationDieText = this.counterAnimationDieTextThO + 1;
+            }
+        }
+    }
+
+    private faseSceltaProcedure(player: Charter, counterAnimation: number) {
+        if (!player || this.isRestartTouched) {
+            this.ctx.save();
+            this.ctx.font = 'italic bolder 75px Orbitron';
+            this.ctx.fillStyle = 'black';
+            this.ctx.fillText('Alfa - alfa', 0, 250, 3000);
+            for (let i = 0; i < this.sceltaProiettile.length; i++) {
+                this.sceltaProiettile[i].terzoText = this.sceltaProiettile[i].typeOfProiettile;
+                this.sceltaProiettile[i].counterAnimation = counterAnimation;
+                this.sceltaProiettile[i].index = i;
+                this.sceltaProiettile[i].stand();
+            }
+            if (this.classeProiettileScelto !== 'ABSTRACT') {
+                this.ctx.save();
+                this.ctx.font = 'italic bolder 45px Orbitron';
+                this.ctx.fillStyle = 'black';
+                this.drawImage(counterAnimation);
+                this.ctx.fillText('Proiettile ' + this.classeProiettileScelto + ' ' + this.descrizioneProiettile, 0, 450, 3000);
+                this.ctx.restore();
+                this.startButton.stand();
+            } else {
+                this.ctx.save();
+                this.ctx.font = 'italic bolder 45px Orbitron';
+                this.ctx.fillStyle = 'black';
+                this.ctx.fillText('Scegliere proiettile', 600, 550, 300);
+                this.ctx.restore();
+            }
+
+            for (let i = 0; i < this.sceltaCharter.length; i++) {
+                this.sceltaCharter[i].terzoText = this.sceltaCharter[i].typeOfCharter;
+                this.sceltaCharter[i].counterAnimation = counterAnimation;
+                this.sceltaCharter[i].index = i;
+                this.sceltaCharter[i].stand();
+            }
+            if (this.classeCharterScelto !== 'ABSTRACT') {
+                this.ctx.save();
+                this.ctx.font = 'italic bolder 45px Orbitron';
+                this.ctx.fillStyle = 'black';
+                switch (this.classeCharterScelto) {
+                    case 'SAMURAI': this.selectedImageCharter.src = 'assets/images/samuraiAtk2.png'; this.descrizioneCharter = 'Incendia';
+                        break; //samurai
+                    case 'MAGO': this.selectedImageCharter.src = 'assets/images/discotraspooAtck.png'; this.descrizioneCharter = 'Avvelena e mana veloce';
+                        break; //mago
+                    case 'GUERRIERO': this.selectedImageCharter.src = 'assets/images/biondotraspoAtck_1.png'; this.descrizioneCharter = 'Stunna';
+                        break; //guerriero
+                    case 'BULLO': this.selectedImageCharter.src = 'assets/images/edwardAtk.png'; this.descrizioneCharter = 'Avvelena';
+                        break; //arcere
+                }
+                this.ctx.fillText('Eroe ' + this.classeCharterScelto + ' ' + this.descrizioneCharter, 0, 350, 3000);
+                this.ctx.restore();
+                this.ctx.drawImage(this.selectedImageCharter,
+                    this.selectedImageCharter.width / 4 * counterAnimation,
+                    0,
+                    this.selectedImageCharter.width / 4,
+                    this.selectedImageCharter.height / 4,
+                    450, 500,
+                    100,
+                    140);
+                this.startButton.stand();
+            } else {
+                this.ctx.save();
+                this.ctx.font = 'italic bolder 45px Orbitron';
+                this.ctx.fillStyle = 'black';
+                this.ctx.fillText('Scegliere eroe', 0, 550, 300);
+                this.ctx.restore();
+            }
+        }
+    }
+
+    private drawImage(counterAnimation: number) {
+        switch (this.classeProiettileScelto) {
+            case 'RAGNO':
+                this.selectedImageProiettile.src = 'assets/images/spidero.png';
+                this.descrizioneProiettile = 'rallenta';
+                this.ctx.drawImage(this.selectedImageProiettile,
+                    this.selectedImageProiettile.width / 4 * counterAnimation,
+                    0,
+                    this.selectedImageProiettile.width / 4,
+                    this.selectedImageProiettile.height / 4,
+                    530, 580,
+                    50,
+                    65);
+                break;
+            case 'COLTELLO':
+                this.selectedImageProiettile.src = 'assets/images/coltello.png';
+                this.descrizioneProiettile = 'lacera le carni';
+                this.ctx.drawImage(this.selectedImageProiettile,
+                    this.selectedImageProiettile.width / 4 * counterAnimation,
+                    0,
+                    this.selectedImageProiettile.width / 4,
+                    this.selectedImageProiettile.height,
+                    530, 580,
+                    50,
+                    65);
+                break;
+            case 'PALLADIFUOCO':
+                this.selectedImageProiettile.src = 'assets/images/fireball.png';
+                this.descrizioneProiettile = 'incendia';
+                this.ctx.drawImage(this.selectedImageProiettile,
+                    this.selectedImageProiettile.width / 4 * counterAnimation,
+                    0,
+                    this.selectedImageProiettile.width / 4,
+                    this.selectedImageProiettile.height / 4,
+                    530, 580,
+                    50,
+                    65);
+                break;
+            case 'HAMMER':
+                this.selectedImageProiettile.src = 'assets/images/hammero.png';
+                this.descrizioneProiettile = 'stunna';
+                this.ctx.drawImage(this.selectedImageProiettile,
+                    this.selectedImageProiettile.width / 4 * counterAnimation,
+                    0,
+                    this.selectedImageProiettile.width / 4,
+                    this.selectedImageProiettile.height,
+                    530, 580,
+                    50,
+                    65);
+                break;
+        }
     }
 }

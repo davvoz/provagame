@@ -74,6 +74,7 @@ export class Charter extends Square implements CharterParam {
   dannoCritico = 50;
   counterForCritico = 0;
   ultimiDanni = 0;
+  ultimiDanniDaMaleficio = 0;
   spriteSheetCharterPath = '';
   spriteSheetAttackPath = '';
 
@@ -94,7 +95,7 @@ export class Charter extends Square implements CharterParam {
 
   scudoCounter = new CounterToTrashold(500, false);
   pozioneCounter = new CounterToTrashold(500, false);
-  visualizzaDannoCounter = new CounterToTrashold(32, false);
+  visualizzaDannoCounter = new CounterToTrashold(20, false);
   haPresoUnaDirezioneCounter = new CounterToTrashold(25, false);
   disegno!: DrawCharter;
 
@@ -138,7 +139,11 @@ export class Charter extends Square implements CharterParam {
   }
 
   incrementaSalute(addendum: number) {
-    this.parametriFantasy.salute + addendum > this.maxSalute ? this.parametriFantasy.salute = this.maxSalute : this.parametriFantasy.salute = this.parametriFantasy.salute + addendum;
+    if (this.parametriFantasy.salute + addendum > this.maxSalute) {
+      this.parametriFantasy.salute = this.maxSalute
+    } else {
+      this.parametriFantasy.salute = this.parametriFantasy.salute + addendum;
+    }
   }
 
   updateMalefici(effettoMalevolo: MaliciusEffect) {
@@ -175,45 +180,55 @@ export class Charter extends Square implements CharterParam {
       this.isOnAttack = true;
       if (this.counterAnimation == 3) {
         this.sintesiDati.numeroAttacchi++;
-        //Utilities.log(this.isLogActive, [this.classe + ' ' + this.name +'** ATTACCA ' + charter.classe + ' ' + charter.name ]);
-        if (!this.isMorto) {
-          let critico = 0;
-          let isCritico = false;
-          if (this.counterForCritico === this.counterForCriticoTreshold) {
-            critico = this.parametriFantasy.livello * 10;
-            this.sintesiDati.danniCriticiInflitti += critico;
-            isCritico = true;
-            this.isCritico = true;
-          } else {
-            this.isCritico = false;
-          }
-          charter.difendere((this.parametriFantasy.intelligenza + critico) * this.parametriFantasy.livello, (this.parametriFantasy.forza + critico) * this.parametriFantasy.livello, isCritico);
-          this.counterForCritico === this.counterForCriticoTreshold ? this.counterForCritico = 0 : this.counterForCritico++;
-          if (charter.isMorto && !charter.isPlayer) {
-            this.rubaSoldiA(charter);
-          }
-        }
-        //console.log('** FINE ATTACCO ' + this.classe + ' ' + this.name)
+        this.isNotMortoProcedure(charter);
       }
     }
   }
 
+  private isNotMortoProcedure(charter: Charter) {
+    if (!this.isMorto) {
+      let critico = 0;
+      let isCritico = false;
+      ({ critico, isCritico } = this.setCritico(critico, isCritico));
+      charter.difendere((this.parametriFantasy.intelligenza + critico) * this.parametriFantasy.livello, (this.parametriFantasy.forza + critico) * this.parametriFantasy.livello, isCritico);
+      if (this.counterForCritico === this.counterForCriticoTreshold) {
+        this.counterForCritico = 0;
+      } else {
+        this.counterForCritico++;
+      }
+      if (charter.isMorto && !charter.isPlayer) {
+        this.rubaSoldiA(charter);
+      }
+    }
+  }
+
+  private setCritico(critico: number, isCritico: boolean) {
+    if (this.counterForCritico === this.counterForCriticoTreshold) {
+      critico = this.parametriFantasy.livello * 10;
+      this.sintesiDati.danniCriticiInflitti += critico;
+      isCritico = true;
+      this.isCritico = true;
+    } else {
+      this.isCritico = false;
+    }
+    return { critico, isCritico };
+  }
+
   difendere(dannoMagico: number, dannoFisico: number, isCritico: boolean) {
-    console.log('****** DIFENDE ' + this.classe + ' ' + this.name)
-    isCritico ? console.log('******** critico') : null;
     const schiva = Math.floor(Math.random() * 10);
     let schivata = false;
     this.stato = 'difendendo';
-    if (!isCritico || this.isVelenoApplicato) {//il critico non si schiva ,se sei avvelenato non schivi
-      for (let a of this.parametriFantasy.numeriFortunati) {
-        if (schiva == a) {
-          schivata = true;
-          this.sintesiDati.numeroSchivate++;
-          console.log('******** schiva');
-          break;
-        }
-      }
+    schivata = this.getSchivata(isCritico, schiva, schivata);
+    this.notSchivaOrCriticoProcedure(schivata, isCritico, dannoFisico, dannoMagico);
+    if (this.parametriFantasy.salute <= 0) {
+      this.isMorto = true
+      console.log(this.classe + ' - ' + this.name + ' è stato ucciso')
+    } else {
+      this.isMorto = false;
     }
+  }
+
+  private notSchivaOrCriticoProcedure(schivata: boolean, isCritico: boolean, dannoFisico: number, dannoMagico: number) {
     if (!schivata || isCritico) {
       if (isCritico) {
         this.sintesiDati.danniCriticiRicevuti += dannoFisico;
@@ -221,14 +236,7 @@ export class Charter extends Square implements CharterParam {
       }
       let dannoFisicoEffettivo = 0;
       let dannoMagicoEffettivo = 0;
-      if (this.parametriFantasy.resistenzaMagica < dannoMagico) {
-        dannoMagicoEffettivo = dannoMagico - this.parametriFantasy.resistenzaMagica * this.parametriFantasy.livello;
-        dannoMagicoEffettivo < 0 ? dannoMagicoEffettivo = 0 : null;
-      }
-      if (this.parametriFantasy.resistenzaFisica < dannoFisico) {
-        dannoFisicoEffettivo = dannoFisico - this.parametriFantasy.resistenzaFisica * this.parametriFantasy.livello;
-        dannoFisicoEffettivo < 0 ? dannoFisicoEffettivo = 0 : null;
-      }
+      ({ dannoMagicoEffettivo, dannoFisicoEffettivo } = this.getDanni(dannoMagico, dannoMagicoEffettivo, dannoFisico, dannoFisicoEffettivo));
       this.parametriFantasy.salute -= dannoFisicoEffettivo + dannoMagicoEffettivo;
       this.sintesiDati.danniFisiciRicevuti += dannoFisicoEffettivo;
       this.sintesiDati.danniMagiciRicevuti += dannoMagicoEffettivo;
@@ -236,19 +244,35 @@ export class Charter extends Square implements CharterParam {
       if (!this.visualizzaDannoCounter.isActive()) {
         this.visualizzaDannoCounter.attiva();
       }
-
-      console.log('******** danni magici ricevuti ' + dannoMagicoEffettivo);
-      console.log('******** danni fisici ricevuti ' + dannoFisicoEffettivo);
-      console.log('******** danni totali ricevuti ' + (dannoFisicoEffettivo + dannoMagicoEffettivo));
-
     }
-    console.log('**** FINE DIFESA ' + this.classe + ' ' + this.name)
-    if (this.parametriFantasy.salute <= 0) {
-      this.isMorto = true
-      console.log(this.classe + ' - ' + this.name + ' è stato ucciso')
-    } else {
-      this.isMorto = false;
+  }
+
+  private getDanni(dannoMagico: number, dannoMagicoEffettivo: number, dannoFisico: number, dannoFisicoEffettivo: number) {
+    if (this.parametriFantasy.resistenzaMagica < dannoMagico) {
+      dannoMagicoEffettivo = dannoMagico - this.parametriFantasy.resistenzaMagica * this.parametriFantasy.livello;
+      if (dannoMagicoEffettivo < 0) {
+        dannoMagicoEffettivo = 0;
+      }
     }
+    if (this.parametriFantasy.resistenzaFisica < dannoFisico) {
+      dannoFisicoEffettivo = dannoFisico - this.parametriFantasy.resistenzaFisica * this.parametriFantasy.livello;
+      if (dannoFisicoEffettivo < 0) {
+        dannoFisicoEffettivo = 0;
+      }
+    }
+    return { dannoMagicoEffettivo, dannoFisicoEffettivo };
+  }
+
+  private getSchivata(isCritico: boolean, schiva: number, schivata: boolean) {
+    if (!isCritico || this.isVelenoApplicato) { //il critico non si schiva ,se sei avvelenato non schivi
+      for (let a of this.parametriFantasy.numeriFortunati) {
+        if (schiva == a) {
+          schivata = true;
+          this.sintesiDati.numeroSchivate++;
+        }
+      }
+    }
+    return schivata;
   }
 
   incrementaLivello() {

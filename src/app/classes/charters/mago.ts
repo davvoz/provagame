@@ -7,22 +7,22 @@ export class Mago extends Charter {
   override spriteSheetCharterPath = 'assets/images/discotraspoo.png';
   override spriteSheetAttackPath = 'assets/images/discotraspooAtck.png';
   override genereSprite: number = 0;
-  override maxSalute =  10000 * this.parametriFantasy.livello;
+  override maxSalute = 10000 * this.parametriFantasy.livello;
 
-  constructor(configurazioneInziale:SquareConfig) {
+  constructor(configurazioneInziale: SquareConfig) {
     super(configurazioneInziale);
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
     this.spriteSheetImageAttack.src = this.spriteSheetAttackPath;
     this.parametriFantasy.livello = 1;
-    this.parametriFantasy.numeriFortunati = [0, 1, 2, 3, 4];
+    this.parametriFantasy.numeriFortunati = [0, 1, 2, 3, 4, 5, 6];
     this.parametriFantasy.agilita = 3;
     this.parametriFantasy.forza = 10;
     this.parametriFantasy.intelligenza = 25;
     this.parametriFantasy.mana = 1;
-    this.parametriFantasy.resistenzaFisica = 10;
-    this.parametriFantasy.resistenzaMagica = 15;
+    this.parametriFantasy.resistenzaFisica = 15;
+    this.parametriFantasy.resistenzaMagica = 25;
     this.parametriFantasy.maxMana = 10;
-    this.counterForCriticoTreshold = 2 ;
+    this.counterForCriticoTreshold = 1;
     this.updateParametriFantasy();
 
   }
@@ -41,7 +41,7 @@ export class Mago extends Charter {
     charter.updateMalefici(
       {
         malus: 'VENO',
-        quantita: 10 * this.parametriFantasy.livello,
+        quantita: 2 * this.parametriFantasy.livello,
         totTurni: 80 + this.parametriFantasy.livello,
         value: true
       }

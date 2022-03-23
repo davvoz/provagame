@@ -7,13 +7,13 @@ export class Camion extends Square {
   image = new Image();
   isPlayerMorto = false;
 
-  constructor(configurazioneInziale:SquareConfig) {
-  super(configurazioneInziale);
+  constructor(configurazioneInziale: SquareConfig) {
+    super(configurazioneInziale);
     this.image.src = 'assets/images/camion.png';
   }
-  
+
   override draw(): void {
-    this.config.ctx.strokeStyle = this.config.color ;
+    this.config.ctx.strokeStyle = this.config.color;
     this.config.ctx.strokeRect(
       this.config.x * this.config.w, this.config.y * this.config.h, this.image.width, this.image.height);
     this.config.ctx.drawImage(this.image,
@@ -34,13 +34,13 @@ export class Camion extends Square {
 
   override moveRight() {
     this.setDirection('RIGHT');
-    this.config.x =this.config.x + this.config.velocita;
+    this.config.x = this.config.x + this.config.velocita;
     this.draw();
   }
 
   override  moveLeft() {
     this.setDirection('LEFT');
-    this.config.x =this.config.x - this.config.velocita;
+    this.config.x = this.config.x - this.config.velocita;
     this.draw();
   }
 
@@ -49,8 +49,8 @@ export class Camion extends Square {
       this.setDirection('LEFT');
       Utilities.directionToMoveSwitch(this);
     } else {
-      this.config.x =29;
-      this.config.y =Utilities.arrayRandomicoNumerico([1, 2, 3, 4]);
+      this.config.x = 29;
+      this.config.y = Utilities.arrayRandomicoNumerico([1, 2, 3, 4]);
     }
   }
 

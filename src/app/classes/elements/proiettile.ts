@@ -1,5 +1,5 @@
 import { Charter } from "../abstract/charter";
-import { classe, classeProiettile, SquareConfig } from "../utils/costants.enum";
+import { classeProiettile, SquareConfig } from "../utils/costants.enum";
 import { Square } from "./square";
 
 export class Proiettile extends Square {
@@ -8,11 +8,10 @@ export class Proiettile extends Square {
   image = new Image();
   counterAnimation = 0;
   classe: classeProiettile = 'ABSTRACT';
-  //firebalTopBotPath = 'assets/images/fireballs2TB.png';
-  constructor(configurazioneInziale: SquareConfig, srcPath: string, classe: classeProiettile) {
+  constructor(configurazioneInziale: SquareConfig, srcPath: string, cp: classeProiettile) {
     super(configurazioneInziale);
     this.spriteSheet = srcPath;
-    this.classe = classe
+    this.classe = cp;
     this.image.src = this.spriteSheet;
 
   }
@@ -56,7 +55,7 @@ export class Proiettile extends Square {
       )
         break;
     }
-    
+
 
   }
 
@@ -107,7 +106,7 @@ export class Proiettile extends Square {
   private drawRagno() {
     let riga = 0;
     switch (this.getDirection()) {
-      case 'BOTTOM': riga = 0;
+      case 'BOTTOM':
         break;
       case 'TOP': riga = this.image.height / 4 * 2;
         break;
@@ -121,17 +120,6 @@ export class Proiettile extends Square {
   }
 
   private drawColtello() {
-    let riga = 0;
-    switch (this.getDirection()) {
-      case 'BOTTOM': riga = 0;
-        break;
-      case 'TOP': riga = this.image.height / 4 * 3;
-        break;
-      case 'LEFT': riga = this.image.height / 4;
-        break;
-      case 'RIGHT': riga = this.image.height / 4 * 2;
-        break;
-    }
     let colonna = this.image.width / 4 * this.counterAnimation;
     this.config.ctx.drawImage(this.image, colonna, 0, this.image.width / 4, this.image.height, this.config.x * this.config.w, this.config.y * this.config.h, 70, 90);
   }

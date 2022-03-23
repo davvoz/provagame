@@ -2,7 +2,12 @@ import { GeneralSprite } from "../elements/general-sprite";
 
 export type classe = 'MAGO' | 'GUERRIERO' | 'ARCERE' | 'SAMURAI' | 'ABSTRACT' | 'BULLO';
 export type classeProiettile = 'PALLADIFUOCO' | 'RAGNO' | 'COLTELLO' | 'HAMMER' | 'ABSTRACT';
-
+export enum KEY_CODE {
+    UP_ARROW = 'ArrowUp',
+    DOWN_ARROW = 'ArrowDown',
+    RIGHT_ARROW = 'ArrowRight',
+    LEFT_ARROW = 'ArrowLeft',
+  }
 export type tipoBonus = 'salute' | 'forza' | 'intelligenza';
 export type direzione = 'TOP' | 'BOTTOM' | 'RIGHT' | 'LEFT' | 'STAND';
 export type malus = 'STUN' | 'VENO' | 'FIRE' | 'BLOCK' | 'BLOOD';
@@ -45,6 +50,9 @@ export interface SquareParam {
 }
 export interface GetSquareParam {
     getSquareParam(): SquareParam
+}
+export interface Drowable {
+    draw(): void
 }
 export interface IOtherAnimations {
     lanciaOggetto(sprite: GeneralSprite): any;
@@ -119,4 +127,8 @@ export class CollisionToDirection {
         }
         return direzioneLR
     }
+}
+export interface Coordinate{
+    x:number;
+    y:number
 }

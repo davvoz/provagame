@@ -42,7 +42,7 @@ export class Guerriero extends Charter {
     charter.updateMalefici(
       {
         malus: 'STUN',
-        quantita: 10 * this.parametriFantasy.livello,
+        quantita: 1 * this.parametriFantasy.livello,
         totTurni: 60 + this.parametriFantasy.livello,
         value: true
       }

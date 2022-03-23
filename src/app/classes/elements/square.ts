@@ -1,13 +1,13 @@
-import { direzione, GetSquareParam, SquareConfig, SquareParam } from "../utils/costants.enum";
+import { direzione, Drowable, GetSquareParam, SquareConfig, SquareParam } from "../utils/costants.enum";
 
-export class Square implements GetSquareParam {
+export class Square implements GetSquareParam, Drowable {
 
   private direction: direzione = 'STAND';
   config!: SquareConfig;
   constructor(configurazioneIniziale: SquareConfig) {
     this.config = configurazioneIniziale
   }
-  
+
   getSquareParam(): SquareParam {
     return {
       y: this.config.y,

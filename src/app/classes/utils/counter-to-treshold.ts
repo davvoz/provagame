@@ -28,8 +28,11 @@ export class CounterToTrashold {
     private reverseCounting() {
         if (this.counter < this.treshold) {
             this.counter++;
+            this.counterEnd = false;
         } else {
             this.counter = 0;
+            this.counterEnd = true;
+            this.isCountingActive = false;
         }
     }
     attiva() {
