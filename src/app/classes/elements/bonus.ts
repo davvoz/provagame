@@ -7,10 +7,10 @@ export class Bonus extends Square {
     private quantita = 0;
     spriteSheetCharterPath = 'assets/images/panino.png';//src\assets\images\treasure.pngsrc\assets\images\spritesheet.jpg
     spriteSheetImage = new Image();
-    constructor(configurazioneInziale:SquareConfig, tipoBonus: tipoBonus, quantita: number, plafond: number) {
+    constructor(configurazioneInziale:SquareConfig, tb: tipoBonus, quantita: number, plafond: number) {
         super(configurazioneInziale);
         this.config = configurazioneInziale;
-        this.tipoBonus = tipoBonus;
+        this.tipoBonus = tb;
         this.quantita = quantita;
         this.plafond = plafond;
         if (this.tipoBonus == 'salute') {
@@ -21,8 +21,8 @@ export class Bonus extends Square {
     getTipoBonus() {
         return this.tipoBonus;
     }
-    setTipoBonus(tipoBonus: tipoBonus) {
-        this.tipoBonus = tipoBonus
+    setTipoBonus(tb: tipoBonus) {
+        this.tipoBonus = tb
     }
 
     override  draw() {
