@@ -37,11 +37,13 @@ export class GestioneSfondi extends Square {
     }
 
     override draw(): void {
+        
         if (this.tipoSfondo === 'GIORNO') {
             this.disegnaGiorno();
         } else {
             this.disegnaNotte();
         }
+       
     }
 
     private disegnaNotte() {

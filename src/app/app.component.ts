@@ -322,7 +322,7 @@ export class AppComponent implements AfterViewInit {
       if (iIsColliding) {
         Utilities.directionToMoveSwitch(this.m[this.mn].enemies[i]);
       } else {
-        Utilities.charterMovmentRandomRoutine(this.m[this.mn].enemies[i], this.counterRoutine, 20);
+       Utilities.charterMovmentRandomRoutine(this.m[this.mn].enemies[i], this.counterRoutine, 20);
       }
     }
   }
@@ -475,7 +475,7 @@ export class AppComponent implements AfterViewInit {
 
     }
     if (this.counterRoutine === 399) {
-      (this.counterRoutine = 0)
+      this.counterRoutine = 0
     } else {
       this.counterRoutine++;
     }

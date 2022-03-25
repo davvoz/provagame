@@ -3,7 +3,6 @@ import { Pozione } from '../elements/pozione';
 import { Square } from '../elements/square';
 import { CounterToTrashold } from '../utils/counter-to-treshold';
 import { DrawCharter } from '../elements/draw-charter';
-import { Utilities } from '../utils/utilities';
 
 export class Charter extends Square implements CharterParam,IOtherAnimations {
   classe: classe = 'ABSTRACT';
@@ -215,8 +214,8 @@ export class Charter extends Square implements CharterParam,IOtherAnimations {
     return { critico, isCritico };
   }
 
-  difendere(dannoMagico: number, dannoFisico: number, isCritico: boolean) {
-    const schiva = Utilities.getSecureRandom(10);
+  difendere(dannoMagico: number, dannoFisico: number, isCritico: boolean) {   
+    const schiva = this.getSecureRandom(10);
     let schivata = false;
     this.stato = 'difendendo';
     schivata = this.getSchivata(isCritico, schiva, schivata);
@@ -227,8 +226,18 @@ export class Charter extends Square implements CharterParam,IOtherAnimations {
     } else {
       this.isMorto = false;
     }
+   
+    
   }
-
+  getSecureRandom(max: number) {
+    let min = 0;
+    const randomBuffer = new Uint32Array(1);
+    window.crypto.getRandomValues(randomBuffer);
+    let randomNumber = randomBuffer[0] / (0xffffffff + 1);
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(randomNumber * (max - min + 1)) + min;
+}
   private notSchivaOrCriticoProcedure(schivata: boolean, isCritico: boolean, dannoFisico: number, dannoMagico: number) {
     if (!schivata || isCritico) {
       if (isCritico) {

@@ -59,7 +59,11 @@ export class Utilities {
 
     static direzionaRandomicamenteCharter(charter: Square) {
         const d: direzione[] = ["TOP", "BOTTOM", "LEFT", "RIGHT", "STAND"];
-        const random = Utilities.getSecureRandom(d.length);
+        const random = Utilities.getSecureRandom(d.length - 1);
+        if (d[random] !== 'BOTTOM' && d[random] !== 'TOP' && d[random] !== 'LEFT' && d[random] !== 'RIGHT' && d[random] !== 'STAND') {
+            console.error(random, d[random]);
+            throw new Error("Index non presente");
+        }
         charter.setDirection(d[random]);
     }
 
@@ -79,6 +83,8 @@ export class Utilities {
                 break;
             case 'STAND':
                 charter.stand();
+                break;
+            default: console.error(charter, charter.getDirection()); throw Error();
         }
     }
 
