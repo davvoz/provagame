@@ -98,6 +98,16 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "prerender": false,
+            "ssr": false,
+            "browserTarget": "game2k22:build:production",
+            "firebaseProject": "wada-42dd4",
+            "firebaseHostingSite": "fireappgame"
+          }
         }
       }
     }

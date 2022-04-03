@@ -8,7 +8,14 @@ import { Proiettile } from './classes/elements/proiettile';
 import { Charter } from './classes/abstract/charter';
 import { Collisions } from './classes/utils/collisions';
 import { SetCanvasListener } from './classes/utils/set-canvas-listener';
+import { collection, Firestore, collectionData } from '@angular/fire/firestore';
+import { Observable } from 'rxjs/internal/Observable';
 
+interface Item {
+  campo1: string,
+  campo2: string,
+  campo3: string
+}
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -55,7 +62,14 @@ export class AppComponent implements AfterViewInit {
   isEnemiesCollideSelf = false;
   collisions!: Collisions;
   canvasListeners!: SetCanvasListener;
-  constructor(private ngZone: NgZone) { }
+  item$: Observable<Item[]> | undefined;
+
+  constructor(private ngZone: NgZone, public firestore: Firestore) {
+    let col = collection(firestore, 'raccolta');
+    // @ts-ignore
+    this.item$ = collectionData(col);
+
+  }
 
   animate(): void {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -112,7 +126,7 @@ export class AppComponent implements AfterViewInit {
       this.dieCount = 0;
       this.gui.incrementaLivelloButton.terzoText = '$' + (100 * this.player.parametriFantasy.livello);
       this.bonus = [];
-      this.bonus = Utilities.createBonusArray( this.ctx);
+      this.bonus = Utilities.createBonusArray(this.ctx);
       this.mn++;
       this.getMondo().inizialize(this.ctx);
     }
@@ -203,7 +217,7 @@ export class AppComponent implements AfterViewInit {
       case 'q':
         if (this.player.parametriFantasy.money > 0) {
           this.bonus = [];
-          this.bonus = Utilities.createBonusArray( this.ctx);
+          this.bonus = Utilities.createBonusArray(this.ctx);
           this.player.parametriFantasy.money -= 20;
         }
         break;
@@ -215,7 +229,7 @@ export class AppComponent implements AfterViewInit {
         break;
       case ' ':
         this.player.lanciaOggetto();
-        Utilities.newProiettile(this.gui.classeProiettileScelto, this.player.config);
+        this.proiettile = Utilities.newProiettile(this.gui.classeProiettileScelto, this.player.config);
         this.proiettile.setDirection(this.player.getDirection());
         break;
       case 'p':
@@ -333,3 +347,5 @@ export class AppComponent implements AfterViewInit {
   }
 
 }
+
+

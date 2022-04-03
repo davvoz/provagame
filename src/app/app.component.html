@@ -7,18 +7,26 @@
     margin-left: auto;
     margin-right: auto;
     display: block;"></canvas>
-    <div *ngFor="let finalState of finalStates;let i = index" style="float: left;">
-      <ul>
-        <li>Match N°: {{i+1}}</li>
-        <li>$ : {{finalState.money}}</li>
-        <li>Livello schema : {{finalState.livelloSchema}}</li>
-        <li>{{finalState.classe}} {{finalState.livelloPersonaggio}}</li>
-        <li>Schivate {{finalState.numeroSchivate}}</li>
-        <li>Attacchi {{finalState.numeroAttacchi}}</li>
-        <li> Ratio {{finalState.ratio + '' | slice:0:6}}</li>
-        <li>Point:
-          {{finalState.livelloPersonaggio*finalState.livelloSchema*(finalState.money > 0 ? finalState.money:1)/1000}}</li>
-      </ul>
-    </div>
-  </div>
+    
+</div>
+<div >
+  <table style="border-collapse: collapse;">
+    <caption style="background-color: blanchedalmond;">Valori da fire base</caption>
+    <tr>
+      <th scope="col">campo1</th>
+      <th scope="col">campo2</th>
+      <th scope="col">campo3</th>
+    </tr>
+    <tr *ngFor="let item of item$ | async">
+        <td style="border: 1px solid black;">
+          {{ item.campo1}}
+        </td>
+        <td style="border: 1px solid black;">
+          {{ item.campo2}}
+        </td>
+        <td style="border: 1px solid black;">
+          {{ item.campo3}}
+        </td>
+    </tr>
+  </table>
 </div>
