@@ -337,51 +337,28 @@ export class Gui {
             case 'RAGNO':
                 this.selectedImageProiettile.src = 'assets/images/spidero.png';
                 this.descrizioneProiettile = 'rallenta';
-                this.ctx.drawImage(this.selectedImageProiettile,
-                    this.selectedImageProiettile.width / 4 * counterAnimation,
-                    0,
-                    this.selectedImageProiettile.width / 4,
-                    this.selectedImageProiettile.height / 4,
-                    530, 580,
-                    50,
-                    65);
                 break;
             case 'COLTELLO':
                 this.selectedImageProiettile.src = 'assets/images/coltello.png';
-                this.descrizioneProiettile = 'lacera le carni';
-                this.ctx.drawImage(this.selectedImageProiettile,
-                    this.selectedImageProiettile.width / 4 * counterAnimation,
-                    0,
-                    this.selectedImageProiettile.width / 4,
-                    this.selectedImageProiettile.height,
-                    530, 580,
-                    50,
-                    65);
+                this.descrizioneProiettile = 'stunna';
                 break;
             case 'PALLADIFUOCO':
                 this.selectedImageProiettile.src = 'assets/images/fireball.png';
                 this.descrizioneProiettile = 'incendia';
-                this.ctx.drawImage(this.selectedImageProiettile,
-                    this.selectedImageProiettile.width / 4 * counterAnimation,
-                    0,
-                    this.selectedImageProiettile.width / 4,
-                    this.selectedImageProiettile.height / 4,
-                    530, 580,
-                    50,
-                    65);
                 break;
             case 'HAMMER':
                 this.selectedImageProiettile.src = 'assets/images/hammero.png';
                 this.descrizioneProiettile = 'stunna';
-                this.ctx.drawImage(this.selectedImageProiettile,
-                    this.selectedImageProiettile.width / 4 * counterAnimation,
-                    0,
-                    this.selectedImageProiettile.width / 4,
-                    this.selectedImageProiettile.height,
-                    530, 580,
-                    50,
-                    65);
                 break;
         }
+       // const height = this.classeProiettileScelto === 'RAGNO' || this.classeProiettileScelto === 'PALLADIFUOCO' ? this.selectedImageProiettile.width / 4 : this.selectedImageProiettile.width;
+        this.ctx.drawImage(this.selectedImageProiettile,
+            this.selectedImageProiettile.width / 4 * counterAnimation,
+            0,
+            this.selectedImageProiettile.width / 4,
+            this.selectedImageProiettile.width / 4 ,
+            530, 580,
+            50,
+            65);
     }
 }

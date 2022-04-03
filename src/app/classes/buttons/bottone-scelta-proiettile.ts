@@ -31,16 +31,16 @@ export class BottoneSceltaProiettile extends BottoneSceltaCharter {
                 this.descrizioneProiettile = 'stunna';
                 break;
         }
-        this.descrizioneProiettile = 'blocca';
+        
         this.config.ctx.drawImage(this.image,
             this.image.width / 4 * this.counterAnimation,//colonna ws
             0,//riga hs
             this.image.width / 4, //ws
-            this.image.height / 4,//hs
+            this.typeOfProiettile === 'RAGNO' || this.typeOfProiettile === 'PALLADIFUOCO' ? this.image.height/4  : this.image.height ,//hs
             this.config.x * this.config.w,
             this.config.y * this.config.h,
             this.config.w,
-            this.config.h);
+            this.config.h );
         this.config.ctx.restore()
     }
 }
