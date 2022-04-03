@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "wada-42dd4"
+  },
+  "targets": {
+    "wada-42dd4": {
+      "hosting": {
+        "game2k22": [
+          "fireappgame"
+        ]
+      }
+    }
+  }
+}
