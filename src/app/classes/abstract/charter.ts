@@ -132,7 +132,7 @@ export class Charter extends Square implements CharterParam, IOtherAnimations {
     throw new Error('Not implemented');
   }
 
-  lanciaAbilita(charter: Charter): void {
+  lanciaAbilita(aCharter: Charter): void {
     throw new Error('Not implemented');
   }
 

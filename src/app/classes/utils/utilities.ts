@@ -90,7 +90,7 @@ export class Utilities {
         }
     }
 
-    static createBonusArray(j: number, ctx: CanvasRenderingContext2D): Bonus[] {
+    static createBonusArray(ctx: CanvasRenderingContext2D): Bonus[] {
         const ba: Bonus[] = [];
         const bonus1 = new Bonus(Utilities.getSquareConfig(ctx, 'red'), 'salute', 1000, 1000);
         bonus1.spriteSheetImage.src = 'assets/images/polloo.png';

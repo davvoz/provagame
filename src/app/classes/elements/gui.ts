@@ -351,7 +351,6 @@ export class Gui {
                 this.descrizioneProiettile = 'stunna';
                 break;
         }
-       // const height = this.classeProiettileScelto === 'RAGNO' || this.classeProiettileScelto === 'PALLADIFUOCO' ? this.selectedImageProiettile.width / 4 : this.selectedImageProiettile.width;
         this.ctx.drawImage(this.selectedImageProiettile,
             this.selectedImageProiettile.width / 4 * counterAnimation,
             0,
