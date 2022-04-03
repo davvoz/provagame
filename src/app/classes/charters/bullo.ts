@@ -13,10 +13,10 @@ export class Bullo extends Charter {
     this.spriteSheetImage.src = this.spriteSheetCharterPath;
     this.spriteSheetImageAttack.src = this.spriteSheetAttackPath;
     this.parametriFantasy.livello = 1;
-    this.parametriFantasy.numeriFortunati = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    this.parametriFantasy.numeriFortunati = [0, 2, 3, 4, 6, 7, 8];
     this.parametriFantasy.agilita = 2;
-    this.parametriFantasy.forza = 10;
-    this.parametriFantasy.intelligenza = 10;
+    this.parametriFantasy.forza = 9;
+    this.parametriFantasy.intelligenza = 15;
     this.parametriFantasy.mana = 1;
     this.parametriFantasy.resistenzaFisica = 7;
     this.parametriFantasy.resistenzaMagica = 8;
