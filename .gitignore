@@ -51,3 +51,6 @@ src/environments/environment.ts
 src/environments/environment.prod.ts
 y/index.html
 firebase.json
+.firebaserc
+.firebaserc
+firebase.json
