@@ -8,7 +8,6 @@ export class Samurai extends Charter {
   override genereSprite = 1;
   override spriteSheetCharterPath = 'assets/images/samuraiAtk2.png';
   override spriteSheetAttackPath = 'assets/images/samuraiAtk2.png';
-  override maxSalute = 12000 * this.parametriFantasy.livello;
 
   constructor(configurazioneInziale: SquareConfig) {
     super(configurazioneInziale);

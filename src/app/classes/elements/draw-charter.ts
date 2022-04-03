@@ -17,6 +17,7 @@ export class DrawCharter {
 
     public drawAll(drowSintesi: boolean) {
         this.drawSprite();
+        this.drawAurea();
         this.drawBarre();
         if (this.charter.visualizzaDannoCounter.isActive()) {
             this.charter.config.ctx.fillStyle = !this.charter.isCritico ? this.charter.config.color : 'red';
@@ -162,13 +163,20 @@ export class DrawCharter {
 
     private drawAurea() {
         this.charter.config.ctx.save();
-        this.charter.config.ctx.fillStyle = 'rgba(200,120,120,0.4)';
-        this.charter.config.ctx.lineWidth = 2;
+        this.charter.config.ctx.strokeStyle = 'yellow';
+        this.charter.config.ctx.lineWidth = 1;
         this.charter.config.ctx.strokeRect(
-            this.charter.config.x * this.charter.config.w - this.charter.config.w,
-            this.charter.config.y * this.charter.config.h - this.charter.config.h,
-            this.charter.config.w * 3,
-            this.charter.config.h * 3);
+            this.charter.getAurea().x,
+            this.charter.getAurea().y,
+            this.charter.getAurea().w,
+            this.charter.getAurea().h);
+        this.charter.config.ctx.strokeStyle = 'orangered';
+        this.charter.config.ctx.lineWidth = 1;
+        this.charter.config.ctx.strokeRect(
+            this.charter.getVisionAurea().x,
+            this.charter.getVisionAurea().y,
+            this.charter.getVisionAurea().w,
+            this.charter.getVisionAurea().h);
         this.charter.config.ctx.restore();
 
     }
@@ -275,7 +283,7 @@ export class DrawCharter {
     private drawBarre() {
         let maxLength = 100;
         //salute
-        this.drawBarra('red', maxLength * this.charter.parametriFantasy.salute / this.charter.maxSalute, 30, 10);
+        this.drawBarra('red', maxLength * this.charter.parametriFantasy.salute / this.charter.maxSalute(), 30, 10);
         this.drawFineCorsa(maxLength, 30);
         //mana
         this.drawBarra('blue', this.charter.parametriFantasy.mana, 40, 10);
@@ -325,7 +333,7 @@ export class DrawCharter {
         this.charter.config.ctx.strokeStyle = 'black';
         this.charter.config.ctx.font = '18px Impact';
         this.charter.config.ctx.strokeText(
-            this.charter.classe + ' - ' + this.charter.name + ' - Level ' + this.charter.parametriFantasy.livello + ' - $ ' + this.charter.parametriFantasy.money + '     ' + this.charter.parametriFantasy.salute + '     ' + this.charter.maxSalute,
+            this.charter.classe + ' - ' + this.charter.name + ' - Level ' + this.charter.parametriFantasy.livello + ' - $ ' + this.charter.parametriFantasy.money + '     ' + this.charter.parametriFantasy.salute + '     ' + this.charter.maxSalute(),
             this.charter.config.x * this.charter.config.w,
             this.charter.config.y * this.charter.config.h - 55, 500
         );

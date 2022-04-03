@@ -7,7 +7,6 @@ export class Guerriero extends Charter {
   override classe: classe = 'GUERRIERO';
   override spriteSheetCharterPath = 'assets/images/biondotraspoAtck_1.png';
   override spriteSheetAttackPath = 'assets/images/biondotraspoAtck_1.png';
-  override maxSalute = 15000 * this.parametriFantasy.livello;
   constructor(configurazioneInziale: SquareConfig) {
     super(configurazioneInziale);
     this.spriteSheetImage.src = this.spriteSheetCharterPath;

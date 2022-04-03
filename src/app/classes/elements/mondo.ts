@@ -77,15 +77,7 @@ export class Mondo {
         this.scudoBonus.config.y = 4;
         this.scudoBonus.config.velocita = 0;
         this.scudoBonus.stand();
-        this.tesoro = new Treasure({
-            color: 'green',
-            ctx: ctx,
-            velocita: 0.1,
-            h: 70,
-            w: 50,
-            x: 0,
-            y: 0
-        });
+        this.tesoro = new Treasure(Utilities.getSquareConfig(ctx,''));
         this.tesoro.config.x = 5;
         this.tesoro.config.y = 5;
         this.tesoro.config.velocita = 0;

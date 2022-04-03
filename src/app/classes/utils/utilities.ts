@@ -1,5 +1,6 @@
 import { Square } from "../elements/square";
-import { CollisionToDirection, Coordinate, direzione, SquareConfig, SquareParam } from './costants.enum';
+import { classeProiettile, Coordinate, direzione, SquareConfig, SquareParam } from './costants.enum';
+import { CollisionToDirection } from "./collision-to-direction";
 import { Guerriero } from "../charters/guerriero";
 import { Mago } from "../charters/mago";
 import { Bonus } from "../elements/bonus";
@@ -8,6 +9,7 @@ import { Bullo } from "../charters/bullo";
 import { Bottone } from "../elements/bottone";
 import { Samurai } from "../charters/samurai";
 import { Camion } from "../elements/camion";
+import { Proiettile } from "../elements/proiettile";
 
 export class Utilities {
 
@@ -84,7 +86,7 @@ export class Utilities {
             case 'STAND':
                 charter.stand();
                 break;
-            default: console.error(charter, charter.getDirection()); throw Error();
+            default: console.error(charter, charter.getDirection()); throw Error("Errore nella direzione del charter");
         }
     }
 
@@ -92,33 +94,32 @@ export class Utilities {
         const ba: Bonus[] = [];
         const bonus1 = new Bonus(Utilities.getSquareConfig(ctx, 'red'), 'salute', 1000, 1000);
         bonus1.spriteSheetImage.src = 'assets/images/polloo.png';
-        bonus1.config.x = Utilities.getSecureRandom(9) + 1;
-        bonus1.config.y = Utilities.getSecureRandom(8) + 1;
+        bonus1.config.x = Utilities.getSecureRandom(10);
+        bonus1.config.y = Utilities.getSecureRandom(9);
         bonus1.config.velocita = 0;
         bonus1.stand();
         ba.push(bonus1);
         const bonus2 = new Bonus(Utilities.getSquareConfig(ctx, 'red'), 'salute', 200, 200);
         bonus2.spriteSheetImage.src = 'assets/images/panino.png';
-        bonus2.config.x = Utilities.getSecureRandom(9) + 1;
-        bonus2.config.y = Utilities.getSecureRandom(8) + 1;
+        bonus2.config.x = Utilities.getSecureRandom(10);
+        bonus2.config.y = Utilities.getSecureRandom(9);
         bonus2.config.velocita = 0;
         bonus2.stand();
         ba.push(bonus2);
         const bonus3 = new Bonus(Utilities.getSquareConfig(ctx, 'red'), 'salute', 300, 300);
         bonus3.spriteSheetImage.src = 'assets/images/formaggio.png';
-        bonus3.config.x = Utilities.getSecureRandom(9) + 1;
-        bonus3.config.y = Utilities.getSecureRandom(8) + 1;
+        bonus3.config.x = Utilities.getSecureRandom(10);
+        bonus3.config.y = Utilities.getSecureRandom(9);
         bonus3.config.velocita = 0;
         bonus3.stand();
         ba.push(bonus3);
         const bonus4 = new Bonus(Utilities.getSquareConfig(ctx, 'red'), 'salute', 400, 400);
         bonus4.spriteSheetImage.src = 'assets/images/uovo.png';
-        bonus4.config.x = Utilities.getSecureRandom(9) + 1;
-        bonus4.config.y = Utilities.getSecureRandom(8) + 1;
+        bonus4.config.x = Utilities.getSecureRandom(10);
+        bonus4.config.y = Utilities.getSecureRandom(9);
         bonus4.config.velocita = 0;
         bonus4.stand();
         ba.push(bonus4);
-        console.log(ba);
         return ba
     }
 
@@ -158,8 +159,8 @@ export class Utilities {
         return {
             color: color,
             ctx: ctx,
-            h: 70,
-            w: 50,
+            h: 80,
+            w: 70,
             velocita: 0.1,
             x: 0,
             y: 0
@@ -167,7 +168,7 @@ export class Utilities {
     }
 
     private static setEnemiesArray(enemy: Charter, i: number, livelloNemici: number, enemies: Charter[]) {
-        for (let j = 0; j < livelloNemici; j++) {
+        for (let j = 0; j < livelloNemici - 1; j++) {
             enemy.incrementaLivello();
         }
         enemy.config.x = Utilities.getSecureRandom(15) + 5;
@@ -245,8 +246,8 @@ export class Utilities {
     }
 
     static setRandomXY(square: Square) {
-        square.config.x = Utilities.getSecureRandom(8) + 1;
-        square.config.y = Utilities.getSecureRandom(5) + 1;
+        square.config.x = Utilities.getSecureRandom(9);
+        square.config.y = Utilities.getSecureRandom(6);
     }
 
     static getSecureRandom(max: number) {
@@ -258,4 +259,46 @@ export class Utilities {
         max = Math.floor(max);
         return Math.floor(randomNumber * (max - min + 1)) + min;
     }
+
+    static playSoundBuffer(ac: AudioContext, buffer: AudioBuffer) {
+        let source = ac.createBufferSource();
+        source.connect(ac.destination);
+        source.buffer = buffer;
+        source.start(ac.currentTime);
+    }
+
+    static rectCollisionRealCollision(protagonistaSp: Charter, collisoreAureaSp: SquareParam): CollisionToDirection {
+        const cto: CollisionToDirection = Utilities.rectsCollidingToDirection(protagonistaSp.getAurea(), collisoreAureaSp);
+        if (cto.isColliding) {
+            protagonistaSp.directionColliding = cto.getBetterDirection();
+            if (protagonistaSp.getDirection() === cto.getBetterDirection()) {
+                protagonistaSp.config.velocita = 0;
+            } else {
+                if (!protagonistaSp.isPlayer) {
+                    protagonistaSp.config.velocita = protagonistaSp.velocitaIniziale;
+                }
+            }
+        }
+        return cto;
+    }
+    
+    static newProiettile(cp: classeProiettile,sq:SquareConfig):Proiettile {
+        let path;
+        switch (cp) {
+          case 'COLTELLO': path = 'assets/images/coltello.png'; break;
+          case 'PALLADIFUOCO': path = 'assets/images/fireball.png'; break;
+          case 'RAGNO': path = 'assets/images/spidero.png'; break;
+          case 'HAMMER': path = 'assets/images/hammero.png'; break;
+          default: cp = 'HAMMER'; path = 'assets/images/hammero.png'; break;
+        }
+        return new Proiettile({
+          color: 'white',
+          ctx: sq.ctx,
+          velocita: 0.5,
+          h: 70,
+          w: 50,
+          x: sq.x,
+          y: sq.y
+        }, path, cp);
+      }
 }

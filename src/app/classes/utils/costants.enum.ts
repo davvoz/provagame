@@ -1,16 +1,27 @@
+import { Charter } from "../abstract/charter";
+import { BottonePozione } from "../buttons/bottone-pozione";
+import { BottoneScudoAttiva } from "../buttons/bottone-scudo-attiva";
+import { Bonus } from "../elements/bonus";
 import { GeneralSprite } from "../elements/general-sprite";
+import { Mondo } from "../elements/mondo";
+import { Proiettile } from "../elements/proiettile";
 
 export type classe = 'MAGO' | 'GUERRIERO' | 'ARCERE' | 'SAMURAI' | 'ABSTRACT' | 'BULLO';
 export type classeProiettile = 'PALLADIFUOCO' | 'RAGNO' | 'COLTELLO' | 'HAMMER' | 'ABSTRACT';
+export type tipoBonus = 'salute' | 'forza' | 'intelligenza';
+export type direzione = 'TOP' | 'BOTTOM' | 'RIGHT' | 'LEFT' | 'STAND';
+export type malus = 'STUN' | 'VENO' | 'FIRE' | 'BLOCK' | 'BLOOD';
+export type stato = 'attaccando' | 'difendendo' | 'camminando' | 'morendo';
+export type statoBottone = 'ON' | 'OFF';
+export type tipoSfondo = 'NOTTE' | 'GIORNO';
+
 export enum KEY_CODE {
     UP_ARROW = 'ArrowUp',
     DOWN_ARROW = 'ArrowDown',
     RIGHT_ARROW = 'ArrowRight',
     LEFT_ARROW = 'ArrowLeft',
-  }
-export type tipoBonus = 'salute' | 'forza' | 'intelligenza';
-export type direzione = 'TOP' | 'BOTTOM' | 'RIGHT' | 'LEFT' | 'STAND';
-export type malus = 'STUN' | 'VENO' | 'FIRE' | 'BLOCK' | 'BLOOD';
+}
+
 export interface MaliciusEffect {
     malus: malus;
     value: boolean;
@@ -24,7 +35,6 @@ export interface Malefici {
     slowed: MaliciusEffect;
     blooding: MaliciusEffect
 }
-export type stato = 'attaccando' | 'difendendo' | 'camminando' | 'morendo';
 export interface FinalState {
     money: number;
     livelloSchema: number;
@@ -34,8 +44,6 @@ export interface FinalState {
     numeroAttacchi: number;
     ratio: number
 }
-export type statoBottone = 'ON' | 'OFF';
-export type tipoSfondo = 'NOTTE' | 'GIORNO';
 export interface MondoConfigurations {
     livelloNemici: number;
     numeroNemici: number;
@@ -97,38 +105,18 @@ export interface SquareConfig {
     color: string;
     velocita: number;
 }
-export class CollisionToDirection {
-    isColliding: boolean = false;
-    collisionFromRight: number = 0;
-    collisionFromLeft: number = 0;
-    collisionFromTop: number = 0;
-    collisionFromBottom: number = 0;
-    getBetterDirection(): direzione {
-        let winDirctionLR = 0;
-        let direzioneLR: direzione;
-        if (this.collisionFromRight > this.collisionFromLeft) {
-            winDirctionLR = this.collisionFromRight;
-            direzioneLR = 'RIGHT';
-        } else {
-            winDirctionLR = this.collisionFromLeft;
-            direzioneLR = 'LEFT';
-        }
-        let winDirctionBT = 0;
-        let direzioneBT: direzione;
-        if (this.collisionFromTop > this.collisionFromBottom) {
-            winDirctionBT = this.collisionFromTop;
-            direzioneBT = 'TOP';
-        } else {
-            winDirctionBT = this.collisionFromBottom;
-            direzioneBT = 'BOTTOM';
-        }
-        if (winDirctionBT > winDirctionLR) {
-            return direzioneBT
-        }
-        return direzioneLR
-    }
+export interface Coordinate {
+    x: number;
+    y: number
 }
-export interface Coordinate{
-    x:number;
-    y:number
+
+export interface CollisionsParams {
+    mondo: Mondo,
+    player: Charter,
+    proiettile: Proiettile,
+    mondoNumero: number,
+    scudoButton: BottoneScudoAttiva,
+    pozioniBottoni: BottonePozione[],
+    bonus: Bonus[],
+    counterAnimation: number
 }

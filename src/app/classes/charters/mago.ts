@@ -8,7 +8,6 @@ export class Mago extends Charter {
   override spriteSheetCharterPath = 'assets/images/discotraspoo.png';
   override spriteSheetAttackPath = 'assets/images/discotraspooAtck.png';
   override genereSprite: number = 0;
-  override maxSalute = 10000 * this.parametriFantasy.livello;
 
   constructor(configurazioneInziale: SquareConfig) {
     super(configurazioneInziale);

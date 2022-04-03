@@ -5,7 +5,6 @@ import { Square } from "./square";
 export class Treasure extends Square {
     image = new Image();
     money = 0;
-    override config!:SquareConfig;
         constructor(configurazioneInziale:SquareConfig) {
         super(configurazioneInziale);
         this.money = Utilities.getSecureRandom(1000);

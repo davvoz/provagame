@@ -1,10 +1,10 @@
-import { CharterParam, classe, MaliciusEffect, Malefici, ParametriFanatsy, SintesiDati, stato, SquareConfig, SquareParam, IOtherAnimations } from '../utils/costants.enum';
+import { CharterParam, classe, MaliciusEffect, Malefici, ParametriFanatsy, SintesiDati, stato, SquareConfig, SquareParam, IOtherAnimations, direzione } from '../utils/costants.enum';
 import { Pozione } from '../elements/pozione';
 import { Square } from '../elements/square';
 import { CounterToTrashold } from '../utils/counter-to-treshold';
 import { DrawCharter } from '../elements/draw-charter';
 
-export class Charter extends Square implements CharterParam,IOtherAnimations {
+export class Charter extends Square implements CharterParam, IOtherAnimations {
   classe: classe = 'ABSTRACT';
   name = 'Abstract cant instantiate';
   sintesiDati: SintesiDati = {
@@ -62,7 +62,9 @@ export class Charter extends Square implements CharterParam,IOtherAnimations {
     }
   }
   override config !: SquareConfig;
-  maxSalute = 1000 * this.parametriFantasy.livello;
+  maxSalute(): number {
+    return 10000 * this.parametriFantasy.livello;
+  }
   genereSprite = 0;//se = 0 then SX = 1 dx = 2 ; se = 1 SX = 2 DX = 1
   exp = 0;
   nextExp = 200;
@@ -70,9 +72,8 @@ export class Charter extends Square implements CharterParam,IOtherAnimations {
   posizioneInfoLabelX = 0;
   posizioneInfoLabelY = 0;
   counterAnimation = 0;
-  counterForCriticoTreshold = 100;
+
   dannoCritico = 50;
-  counterForCritico = 0;
   ultimiDanni = 0;
   ultimiDanniDaMaleficio = 0;
   spriteSheetCharterPath = '';
@@ -89,14 +90,19 @@ export class Charter extends Square implements CharterParam,IOtherAnimations {
   isOggettoInvolo = false;
   isOggettoAtterrato = false;
   isLogActive = false;
+  isColliding = false;
 
   pozioni: Pozione[] = [];
   stato: stato = 'camminando';
+  directionColliding: direzione = 'STAND';
 
   scudoCounter = new CounterToTrashold(500, false);
   pozioneCounter = new CounterToTrashold(500, false);
-  visualizzaDannoCounter = new CounterToTrashold(20, false);
+  visualizzaDannoCounter = new CounterToTrashold(30, false);
   haPresoUnaDirezioneCounter = new CounterToTrashold(25, false);
+
+  counterForCriticoTreshold = 100;
+  counterForCritico = 0;
   disegno!: DrawCharter;
 
 
@@ -139,8 +145,8 @@ export class Charter extends Square implements CharterParam,IOtherAnimations {
   }
 
   incrementaSalute(addendum: number) {
-    if (this.parametriFantasy.salute + addendum > this.maxSalute) {
-      this.parametriFantasy.salute = this.maxSalute
+    if (this.parametriFantasy.salute + addendum > this.maxSalute()) {
+      this.parametriFantasy.salute = this.maxSalute();
     } else {
       this.parametriFantasy.salute = this.parametriFantasy.salute + addendum;
     }
@@ -175,6 +181,7 @@ export class Charter extends Square implements CharterParam,IOtherAnimations {
 
   attaccare(charter: Charter) {
     if (!this.isVelenoApplicato || this.counterAnimation * 3 == 9) {
+      console.log(this.name, this.classe, this.parametriFantasy.livello, 'ATTACCA', charter.name, charter.classe, charter.parametriFantasy.livello);
       this.exp++;
       this.stato = 'attaccando';
       this.isOnAttack = true;
@@ -190,6 +197,9 @@ export class Charter extends Square implements CharterParam,IOtherAnimations {
       let critico = 0;
       let isCritico = false;
       ({ critico, isCritico } = this.setCritico(critico, isCritico));
+      console.log('Danni intelligenza =' + ((this.parametriFantasy.intelligenza + critico) * this.parametriFantasy.livello));
+      console.log('Danni forza =' + ((this.parametriFantasy.forza + critico) * this.parametriFantasy.livello));
+      console.log('Critico =' + critico);
       charter.difendere((this.parametriFantasy.intelligenza + critico) * this.parametriFantasy.livello, (this.parametriFantasy.forza + critico) * this.parametriFantasy.livello, isCritico);
       if (this.counterForCritico === this.counterForCriticoTreshold) {
         this.counterForCritico = 0;
@@ -214,7 +224,7 @@ export class Charter extends Square implements CharterParam,IOtherAnimations {
     return { critico, isCritico };
   }
 
-  difendere(dannoMagico: number, dannoFisico: number, isCritico: boolean) {   
+  difendere(dannoMagico: number, dannoFisico: number, isCritico: boolean) {
     const schiva = this.getSecureRandom(10);
     let schivata = false;
     this.stato = 'difendendo';
@@ -226,9 +236,10 @@ export class Charter extends Square implements CharterParam,IOtherAnimations {
     } else {
       this.isMorto = false;
     }
-   
-    
+
+
   }
+
   getSecureRandom(max: number) {
     let min = 0;
     const randomBuffer = new Uint32Array(1);
@@ -237,7 +248,8 @@ export class Charter extends Square implements CharterParam,IOtherAnimations {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(randomNumber * (max - min + 1)) + min;
-}
+  }
+
   private notSchivaOrCriticoProcedure(schivata: boolean, isCritico: boolean, dannoFisico: number, dannoMagico: number) {
     if (!schivata || isCritico) {
       if (isCritico) {
@@ -254,6 +266,11 @@ export class Charter extends Square implements CharterParam,IOtherAnimations {
       if (!this.visualizzaDannoCounter.isActive()) {
         this.visualizzaDannoCounter.attiva();
       }
+
+      console.log(this.name, this.classe, this.parametriFantasy.livello, 'Difende');
+      console.log('Riceve Danni forza =' + dannoFisicoEffettivo);
+      console.log('Riceve Danni intelligenza =' + dannoMagicoEffettivo);
+
     }
   }
 
@@ -287,14 +304,22 @@ export class Charter extends Square implements CharterParam,IOtherAnimations {
 
   incrementaLivello() {
     this.parametriFantasy.livello++;
-    this.maxSalute = this.parametriFantasy.livello * 1000;
-    this.parametriFantasy.salute = this.maxSalute;
+    this.parametriFantasy.salute = this.maxSalute();
     this.updateParametriFantasy();
   }
 
   getAurea(): SquareParam {
     return {
-      x: this.config.x * this.config.w - this.config.w,
+      x: this.config.x * this.config.w,
+      y: this.config.y * this.config.h,
+      h: this.config.w,
+      w: this.config.h
+    }
+  }
+
+  getVisionAurea(): SquareParam {
+    return {
+      x: this.config.x * this.config.w - this.config.w ,
       y: this.config.y * this.config.h - this.config.h,
       h: this.config.w * 3,
       w: this.config.h * 3
