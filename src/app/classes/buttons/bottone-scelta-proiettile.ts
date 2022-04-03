@@ -16,57 +16,31 @@ export class BottoneSceltaProiettile extends BottoneSceltaCharter {
         switch (this.typeOfProiettile) {
             case 'RAGNO':
                 this.image.src = 'assets/images/spidero.png';
-                this.descrizioneProiettile = 'blocca';
-                this.config.ctx.drawImage(this.image,
-                    this.image.width / 4 * this.counterAnimation,//colonna ws
-                    0,//riga hs
-                    this.image.width / 4, //ws
-                    this.image.height / 4,//hs
-                    this.config.x * this.config.w,
-                    this.config.y * this.config.h,
-                    this.config.w,
-                    this.config.h);
+                this.descrizioneProiettile = 'rallenta';
                 break;
             case 'COLTELLO':
                 this.image.src = 'assets/images/coltello.png';
                 this.descrizioneProiettile = 'stunna';
-                this.config.ctx.drawImage(this.image,
-                    this.image.width / 4 * this.counterAnimation,//colonna ws
-                    0,//riga hs
-                    this.image.width / 4, //ws
-                    this.image.height,//hs
-                    this.config.x * this.config.w,
-                    this.config.y * this.config.h,
-                    this.config.w,
-                    this.config.h);
                 break;
             case 'PALLADIFUOCO':
                 this.image.src = 'assets/images/fireball.png';
                 this.descrizioneProiettile = 'incendia';
-                this.config.ctx.drawImage(this.image,
-                    this.image.width / 4 * this.counterAnimation,//colonna ws
-                    0,//riga hs
-                    this.image.width / 4, //ws
-                    this.image.height / 4,//hs
-                    this.config.x * this.config.w,
-                    this.config.y * this.config.h,
-                    this.config.w,
-                    this.config.h);
                 break;
             case 'HAMMER':
                 this.image.src = 'assets/images/hammero.png';
                 this.descrizioneProiettile = 'stunna';
-                this.config.ctx.drawImage(this.image,
-                    this.image.width / 4 * this.counterAnimation,//colonna ws
-                    0,//riga hs
-                    this.image.width / 4, //ws
-                    this.image.height,//hs
-                    this.config.x * this.config.w,
-                    this.config.y * this.config.h,
-                    this.config.w,
-                    this.config.h);
                 break;
         }
+        this.descrizioneProiettile = 'blocca';
+        this.config.ctx.drawImage(this.image,
+            this.image.width / 4 * this.counterAnimation,//colonna ws
+            0,//riga hs
+            this.image.width / 4, //ws
+            this.image.height / 4,//hs
+            this.config.x * this.config.w,
+            this.config.y * this.config.h,
+            this.config.w,
+            this.config.h);
         this.config.ctx.restore()
     }
 }
