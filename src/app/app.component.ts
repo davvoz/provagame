@@ -112,7 +112,7 @@ export class AppComponent implements AfterViewInit {
       this.dieCount = 0;
       this.gui.incrementaLivelloButton.terzoText = '$' + (100 * this.player.parametriFantasy.livello);
       this.bonus = [];
-      this.bonus = Utilities.createBonusArray(this.mn, this.ctx);
+      this.bonus = Utilities.createBonusArray( this.ctx);
       this.mn++;
       this.getMondo().inizialize(this.ctx);
     }
@@ -203,7 +203,7 @@ export class AppComponent implements AfterViewInit {
       case 'q':
         if (this.player.parametriFantasy.money > 0) {
           this.bonus = [];
-          this.bonus = Utilities.createBonusArray(3, this.ctx);
+          this.bonus = Utilities.createBonusArray( this.ctx);
           this.player.parametriFantasy.money -= 20;
         }
         break;
