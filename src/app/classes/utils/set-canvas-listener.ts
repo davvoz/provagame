@@ -83,7 +83,7 @@ export class SetCanvasListener {
         const compraBonusTouched = Utilities.changeButtonState(evt, this.app.gui.compraBonus, this.app.ctx);
         if (compraBonusTouched && this.app.player.parametriFantasy.money > 0) {
             this.app.bonus = [];
-            this.app.bonus = Utilities.createBonusArray(3, this.app.ctx);
+            this.app.bonus = Utilities.createBonusArray( this.app.ctx);
             this.app.player.parametriFantasy.money -= 20;
         }
     }
