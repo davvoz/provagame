@@ -274,7 +274,7 @@ export class AppComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     const res = this.canvasGui.nativeElement.getContext('2d');
     if (!res || !(res instanceof CanvasRenderingContext2D)) {
-      throw new Error('Failed to get 2d context');
+      throw new Error('Failed to get 2d context.');
     }
     this.ctx = res;
     this.gui = new Gui(this.ctx);
