@@ -1,35 +1,14 @@
-<span>{{title}} app is running!</span>
+<h1>{{title}}</h1>
+
+<button routerLink="/game" (click)="nascondiAltriBottoni(true)">Game</button>
+
+<button *ngIf="nascondiBottoni" (click)="nascondiAltriBottoni(false)">mostra altri bottoni</button>
+
+<button *ngIf="!nascondiBottoni" routerLink="/chat">Chat</button>
+
+<button *ngIf="!nascondiBottoni" routerLink="/info">Info</button>
 <div id="container">
   <div id="content">
-    <canvas #canvasGui width="1050" height="750" class="bg-layer" style="background-color: whitesmoke;
-  padding-left: 0;
-    padding-right: 0;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;"></canvas>
-    
-</div>
-<div >
-
-  <table style="border-collapse: collapse;">
-    <caption style="background-color: rgb(240, 76, 0);">Valori da firebase
-
-    </caption>
-    <tr>
-      <th scope="col">campo1</th>
-      <th scope="col">campo2</th>
-      <th scope="col">campo3</th>
-    </tr>
-    <tr *ngFor="let item of item$ | async">
-        <td style="border: 1px solid black;">
-          {{ item.campo1}}
-        </td>
-        <td style="border: 1px solid black;">
-          {{ item.campo2}}
-        </td>
-        <td style="border: 1px solid black;">
-          {{ item.campo3}}
-        </td>
-    </tr>
-  </table>
+    <router-outlet></router-outlet>
+  </div>
 </div>

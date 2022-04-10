@@ -1,0 +1,6 @@
+<span style="margin:0">  {{out.IPv4 }} - {{out.city}}- {{out.country_code}} - {{out.country_name}}- {{out.latitude}} - {{out.longitude}} -
+    {{out.postal}} - {{out.state}}</span>
+    <div *ngFor="let item of (item$ |async)?.slice()?.reverse() ;let i = index">
+        <span style="width: 300px;" [ngClass]="i % 2 === 0 ? 'green' : 'white'"> -> {{
+          item.byteArrayStringFormat }}</span>
+      </div>

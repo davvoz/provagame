@@ -1,4 +1,4 @@
-import { AppComponent } from "src/app/app.component";
+import { GameComponent } from "src/app/components/game/game.component";
 import { Bullo } from "../charters/bullo";
 import { Guerriero } from "../charters/guerriero";
 import { Mago } from "../charters/mago";
@@ -7,12 +7,12 @@ import { Utilities } from "./utilities";
 
 export class SetCanvasListener {
 
-    constructor(public app: AppComponent) {
+    constructor(public game: GameComponent) {
         this.setCanvasListener();
     }
     
     private setCanvasListener() {
-        this.app.ctx.canvas.addEventListener(
+        this.game.ctx.canvas.addEventListener(
             'click',
             (evt: MouseEvent) => {
                 const startButtonTouched = this.startButton(evt);
@@ -20,7 +20,7 @@ export class SetCanvasListener {
                 this.scegliProiettileButton(evt, startButtonTouched);
                 this.restartButton(evt);
                 //se non sono nella prima fase non servono gli handler/mostrare ai bottoni di gioco e alla pausa
-                if (!this.app.isFaseScelta) {
+                if (!this.game.isFaseScelta) {
                     this.incrementaLivelloButton(evt);
                     this.compraBonusButton(evt);
                     this.pozioniButtons(evt);
@@ -33,84 +33,84 @@ export class SetCanvasListener {
     }
 
     private scegliPersonaggioButton(evt: MouseEvent, startButtonTouched: boolean) {
-        for (const charter of this.app.gui.sceltaCharter) {
-            const scegliCharterButtonTouched = Utilities.changeButtonState(evt, charter, this.app.ctx);
+        for (const charter of this.game.gui.sceltaCharter) {
+            const scegliCharterButtonTouched = Utilities.changeButtonState(evt, charter, this.game.ctx);
             if (scegliCharterButtonTouched) {
-                this.app.gui.classeCharterScelto = charter.typeOfCharter;
+                this.game.gui.classeCharterScelto = charter.typeOfCharter;
             }
-            if (this.app.gui.classeCharterScelto && !this.app.isStarted) {
+            if (this.game.gui.classeCharterScelto && !this.game.isStarted) {
 
                 if (startButtonTouched) {
-                    switch (this.app.gui.classeCharterScelto) {
-                        case 'BULLO': this.app.player = new Bullo(Utilities.getSquareConfig(this.app.ctx, 'azure')); this.app.startGame(); break;
-                        case 'MAGO': this.app.player = new Mago(Utilities.getSquareConfig(this.app.ctx, 'pink')); this.app.startGame(); break;
-                        case 'GUERRIERO': this.app.player = new Guerriero(Utilities.getSquareConfig(this.app.ctx, 'violet')); this.app.startGame(); break;
-                        case 'SAMURAI': this.app.player = new Samurai(Utilities.getSquareConfig(this.app.ctx, 'gold')); this.app.startGame(); break;
+                    switch (this.game.gui.classeCharterScelto) {
+                        case 'BULLO': this.game.player = new Bullo(Utilities.getSquareConfig(this.game.ctx, 'azure')); this.game.startGame(); break;
+                        case 'MAGO': this.game.player = new Mago(Utilities.getSquareConfig(this.game.ctx, 'pink')); this.game.startGame(); break;
+                        case 'GUERRIERO': this.game.player = new Guerriero(Utilities.getSquareConfig(this.game.ctx, 'violet')); this.game.startGame(); break;
+                        case 'SAMURAI': this.game.player = new Samurai(Utilities.getSquareConfig(this.game.ctx, 'gold')); this.game.startGame(); break;
                     }
-                    this.app.isStarted = true;
-                    this.app.gui.classeCharterScelto = 'ABSTRACT';
+                    this.game.isStarted = true;
+                    this.game.gui.classeCharterScelto = 'ABSTRACT';
                 }
             }
         }
     }
 
     private pauseButton(evt: MouseEvent) {
-        const attivaPauseTouched = Utilities.changeButtonState(evt, this.app.gui.pauseButton, this.app.ctx);
+        const attivaPauseTouched = Utilities.changeButtonState(evt, this.game.gui.pauseButton, this.game.ctx);
         if (attivaPauseTouched) {
-            if (this.app.isPause) { this.app.isPause = false; this.app.animate() } else { this.app.isPause = true; }
+            if (this.game.isPause) { this.game.isPause = false; this.game.animate() } else { this.game.isPause = true; }
         }
     }
 
     private compraScudoButton(evt: MouseEvent) {
-        const compraScudoTouched = Utilities.changeButtonState(evt, this.app.gui.scudoButton, this.app.ctx);
+        const compraScudoTouched = Utilities.changeButtonState(evt, this.game.gui.scudoButton, this.game.ctx);
         if (compraScudoTouched) {
-            this.app.gui.scudoButton.attivaScudo(this.app.player);
+            this.game.gui.scudoButton.attivaScudo(this.game.player);
         }
     }
 
     private pozioniButtons(evt: MouseEvent) {
-        for (const pozione of this.app.gui.pozioniBottoni) {
-            const bottonPozioneButtonTouched = Utilities.changeButtonState(evt, pozione, this.app.ctx);
-            if (bottonPozioneButtonTouched && this.app.player.pozioni.length > 0) {
-                this.app.player.pozioneCounter.attiva();
-                this.app.player.pozioni.pop();
+        for (const pozione of this.game.gui.pozioniBottoni) {
+            const bottonPozioneButtonTouched = Utilities.changeButtonState(evt, pozione, this.game.ctx);
+            if (bottonPozioneButtonTouched && this.game.player.pozioni.length > 0) {
+                this.game.player.pozioneCounter.attiva();
+                this.game.player.pozioni.pop();
                 pozione.svuotaCasella();
             }
         }
     }
 
     private compraBonusButton(evt: MouseEvent) {
-        const compraBonusTouched = Utilities.changeButtonState(evt, this.app.gui.compraBonus, this.app.ctx);
-        if (compraBonusTouched && this.app.player.parametriFantasy.money > 0) {
-            this.app.bonus = [];
-            this.app.bonus = Utilities.createBonusArray( this.app.ctx);
-            this.app.player.parametriFantasy.money -= 20;
+        const compraBonusTouched = Utilities.changeButtonState(evt, this.game.gui.compraBonus, this.game.ctx);
+        if (compraBonusTouched && this.game.player.parametriFantasy.money > 0) {
+            this.game.bonus = [];
+            this.game.bonus = Utilities.createBonusArray( this.game.ctx);
+            this.game.player.parametriFantasy.money -= 20;
         }
     }
 
     private incrementaLivelloButton(evt: MouseEvent) {
-        const incrementaLivelloButtonTouched = Utilities.changeButtonState(evt, this.app.gui.incrementaLivelloButton, this.app.ctx);
-        if (incrementaLivelloButtonTouched && this.app.player.parametriFantasy.money > 0) {
-            if (this.app.player.parametriFantasy.money > 100 * this.app.player.parametriFantasy.livello) {
-                this.app.player.incrementaLivello();
-                this.app.player.parametriFantasy.money -= 100 * this.app.player.parametriFantasy.livello;
+        const incrementaLivelloButtonTouched = Utilities.changeButtonState(evt, this.game.gui.incrementaLivelloButton, this.game.ctx);
+        if (incrementaLivelloButtonTouched && this.game.player.parametriFantasy.money > 0) {
+            if (this.game.player.parametriFantasy.money > 100 * this.game.player.parametriFantasy.livello) {
+                this.game.player.incrementaLivello();
+                this.game.player.parametriFantasy.money -= 100 * this.game.player.parametriFantasy.livello;
             }
         }
     }
 
     private restartButton(evt: MouseEvent) {
-        if (this.app.player) {
-            if (this.app.player.isMorto) {
-                const restartButtonTouched = Utilities.changeButtonState(evt, this.app.gui.restartButton, this.app.ctx);
+        if (this.game.player) {
+            if (this.game.player.isMorto) {
+                const restartButtonTouched = Utilities.changeButtonState(evt, this.game.gui.restartButton, this.game.ctx);
                 if (restartButtonTouched) {
-                    this.app.isFromStart = true;
-                    this.app.isFaseScelta = true;
-                    this.app.gui.isRestartTouched = true;
-                    this.app.gui.classeCharterScelto = 'ABSTRACT';
-                    this.app.mn = 1;
-                    this.app.player.parametriFantasy.money = 0;
-                    this.app.isStarted = false;
-                    this.app.getMondo().enemies = [];
+                    this.game.isFromStart = true;
+                    this.game.isFaseScelta = true;
+                    this.game.gui.isRestartTouched = true;
+                    this.game.gui.classeCharterScelto = 'ABSTRACT';
+                    this.game.mn = 1;
+                    this.game.player.parametriFantasy.money = 0;
+                    this.game.isStarted = false;
+                    this.game.getMondo().enemies = [];
                 }
             }
         }
@@ -121,22 +121,22 @@ export class SetCanvasListener {
     }
 
     private scegliProiettileButton(evt: MouseEvent, startButtonTouched: boolean) {
-        for (const sp of this.app.gui.sceltaProiettile) {
-            const scegliProiettileButtonTouched = Utilities.changeButtonState(evt, sp, this.app.ctx);
+        for (const sp of this.game.gui.sceltaProiettile) {
+            const scegliProiettileButtonTouched = Utilities.changeButtonState(evt, sp, this.game.ctx);
             if (scegliProiettileButtonTouched) {
-                this.app.gui.classeProiettileScelto = sp.typeOfProiettile;
+                this.game.gui.classeProiettileScelto = sp.typeOfProiettile;
             }
-            if (this.app.gui.classeProiettileScelto && !this.app.isStarted) {
+            if (this.game.gui.classeProiettileScelto && !this.game.isStarted) {
                 if (startButtonTouched) {
-                    Utilities.newProiettile(this.app.gui.classeProiettileScelto, this.app.player.config);
-                    this.app.isStarted = true;
-                    this.app.gui.classeProiettileScelto = 'ABSTRACT';
+                    Utilities.newProiettile(this.game.gui.classeProiettileScelto, this.game.player.config);
+                    this.game.isStarted = true;
+                    this.game.gui.classeProiettileScelto = 'ABSTRACT';
                 }
             }
         }
     }
 
     private startButton(evt: MouseEvent) {
-        return Utilities.changeButtonState(evt, this.app.gui.startButton, this.app.ctx);
+        return Utilities.changeButtonState(evt, this.game.gui.startButton, this.game.ctx);
     }
 }

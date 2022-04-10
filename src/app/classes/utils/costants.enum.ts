@@ -120,3 +120,34 @@ export interface CollisionsParams {
     bonus: Bonus[],
     counterAnimation: number
 }
+
+export interface Item {
+    campo1: string,
+    campo2: string,
+    campo3: number
+}
+
+export interface TabellaPresenze {
+    id: playerFirebase,
+    presente: boolean
+}
+
+export interface Chates {
+    speak: string,
+    time: Date
+}
+export interface IMyUint8Array {
+    byteArrayStringFormat: string
+}
+export type tabelleFirebase = 'raccolta' | 'tabella-presenze' | 'chates' | 'location' | 'byteArray';
+export type playerFirebase = 'player-uno' | 'player-due';
+export interface IMyGeolocation {
+    IPv4: string
+    city: string
+    country_code: string
+    country_name: string
+    latitude: number
+    longitude: number
+    postal: string
+    state: string
+}

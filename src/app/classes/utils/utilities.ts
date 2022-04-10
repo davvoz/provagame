@@ -281,24 +281,35 @@ export class Utilities {
         }
         return cto;
     }
-    
-    static newProiettile(cp: classeProiettile,sq:SquareConfig):Proiettile {
+
+    static newProiettile(cp: classeProiettile, sq: SquareConfig): Proiettile {
         let path;
         switch (cp) {
-          case 'COLTELLO': path = 'assets/images/coltello.png'; break;
-          case 'PALLADIFUOCO': path = 'assets/images/fireball.png'; break;
-          case 'RAGNO': path = 'assets/images/spidero.png'; break;
-          case 'HAMMER': path = 'assets/images/hammero.png'; break;
-          default: cp = 'HAMMER'; path = 'assets/images/hammero.png'; break;
+            case 'COLTELLO': path = 'assets/images/coltello.png'; break;
+            case 'PALLADIFUOCO': path = 'assets/images/fireball.png'; break;
+            case 'RAGNO': path = 'assets/images/spidero.png'; break;
+            case 'HAMMER': path = 'assets/images/hammero.png'; break;
+            default: cp = 'HAMMER'; path = 'assets/images/hammero.png'; break;
         }
         return new Proiettile({
-          color: 'white',
-          ctx: sq.ctx,
-          velocita: 0.5,
-          h: 70,
-          w: 50,
-          x: sq.x,
-          y: sq.y
+            color: 'white',
+            ctx: sq.ctx,
+            velocita: 0.5,
+            h: 70,
+            w: 50,
+            x: sq.x,
+            y: sq.y
         }, path, cp);
-      }
+    }
+
+    static bin2String(arrays: string | any[]) {
+        var result = "";
+        for (const array of arrays) {
+            result += String.fromCharCode(parseInt(array, 2));
+        }
+        return result;
+    }
 }
+
+
+
