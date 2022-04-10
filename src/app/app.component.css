@@ -5,7 +5,7 @@ div#container {
     width: 100%;
     display: table;
 }
-div#content,span,button {
+div#content,span {
     background: whitesmoke;
     display: table-cell;
     vertical-align: middle;

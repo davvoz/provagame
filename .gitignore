@@ -53,4 +53,4 @@ y/index.html
 firebase.json
 .firebaserc
 .firebaserc
-firebase.json
+src/environments/environment.ts

@@ -13,6 +13,7 @@ import { GameComponent } from './components/game/game.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ChatComponent } from './components/chat/chat.component';
 import { InfoComponent } from './components/info/info.component';
+import { MultiPlayerGameComponent } from './components/multi-player-game/multi-player-game.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { InfoComponent } from './components/info/info.component';
     MyFormatDataPipeString,
     GameComponent,
     ChatComponent,
-    InfoComponent
+    InfoComponent,
+    MultiPlayerGameComponent
   ],
   imports: [
     BrowserModule,FormsModule,HttpClientModule,

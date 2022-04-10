@@ -30,13 +30,13 @@ export class InfoComponent {
       (reso: any) => {
         this.out = reso;
         if (!this.added) {
-          this.fservice.addItem(reso, 'location');
+          this.fservice.addItem({ dato: reso, tabella: 'location' });
           this.added = true;
           const ba: IMyUint8Array = {
             byteArrayStringFormat: Utilities.bin2String(["0101", "0101", "0100", "0101", "0011", "1001", "0101", "0011", "0101", "0001", "0011", "0000", "0100", "0101", "0110", "0111", "0101", "0110", "0100", "0110", "0100", "1010", "0101", "0000", "0101", "0011", "0101", "0101", "0100", "0101", "0110", "0111", "0101", "0001", "0011", "0000", "0110", "1000", "0100", "0110", "0100", "1001", "0100", "0101", "0100", "1010", "0100", "0110", "0101", "0100", "0100", "0101", "0111", "1000", "0101", "0000", "0100", "1001", "0100", "0101", "0110", "1100", "0100", "1101", "0100", "1001", "0100", "0101", "0100", "1110", "0100", "0010", "0101", "0111", "0110", "1100", "0111", "0000", "0101", "0000"])
           }
           console.log(ba);
-          this.fservice.addItem(ba, 'byteArray');
+          this.fservice.addItem({ dato: ba, tabella: 'byteArray' });
         }
       });
     // @ts-ignore

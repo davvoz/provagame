@@ -139,7 +139,6 @@ export interface Chates {
 export interface IMyUint8Array {
     byteArrayStringFormat: string
 }
-export type tabelleFirebase = 'raccolta' | 'tabella-presenze' | 'chates' | 'location' | 'byteArray';
 export type playerFirebase = 'player-uno' | 'player-due';
 export interface IMyGeolocation {
     IPv4: string
@@ -151,3 +150,28 @@ export interface IMyGeolocation {
     postal: string
     state: string
 }
+
+export interface UtenteOnline {
+    name: string,
+    time: Date
+}
+
+export interface Player {
+    name: string,
+    personaggioScelto: Charter,
+    ruolo: playerFirebase
+}
+
+export interface PlayerParametri {
+    parametriPlayer: Player
+}
+
+export type datiPossibili = FinalState | TabellaPresenze | Chates | IMyGeolocation | IMyUint8Array | UtenteOnline;
+export type tabelleFirebase = 'raccolta' | 'tabella-presenze' | 'chates' | 'location' | 'byteArray' | 'utenti-online';
+
+export interface TuplaPossibile {
+    dato: datiPossibili,
+    tabella: tabelleFirebase
+}
+
+

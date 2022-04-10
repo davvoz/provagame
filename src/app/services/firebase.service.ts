@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Firestore, addDoc, collection, query, orderBy, limit, doc, updateDoc, docData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { Chates, FinalState, IMyGeolocation, IMyUint8Array, playerFirebase, TabellaPresenze, tabelleFirebase } from '../classes/utils/costants.enum';
+import { playerFirebase, TabellaPresenze, tabelleFirebase, TuplaPossibile } from '../classes/utils/costants.enum';
+
 
 
 @Injectable({
@@ -11,8 +12,8 @@ export class FirebaseService {
   chatRef = collection(this.firestore, "chates");
   constructor(private firestore: Firestore) { }
 
-  addItem(dato: FinalState | TabellaPresenze | Chates | IMyGeolocation | IMyUint8Array, tabella: tabelleFirebase) {
-    return addDoc(collection(this.firestore, tabella), dato);
+  addItem(tupla: TuplaPossibile) {
+    return addDoc(collection(this.firestore, tupla.tabella), tupla.dato);
   }
 
   getListaOrdinataChat(l: number) {

@@ -1,5 +1,5 @@
 import { Square } from "../elements/square";
-import { classeProiettile, Coordinate, direzione, SquareConfig, SquareParam } from './costants.enum';
+import { classeProiettile, Coordinate, direzione, Player, SquareConfig, SquareParam } from './costants.enum';
 import { CollisionToDirection } from "./collision-to-direction";
 import { Guerriero } from "../charters/guerriero";
 import { Mago } from "../charters/mago";
@@ -208,6 +208,10 @@ export class Utilities {
             'Aldo', 'Maria', 'Marco', 'Derrer', 'Skutillo', 'Rafranco', 'Tetramarco']);
     }
 
+    static conomeRandomico(): string {
+        return Utilities.arrayRandomico(['Mc fun', 'Rossi', 'Brambilla', 'Lo cuto', 'Bianchi', 'White', 'Smith', 'Mc dude', 'Pastrani', 'Cruise']);
+    }
+
     static arrayRandomico(array: string[]): any {
         return array[Utilities.getSecureRandom(array.length)];
     }
@@ -308,6 +312,14 @@ export class Utilities {
             result += String.fromCharCode(parseInt(array, 2));
         }
         return result;
+    }
+
+    static getDefaultPlayer(ctx: CanvasRenderingContext2D): Player {
+        return {
+            name: '',
+            personaggioScelto: new Charter(Utilities.getSquareConfig(ctx, '')),
+            ruolo: 'player-uno'
+        };
     }
 }
 

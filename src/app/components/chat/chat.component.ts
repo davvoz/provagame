@@ -26,6 +26,6 @@ export class ChatComponent implements OnInit {
   }
 
   onSave() {
-    this.fservice.addItem({ speak: this.speakInput, time: new Date() }, 'chates');
+    this.fservice.addItem({ dato: { speak: this.speakInput, time: new Date() }, tabella: 'chates'});
   }
 }
