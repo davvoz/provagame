@@ -1,3 +1,4 @@
+import { DocumentReference, Timestamp } from "firebase/firestore";
 import { Charter } from "../abstract/charter";
 import { BottonePozione } from "../buttons/bottone-pozione";
 import { BottoneScudoAttiva } from "../buttons/bottone-scudo-attiva";
@@ -134,8 +135,10 @@ export interface TabellaPresenze {
 
 export interface Chates {
     speak: string,
-    time: Date
+    time: Date,
+    utente: string
 }
+
 export interface IMyUint8Array {
     byteArrayStringFormat: string
 }
@@ -152,8 +155,9 @@ export interface IMyGeolocation {
 }
 
 export interface UtenteOnline {
-    name: string,
-    time: Date
+    nome: string,
+    cognome: string,
+    registrered: Date
 }
 
 export interface Player {
@@ -167,7 +171,7 @@ export interface PlayerParametri {
 }
 
 export type datiPossibili = FinalState | TabellaPresenze | Chates | IMyGeolocation | IMyUint8Array | UtenteOnline;
-export type tabelleFirebase = 'raccolta' | 'tabella-presenze' | 'chates' | 'location' | 'byteArray' | 'utenti-online';
+export type tabelleFirebase = 'raccolta' | 'tabella-presenze' | 'chates' | 'location' | 'byteArray' | 'utenti';
 
 export interface TuplaPossibile {
     dato: datiPossibili,

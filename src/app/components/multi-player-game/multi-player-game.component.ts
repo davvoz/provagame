@@ -1,6 +1,8 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { Player, PlayerParametri } from 'src/app/classes/utils/costants.enum';
-import { Utilities } from 'src/app/classes/utils/utilities';
+import { AfterViewInit, Component } from '@angular/core';
+import { collectionData } from '@angular/fire/firestore';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { UtenteOnline } from 'src/app/classes/utils/costants.enum';
 import { FirebaseService } from 'src/app/services/firebase.service';
 
 @Component({
@@ -8,26 +10,22 @@ import { FirebaseService } from 'src/app/services/firebase.service';
   templateUrl: './multi-player-game.component.html',
   styleUrls: ['./multi-player-game.component.css']
 })
-export class MultiPlayerGameComponent implements AfterViewInit, PlayerParametri {
-  @ViewChild('canvasGui', { static: false })
-  canvasGui!: ElementRef<HTMLCanvasElement>;
-  ctx!: CanvasRenderingContext2D;
-  parametriPlayer: Player = Utilities.getDefaultPlayer(this.ctx);
+export class MultiPlayerGameComponent implements AfterViewInit {
 
-  constructor(public fservice: FirebaseService) {
-    
-  }
-
+  utenti$!: Observable<UtenteOnline[]>;
+  titleLista = 'LISt;A;s;UTe;nt;i';
+  constructor(public fservice: FirebaseService, private router: Router) { }
 
   ngAfterViewInit(): void {
-    const res = this.canvasGui.nativeElement.getContext('2d');
-    if (!res || !(res instanceof CanvasRenderingContext2D)) {
-      throw new Error('Failed to get 2d context.');
-    }
-    this.ctx = res;
+
+    // @ts-ignore
+    this.utenti$ = collectionData(this.fservice.getLista('utenti'));
+
+
   }
+  goToLogin() {
+    this.router.navigate(['/signup']);
+    //this.router.navigateByUrl('/login', { state: this.product });
 
-
-
-
+  }
 }

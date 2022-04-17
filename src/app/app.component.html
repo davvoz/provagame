@@ -1,17 +1,16 @@
-<h1>{{title}}</h1>
-<h1>Hi ! {{utente.name}}</h1>
 
-<button routerLink="/game" (click)="nascondiAltriBottoni(true)">Game</button>
-<button routerLink="/mgame" (click)="nascondiAltriBottoni(true)">Multi player Game</button>
-
-<!-- 
-<button *ngIf="nascondiBottoni" (click)="nascondiAltriBottoni(false)">mostra altri bottoni</button>
-
-<button *ngIf="!nascondiBottoni" routerLink="/chat">Chat</button>
-
-<button *ngIf="!nascondiBottoni" routerLink="/info">Info</button> -->
 <div id="container">
-  <div id="content">
-    <router-outlet></router-outlet>
+  <div style="background-color: rgb(0, 75, 29);height: 7em;font-family: Grenze Gotisch;color: aliceblue;">
+
+    <h1 style="float: right;" >{{title}}</h1>
+
+    <button routerLink="/game" >Game</button>
+    <button routerLink="/mgame" >CRUD Firebase</button>
+    <button routerLink="/chat">Chat</button>
+    <button  routerLink="/info">Info</button>
   </div>
 </div>
+
+  <div id="content">   
+    <router-outlet></router-outlet>
+  </div>

@@ -1,7 +1,9 @@
-import { Component } from "@angular/core";
+import { AfterViewInit, Component } from "@angular/core";
+import { Router } from "@angular/router";
+import { Observable } from "rxjs/internal/Observable";
 import { TuplaPossibile, UtenteOnline } from "./classes/utils/costants.enum";
-import { Utilities } from "./classes/utils/utilities";
 import { FirebaseService } from "./services/firebase.service";
+import { SessionService } from "./services/session.service";
 
 
 @Component({
@@ -9,25 +11,35 @@ import { FirebaseService } from "./services/firebase.service";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  title = 'game2k22';
+export class AppComponent implements AfterViewInit {
+  title = 'Examples BUNDLE';
   errorMessage: any;
   nascondiBottoni = false;
   utente!: UtenteOnline;
-  constructor(private fservice: FirebaseService) {
-   this.utente = {
-    name: Utilities.nomeRandomico() + ' ' + Utilities.conomeRandomico(),
-    time: new Date()
-   }
-    const tupla: TuplaPossibile = {
-      dato: this.utente,
-      tabella: 'utenti-online'
-    };
-    this.fservice.addItem(tupla);
+  constructor(public fservice: FirebaseService, private router: Router, public sservice: SessionService) { }
+  
+  ngAfterViewInit(): void {
   }
 
-  nascondiAltriBottoni(arg: boolean) {
+  routeToGame(): void {
+    this.router.navigate(['/game']);
+  }
+
+  routeToChat(): void {
+    this.router.navigate(['/chat']);
+  }
+
+  routeToMGame(): void {
+    this.router.navigate(['/mgame']);
+  }
+
+  nascondiAltriBottoni(arg: boolean): void {
     this.nascondiBottoni = arg;
+    const tupla: TuplaPossibile = {
+      dato: this.utente,
+      tabella: 'tabella-presenze'
+    };
+    this.fservice.addItem(tupla);
   }
 }
 

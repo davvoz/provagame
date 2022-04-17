@@ -11,3 +11,9 @@ div#content,span ,a{
     width: 100%;
     font-family: 'Lexend','Orbitron', 'Courier New', Courier, monospace;
 }
+.green{
+    background-color: rebeccapurple;
+}
+.white{
+    background-color: aliceblue;
+}

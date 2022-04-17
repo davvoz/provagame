@@ -172,17 +172,16 @@ export class Gui {
         this.ctx.restore();
         if (isFaseScelta) {
             this.faseSceltaProcedure(player, counterAnimation);
-        } else {
-            if (!player.isMorto) {
-                this.incrementaLivelloButton.stand();
-                this.pauseButton.stand()
-                this.compraBonus.stand();
-                this.scudoButton.stand();
-                for (const pozioneBottone of this.pozioniBottoni) {
-                    pozioneBottone.stand();
-                }
+        } else if (!player.isMorto) {
+            this.incrementaLivelloButton.stand();
+            this.pauseButton.stand()
+            this.compraBonus.stand();
+            this.scudoButton.stand();
+            for (const pozioneBottone of this.pozioniBottoni) {
+                pozioneBottone.stand();
             }
         }
+
 
         if (player) {
 
@@ -355,7 +354,7 @@ export class Gui {
             this.selectedImageProiettile.width / 4 * counterAnimation,
             0,
             this.selectedImageProiettile.width / 4,
-            this.selectedImageProiettile.width / 4 ,
+            this.selectedImageProiettile.width / 4,
             530, 580,
             50,
             65);

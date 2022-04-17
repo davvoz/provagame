@@ -14,6 +14,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { ChatComponent } from './components/chat/chat.component';
 import { InfoComponent } from './components/info/info.component';
 import { MultiPlayerGameComponent } from './components/multi-player-game/multi-player-game.component';
+import { CommonModule } from '@angular/common';
+import { SignupComponent } from './components/signup/signup.component';
 
 @NgModule({
   declarations: [
@@ -23,9 +25,11 @@ import { MultiPlayerGameComponent } from './components/multi-player-game/multi-p
     GameComponent,
     ChatComponent,
     InfoComponent,
-    MultiPlayerGameComponent
+    MultiPlayerGameComponent,
+    SignupComponent,
   ],
   imports: [
+    CommonModule,
     BrowserModule,FormsModule,HttpClientModule,
      provideFirebaseApp(() => initializeApp(environment.firebase)),
       provideDatabase(() => getDatabase()), provideFirestore(() => getFirestore()), AppRoutingModule,

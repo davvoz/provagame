@@ -1,9 +1,10 @@
+<h3>{{sservice.utente.nome}}-{{sservice.utente.cognome}}</h3>
 <div>
   <span>Numero messaggi visibili <input [(ngModel)]="numero" type="number" (ngModelChange)="limitLista()" /> </span>
 </div>
 
 <div *ngFor="let item of (item$ |async)?.slice()?.reverse() ;let i = index">
-  <span style="width: 300px;" [ngClass]="i === numero ? 'green' : 'white'"> {{ item.time | myFormatDataString}} -> {{
+  <span [ngClass]="i === numero ? 'green' : 'white'"> {{ item.time | myFormatDataString}} -> {{item.utente }} : {{
     item.speak }}</span>
 </div>
 
