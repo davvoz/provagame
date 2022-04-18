@@ -1,5 +1,10 @@
-.a{
+.a {
     height: 20em;
     background-image: url("/assets/images/Brutalo.png");
-background-repeat: round;
+    background-repeat: round;
+}
+input {
+    font-size: 4em;
+    width: 50%;
+    font-family: "IBM Plex Mono";
 }

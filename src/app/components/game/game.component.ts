@@ -272,7 +272,7 @@ export class GameComponent implements AfterViewInit {
       };
       this.finalStates.push(fs);
       this.isfinalStatesInc = true;
-      this.fservice.addItem({ dato: fs, tabella: 'raccolta' });
+      this.fservice.addItem({ dato: fs, tabella: 'raccolta'} ,'');
 
     }
 

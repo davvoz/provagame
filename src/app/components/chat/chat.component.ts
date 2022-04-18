@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { collectionData } from '@angular/fire/firestore';
-import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Chates, UtenteOnline } from 'src/app/classes/utils/costants.enum';
 import { FirebaseService } from 'src/app/services/firebase.service';
-import { SessionService } from 'src/app/services/session.service';
 
 @Component({
   selector: 'app-chat',
@@ -16,7 +14,7 @@ export class ChatComponent implements OnInit {
   item$!: Observable<Chates[]>;
   speakInput: string = '';
   numero = 10;
-  constructor(public fservice: FirebaseService, private route: ActivatedRoute, public sservice: SessionService) { }
+  constructor(public fservice: FirebaseService) { }
 
   ngOnInit(): void {
     // @ts-ignore
@@ -29,6 +27,6 @@ export class ChatComponent implements OnInit {
   }
 
   onSave() {
-    this.fservice.addItem({ dato: { speak: this.speakInput, time: new Date(), utente: '' }, tabella: 'chates' });
+    this.fservice.addItem({ dato: { speak: this.speakInput, time: new Date(), utente: '' }, tabella: 'chates' },'');
   }
 }

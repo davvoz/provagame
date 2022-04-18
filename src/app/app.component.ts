@@ -1,9 +1,7 @@
-import { AfterViewInit, Component } from "@angular/core";
+import { Component } from "@angular/core";
 import { Router } from "@angular/router";
-import { Observable } from "rxjs/internal/Observable";
-import { TuplaPossibile, UtenteOnline } from "./classes/utils/costants.enum";
+import { UtenteOnline } from "./classes/utils/costants.enum";
 import { FirebaseService } from "./services/firebase.service";
-import { SessionService } from "./services/session.service";
 
 
 @Component({
@@ -11,15 +9,13 @@ import { SessionService } from "./services/session.service";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent  {
   title = 'Examples BUNDLE';
   errorMessage: any;
   nascondiBottoni = false;
   utente!: UtenteOnline;
-  constructor(public fservice: FirebaseService, private router: Router, public sservice: SessionService) { }
-  
-  ngAfterViewInit(): void {
-  }
+  constructor(public fservice: FirebaseService, private router: Router) { }
+
 
   routeToGame(): void {
     this.router.navigate(['/game']);
@@ -35,11 +31,7 @@ export class AppComponent implements AfterViewInit {
 
   nascondiAltriBottoni(arg: boolean): void {
     this.nascondiBottoni = arg;
-    const tupla: TuplaPossibile = {
-      dato: this.utente,
-      tabella: 'tabella-presenze'
-    };
-    this.fservice.addItem(tupla);
+   
   }
 }
 

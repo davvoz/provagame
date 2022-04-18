@@ -1,4 +1,3 @@
-import { DocumentReference, Timestamp } from "firebase/firestore";
 import { Charter } from "../abstract/charter";
 import { BottonePozione } from "../buttons/bottone-pozione";
 import { BottoneScudoAttiva } from "../buttons/bottone-scudo-attiva";
@@ -157,9 +156,12 @@ export interface IMyGeolocation {
 export interface UtenteOnline {
     nome: string,
     cognome: string,
-    registrered: Date
+    registrered: Date,
+    progressivo: number;
 }
-
+export interface UtenteParam{
+    utente:UtenteOnline;
+}
 export interface Player {
     name: string,
     personaggioScelto: Charter,
@@ -170,8 +172,9 @@ export interface PlayerParametri {
     parametriPlayer: Player
 }
 
+export type tipoProgressivi = 'utenti';
 export type datiPossibili = FinalState | TabellaPresenze | Chates | IMyGeolocation | IMyUint8Array | UtenteOnline;
-export type tabelleFirebase = 'raccolta' | 'tabella-presenze' | 'chates' | 'location' | 'byteArray' | 'utenti';
+export type tabelleFirebase = 'raccolta' | 'tabella-presenze' | 'chates' | 'location' | 'byteArray' | 'utenti' | 'progressivi';
 
 export interface TuplaPossibile {
     dato: datiPossibili,

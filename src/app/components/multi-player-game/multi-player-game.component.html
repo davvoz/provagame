@@ -3,38 +3,36 @@
     <div *ngFor="let carateere of  titleLista.split(';')" [ngClass]="carateere" style="float: left;">
       {{carateere}}
     </div>
-    <button (click)="goToLogin()"
+    <button [queryParams]="{azione:'inserisci'}"
+    [routerLink]="['/signup']"
       style="margin: auto; color: white; text-align: center; height: 2em; width: 2em;background-color: red; border: 3px solid white;border-radius: 50%;float: right;box-shadow: 10px;font-size: 70px;">ADD
       UTENTE</button>
-  </div>
 
+
+
+  </div>
   <div *ngFor="let item of (utenti$ |async) ;let i = index" class="e"
     style="display:grid;  grid-template-columns: 70% 30%;">
-
     <div style="min-width: 100%">
-      <h2>nome : {{item.nome}}</h2>
-      <h2>cognome : {{item.cognome}}</h2>
+      <h2>Nome : {{item.nome}}</h2>
+      <h2>Cognome : {{item.cognome}}</h2>
+      <h3>Id : {{item.progressivo}}</h3>
       <div>
         {{item.registrered | myFormatData}} </div>
     </div>
-
-
-
-    <div style="background-color: rgb(31 30 41);"><br><br><br>
+    <div><br><br><br>
       <div class="icons8-firebase"
         style="height: 3.5em; width: 3.5em;background-color: black; border: 3px solid white;border-radius: 50%;float: right;box-shadow: 10px;">
       </div>
-      <div
+      <div (click)="deleteUtente(item)"
         style="height: 3.5em; width: 3.5em;background-color: white;border: 3px solid black;border-radius: 50%;float: right;">
-
-
+        delete
       </div>
       <div
-        style="height: 3.5em; width: 3.5em;background-color: green;border: 3px solid black;border-radius: 50%;float: right;">
+        [queryParams]="{nome:item.nome,cognome:item.cognome,progressivo:item.progressivo,registrered:item.registrered,azione:'modifica'}"
+        [routerLink]="['/signup']"
+        style="height: 3.5em; width: 3.5em;background-color: green;border: 3px solid black;border-radius: 50%;float: right;">Edit
       </div>
     </div>
-
-
-
   </div>
 </div>

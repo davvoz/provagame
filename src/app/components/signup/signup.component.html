@@ -1,20 +1,28 @@
+<br><br>
 <div class="a" style="    color: black;
 font-family: Orbitron;
 width: 75%;
 background-color: rgb(13, 10, 17);
-margin: 0 auto;
-border: 3px solid orangered;">
-
+margin: 0 auto;">
 <div style="margin:0;padding: 0; background-color: darkcyan;">
-    <h1>Crea un nuovo utente</h1>
+    <h1>{{azione}} {{azione === 'inserisci' ?'nuovo':''}} utente
+        <button style="    height: 2em;
+        width: 2em;
+        background-color: orange;
+        border: 3px solid black;
+        border-radius: 50%;
+        ;" (click)="random()">random</button></h1>
     <label for="nome">
-        <input id="nome" type="text" [(ngModel)]="nome" />
+        <input id="nome" type="text" [(ngModel)]="utente.nome" />
         Nome
+       
     </label><br>
     <label for="cognome">
-        <input id="cognome" type="text" [(ngModel)]="cognome" />
+        <input id="cognome" type="text" [(ngModel)]="utente.cognome" />
         Cognome
+       
     </label>
+    
 
     <button style="    height: 5em;
     width: 5em;
