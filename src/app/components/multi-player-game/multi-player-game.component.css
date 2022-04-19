@@ -1,7 +1,7 @@
 @media (max-width: 800px) {
     .e {
         color: black;
-        font-family: "Orbitron";
+        font-family: "Orbitron, Helvetica, Arial, Verdana, Tahoma, sans-serif";
         width: 98%;
         background-color: rgba(255, 255, 255, 0.795);
         margin: 0 auto;
@@ -10,7 +10,7 @@
 @media (min-width: 800px) {
     .e {
         color: black;
-        font-family: "Orbitron";
+        font-family: "Orbitron, Helvetica, Arial, Verdana, Tahoma, sans-serif";
         width: 85%;
         background-color: rgba(255, 255, 255, 0.795);
         margin: 0 auto;
@@ -27,7 +27,7 @@
 
 .LISt {
     background-color: rgb(0, 255, 13);
-    font-family: "Grenze Gotisch";
+    font-family: "Grenze Gotisch, Helvetica, Arial, Verdana, Tahoma, sans-serif";
     border-radius: 10%;
     border: 2px solid black;
 }
@@ -50,7 +50,7 @@
 
 .UTe {
     background-color: hotpink;
-    font-family: "Grenze Gotisch";
+    font-family: "Grenze Gotisch, Helvetica, Arial, Verdana, Tahoma, sans-serif";
     border-radius: 10%;
     border: 2px solid black;
 }
