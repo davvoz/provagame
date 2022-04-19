@@ -1,7 +1,7 @@
 @media (max-width: 800px) {
     .e {
         color: black;
-        font-family: "Orbitron, Helvetica, Arial, Verdana, Tahoma, sans-serif";
+        font-family: Orbitron, Helvetica, Arial, Verdana, Tahoma, sans-serif;
         width: 98%;
         background-color: rgba(255, 255, 255, 0.795);
         margin: 0 auto;
