@@ -33,7 +33,7 @@
 }
 .A {
     background-color: orangered;
-    font-family: "Orbitron";
+    font-family: "Orbitron , Helvetica, Arial, Verdana, Tahoma, sans-serif";
     transform: rotate(7deg);
 }
 .s {
@@ -41,7 +41,7 @@
     color: white;
     width: 50px;
     height: 50px;
-    font-family: "Orbitron";
+    font-family: "Orbitron, Helvetica, Arial, Verdana, Tahoma, sans-serif";
     font-size: 0.1px;
     border: 1px solid white;
     border-radius: 50%;
@@ -56,11 +56,11 @@
 }
 .i {
     background-color: gold;
-    font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+    font-family: "Impact,Arial Narrow Bold, sans-serif";
 }
 .nt {
     background-color: lime;
-    font-family: "Orbitron";
+    font-family: "Orbitron, Helvetica, Arial, Verdana, Tahoma, sans-serif";
     transform: rotate(-7deg);
 }
 .icons8-firebase {
