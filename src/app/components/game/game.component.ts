@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, NgZone, ViewChild } from '@angular/core';
+import { Observable } from 'rxjs';
 import { Charter } from 'src/app/classes/abstract/charter';
 import { Bonus } from 'src/app/classes/elements/bonus';
 import { Gui } from 'src/app/classes/elements/gui';
@@ -60,6 +61,7 @@ export class GameComponent implements AfterViewInit {
   collisions!: Collisions;
   canvasListeners!: SetCanvasListener;
   isPlayerUno = false;
+  getProgressivoFinalState!: Observable<FinalState[]>;
 
   constructor(private ngZone: NgZone, public fservice: FirebaseService) { }
 
@@ -131,18 +133,18 @@ export class GameComponent implements AfterViewInit {
 
   private updateEnemies() {
     this.dieCount = 0;
-    for (const en of this.getMondo().enemies) {
-      if (!en.isMorto) {
-        en.counterAnimation = this.counterAnimation;
-        if (en.malefici.stunned.totTurni > 0) { //se è stunnato lo stando
-          en.setDirection('STAND');
+    for (const enemy of this.getMondo().enemies) {
+      if (!enemy.isMorto) {
+        enemy.counterAnimation = this.counterAnimation;
+        if (enemy.malefici.stunned.totTurni > 0) { //se è stunnato lo stando
+          enemy.setDirection('STAND');
         }
-        else if (en.haPresoUnaDirezioneCounter.isActive()) {//se è attivo il counter direzionale prende la sua direzione
-          Utilities.directionToMoveSwitch(en);
-        } else if (en.isColliding) {//se sta collidendo con qualcosa
-          this.enemyIsCollidingUpdate(en);//scopro cosa e vado di conseguenza
+        else if (enemy.haPresoUnaDirezioneCounter.isActive()) {//se è attivo il counter direzionale prende la sua direzione
+          Utilities.directionToMoveSwitch(enemy);
+        } else if (enemy.isColliding) {//se sta collidendo con qualcosa
+          this.enemyIsCollidingUpdate(enemy);//scopro cosa e vado di conseguenza
         } else {
-          Utilities.charterMovmentRandomRoutine(en, this.counterRoutine, 20);
+          Utilities.charterMovmentRandomRoutine(enemy, this.counterRoutine, 20);
         }
       } else {
         this.dieCount++;
@@ -152,7 +154,7 @@ export class GameComponent implements AfterViewInit {
 
   private enemyIsCollidingUpdate(en: Charter) {
     if (en.stato !== 'attaccando') {
-      //se non sta attaccando ne evinco che stanno collidendo tra loro enemies
+      //se non sta attaccando ne evinco che stanno collidendo tra loro enemies....UPDATE forse no
       switch (en.directionColliding) {
         case 'BOTTOM': en.setDirection('TOP'); break;
         case 'TOP': en.setDirection('BOTTOM'); break;
@@ -160,11 +162,14 @@ export class GameComponent implements AfterViewInit {
         case 'RIGHT': en.setDirection('LEFT'); break;
       }
       en.isColliding = false;
+      Utilities.directionToMoveSwitch(en);
+
     } else {
       //se attacca
       en.setDirection('STAND');
+      Utilities.directionToMoveSwitch(en);
+
     }
-    Utilities.directionToMoveSwitch(en);
   }
 
   private setPozioni(index: number) {
@@ -244,7 +249,6 @@ export class GameComponent implements AfterViewInit {
       this.proiettile.setDirection(this.player.getDirection());
       this.proiettile.config.velocita = 0.1;
     }
-
     if (this.giaInvolo) {
       this.proiettile.counterAnimation = this.counterAnimation;
       Utilities.directionToMoveSwitch(this.proiettile);
@@ -261,34 +265,40 @@ export class GameComponent implements AfterViewInit {
     this.gui.counterAnimationDieText = 0;
     this.collisions.isScudoRaccolto = false;
     if (!this.isfinalStatesInc && this.player.isMorto) {
-      const fs: FinalState = {
-        livelloPersonaggio: this.player.parametriFantasy.livello,
-        livelloSchema: this.mn,
-        money: this.player.parametriFantasy.money,
-        classe: this.player.classe,
-        numeroSchivate: this.player.sintesiDati.numeroSchivate,
-        numeroAttacchi: this.player.sintesiDati.numeroAttacchi,
-        ratio: this.player.sintesiDati.numeroAttacchi / this.player.sintesiDati.numeroSchivate
-      };
-      this.finalStates.push(fs);
-      this.isfinalStatesInc = true;
-      this.fservice.addItem({ dato: fs, tabella: 'raccolta'} ,'');
-
+      
+      this.fservice.getProgressivo('final-states').then(
+        (res) => {
+          const fs: FinalState = {
+            progressivo: (res + 1),
+            nomePersonaggio: this.player.name,
+            livelloPersonaggio: this.player.parametriFantasy.livello,
+            livelloSchema: this.mn,
+            money: this.player.parametriFantasy.money,
+            classe: this.player.classe,
+            numeroSchivate: this.player.sintesiDati.numeroSchivate,
+            numeroAttacchi: this.player.sintesiDati.numeroAttacchi
+          };
+          this.finalStates.push(fs);
+          this.isfinalStatesInc = true;
+          this.fservice.updateProgressivi(res + 1, 'final-states');
+          this.fservice.addItem({ dato: fs, tabella: 'final-states' }, (res + 1) + '');
+        }
+      )
     }
-
     this.mn = 0;
   }
 
-  ngAfterViewInit(): void {
-
+  ngAfterViewInit(): void {// @ts-ignore
     const res = this.canvasGui.nativeElement.getContext('2d');
     if (!res || !(res instanceof CanvasRenderingContext2D)) {
       throw new Error('Failed to get 2d context.');
     }
     this.ctx = res;
+    this.ctx.canvas.width = window.innerWidth - window.innerWidth / 50;
+    this.ctx.canvas.height = this.ctx.canvas.width / 2.5;
     this.gui = new Gui(this.ctx);
     for (let i = 1; i < 5000; i++) {
-      this.m.push(new Mondo({ livelloNemici: i, numeroNemici: i, velocitaCamion: 0.0, id: i }))
+      this.m.push(new Mondo({ livelloNemici: i, numeroNemici: i, velocitaCamion: 0.1, id: i }))
     }
     this.canvasListeners = new SetCanvasListener(this);
     if (this.isFaseScelta) {
@@ -305,8 +315,8 @@ export class GameComponent implements AfterViewInit {
     }
     this.mn = 0;
     this.getMondo().inizialize(this.ctx);
-    this.player.config.x = 10;
-    this.player.config.y = 10;
+    this.player.config.x = 1;
+    this.player.config.y = 1;
     this.player.name = 'BEST PLAYER';
     this.player.posizioneInfoLabelX = 30;
     this.player.posizioneInfoLabelY = 700;
@@ -323,7 +333,6 @@ export class GameComponent implements AfterViewInit {
   }
 
   private updateCounters() {
-    //this.ctx.strokeText(this.counterAnimation+'',30,30,500);
     //velocità animazione ogni n frame
     if (this.counterRoutine % 8 == 0) {
       //step animazione 
@@ -332,7 +341,6 @@ export class GameComponent implements AfterViewInit {
       } else {
         this.counterAnimation++;
       }
-
     }
     if (this.counterRoutine === 399) {
       this.counterRoutine = 0

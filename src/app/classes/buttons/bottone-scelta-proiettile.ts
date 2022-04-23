@@ -10,7 +10,7 @@ export class BottoneSceltaProiettile extends BottoneSceltaCharter {
         this.config.ctx.lineWidth = 3;
         this.config.ctx.strokeRect(
             this.config.x * this.config.w,
-            this.config.y * this.config.h + this.config.h / 2 - 30,
+            this.config.y * this.config.h  - 30,
             this.config.w,
             this.config.h);
         switch (this.typeOfProiettile) {
@@ -38,7 +38,7 @@ export class BottoneSceltaProiettile extends BottoneSceltaCharter {
             this.image.width / 4, //ws
             this.typeOfProiettile === 'RAGNO' || this.typeOfProiettile === 'PALLADIFUOCO' ? this.image.height/4  : this.image.height ,//hs
             this.config.x * this.config.w,
-            this.config.y * this.config.h,
+            this.config.y * this.config.h ,
             this.config.w,
             this.config.h );
         this.config.ctx.restore()

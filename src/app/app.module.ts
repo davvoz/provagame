@@ -17,6 +17,7 @@ import { MultiPlayerGameComponent } from './components/multi-player-game/multi-p
 import { CommonModule } from '@angular/common';
 import { SignupComponent } from './components/signup/signup.component';
 import { AngularFireModule } from '@angular/fire/compat';
+import { ServiceWorkerModule } from '@angular/service-worker';
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,6 +38,18 @@ import { AngularFireModule } from '@angular/fire/compat';
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideDatabase(() => getDatabase()), provideFirestore(() => getFirestore()),
     AppRoutingModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the app is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
 
   ],
   providers: [],

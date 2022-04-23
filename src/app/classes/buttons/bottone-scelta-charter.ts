@@ -20,7 +20,7 @@ export class BottoneSceltaCharter extends Bottone {
         this.config.ctx.lineWidth = 3;
         this.config.ctx.strokeRect(
             this.config.x * this.config.w,
-            this.config.y * this.config.h + this.config.h / 2 - 30,
+            this.config.y * this.config.h - 30,
             this.config.w,
             this.config.h);
         this.config.ctx.drawImage(this.image,
@@ -29,7 +29,7 @@ export class BottoneSceltaCharter extends Bottone {
             this.image.width / 4, //ws
             this.image.height / 4,//hs
             this.config.x * this.config.w,
-            this.config.y * this.config.h + this.config.h / 2,
+            this.config.y * this.config.h,
             this.config.w,
             this.config.h);
 

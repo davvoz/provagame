@@ -3,13 +3,9 @@
     <div *ngFor="let carateere of  titleLista.split(';')" [ngClass]="carateere" style="float: left;">
       {{carateere}}
     </div>
-    <button [queryParams]="{azione:'inserisci'}"
-    [routerLink]="['/signup']"
+    <button [queryParams]="{azione:'inserisci'}" [routerLink]="['/signup']"
       style="margin: auto; color: white; text-align: center; height: 2em; width: 2em;background-color: red; border: 3px solid white;border-radius: 50%;float: right;box-shadow: 10px;font-size: 70px;">ADD
       UTENTE</button>
-
-
-
   </div>
   <div *ngFor="let item of (utenti$ |async) ;let i = index" class="e"
     style="display:grid;  grid-template-columns: 70% 30%;">
@@ -21,17 +17,15 @@
         {{item.registrered | myFormatData}} </div>
     </div>
     <div><br><br><br>
-      <div class="icons8-firebase"
-        style="height: 3.5em; width: 3.5em;background-color: black; border: 3px solid white;border-radius: 50%;float: right;box-shadow: 10px;">
+      <div class="icons8-firebase">
       </div>
-      <div (click)="deleteUtente(item)"
-        style="height: 3.5em; width: 3.5em;background-color: white;border: 3px solid black;border-radius: 50%;float: right;">
-        delete
+      <div (click)="deleteUtente(item)" class="trash">
+        Delete
       </div>
-      <div
+      <div class="pencil"
         [queryParams]="{nome:item.nome,cognome:item.cognome,progressivo:item.progressivo,registrered:item.registrered,azione:'modifica'}"
-        [routerLink]="['/signup']"
-        style="height: 3.5em; width: 3.5em;background-color: green;border: 3px solid black;border-radius: 50%;float: right;">Edit
+        [routerLink]="['/signup']">
+        Edit
       </div>
     </div>
   </div>

@@ -1,8 +1,6 @@
 import { Component } from "@angular/core";
 import { Router } from "@angular/router";
 import { UtenteOnline } from "./classes/utils/costants.enum";
-import { FirebaseService } from "./services/firebase.service";
-
 
 @Component({
   selector: 'app-root',
@@ -14,8 +12,7 @@ export class AppComponent  {
   errorMessage: any;
   nascondiBottoni = false;
   utente!: UtenteOnline;
-  constructor(public fservice: FirebaseService, private router: Router) { }
-
+  constructor( private router: Router) { }
 
   routeToGame(): void {
     this.router.navigate(['/game']);
@@ -30,8 +27,7 @@ export class AppComponent  {
   }
 
   nascondiAltriBottoni(arg: boolean): void {
-    this.nascondiBottoni = arg;
-   
+    this.nascondiBottoni = arg; 
   }
 }
 

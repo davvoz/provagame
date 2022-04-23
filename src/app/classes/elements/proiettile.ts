@@ -59,26 +59,26 @@ export class Proiettile extends Square {
 
   }
 
-  override moveRight() {
-    this.setDirection('RIGHT');
-    this.config.x = this.config.x + this.config.velocita;
-    this.draw();
-  }
-  override moveLeft() {
-    this.setDirection('LEFT');
-    this.config.x = this.config.x - this.config.velocita;
-    this.draw();
-  }
-  override moveTop() {
-    this.setDirection('TOP');
-    this.config.y = this.config.y - this.config.velocita;
-    this.draw();
-  }
-  override moveBottom() {
-    this.setDirection('BOTTOM');
-    this.config.y = this.config.y + this.config.velocita;
-    this.draw();
-  }
+  // override moveRight() {
+  //   this.setDirection('RIGHT');
+  //   this.config.x = this.config.x + this.config.velocita;
+  //   this.draw();
+  // }
+  // override moveLeft() {
+  //   this.setDirection('LEFT');
+  //   this.config.x = this.config.x - this.config.velocita;
+  //   this.draw();
+  // }
+  // override moveTop() {
+  //   this.setDirection('TOP');
+  //   this.config.y = this.config.y - this.config.velocita;
+  //   this.draw();
+  // }
+  // override moveBottom() {
+  //   this.setDirection('BOTTOM');
+  //   this.config.y = this.config.y + this.config.velocita;
+  //   this.draw();
+  // }
   override draw(): void {
     this.config.ctx.fillStyle = this.config.color;
 

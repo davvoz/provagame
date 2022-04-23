@@ -22,8 +22,8 @@ export class Gui {
     classeCharterScelto: classe = 'ABSTRACT';
     classeProiettileScelto: classeProiettile = 'ABSTRACT';
     isRestartTouched = false;
-    private selectedImageCharter = new Image();
-    private selectedImageProiettile = new Image();
+    selectedImageCharter = new Image();
+    selectedImageProiettile = new Image();
     descrizioneProiettile = 'ABSTRACT';
     descrizioneCharter = 'ABSTRACT';
 
@@ -129,7 +129,7 @@ export class Gui {
                     break;
             }
             sc.config.x = i;
-            sc.config.y = 6;
+            sc.config.y = 7;
             sc.secondText = ' -> ' + (i + 1);
             sc.terzoText = 'free';
             sc.stand();
@@ -155,8 +155,8 @@ export class Gui {
                     sc.typeOfProiettile = 'PALLADIFUOCO';
                     break;
             }
-            sc.config.x = i + 9;
-            sc.config.y = 6;
+            sc.config.x = i + this.ctx.canvas.width / sc.config.w - 18;
+            sc.config.y = 7;
             sc.secondText = ' -> ' + (i + 1);
             sc.terzoText = 'free';
             sc.stand();
@@ -168,7 +168,7 @@ export class Gui {
         //rettangolo sotto
         this.ctx.save();
         this.ctx.fillStyle = 'rgb(200,200,200)';
-        this.ctx.fillRect(0, 650, this.ctx.canvas.width, 100);
+        this.ctx.fillRect(0, 670, this.ctx.canvas.width, 100);
         this.ctx.restore();
         if (isFaseScelta) {
             this.faseSceltaProcedure(player, counterAnimation);
@@ -182,11 +182,9 @@ export class Gui {
             }
         }
 
-
         if (player) {
-
             this.notMortoProcedure(player, livelloSchema);
-            this.mortoAndNotRestartProcedure(player);
+            this.animazioneFinaleMorto(player);
         }
 
         this.ctx.restore();
@@ -196,14 +194,14 @@ export class Gui {
         if (!player.isMorto) {
             this.ctx.font = 'italic bolder 45px Orbitron';
             this.ctx.fillStyle = 'rgb(200,200,200)';
-            this.ctx.fillText('Mondo  ' + livelloSchema, 753, 53, 500);
+            this.ctx.fillText('Mondo  ' + livelloSchema, this.ctx.canvas.width - 270, 53, 500);
             this.ctx.fillText('$' + player.parametriFantasy.money, 23, 53, 500);
             this.ctx.fillStyle = 'rgb(250,150,10)';
             this.ctx.strokeStyle = 'black';
             this.ctx.fillText('$' + player.parametriFantasy.money, 20, 50, 500);
             this.ctx.strokeText('$' + player.parametriFantasy.money, 20, 50, 500);
-            this.ctx.fillText('Mondo  ' + livelloSchema, 750, 50, 500);
-            this.ctx.strokeText('Mondo  ' + livelloSchema, 750, 50, 500);
+            this.ctx.fillText('Mondo  ' + livelloSchema, this.ctx.canvas.width - 270, 50, 500);
+            this.ctx.strokeText('Mondo  ' + livelloSchema, this.ctx.canvas.width - 270, 50, 500);
             let maxLength = 100;
             const perCent = maxLength * player.exp / player.nextExp;
             this.ctx.fillStyle = 'green';
@@ -217,7 +215,7 @@ export class Gui {
         }
     }
 
-    private mortoAndNotRestartProcedure(player: Charter) {
+    private animazioneFinaleMorto(player: Charter) {
         if (player.isMorto && !this.isRestartTouched) {
             this.ctx.font = 'normal bolder 115px Orbitron';
             this.ctx.save();
@@ -262,18 +260,29 @@ export class Gui {
         }
     }
 
+    private getFont() {
+        var ratio = 200 / 2000;   // calc ratio
+        var size = this.ctx.canvas.width * ratio;   // get font size based on current width
+        return (size | 0) + 'px '; // set font
+    }
+
     private faseSceltaProcedure(player: Charter, counterAnimation: number) {
         if (!player || this.isRestartTouched) {
             this.ctx.save();
-            this.ctx.font = 'italic bolder 75px Orbitron';
+            this.ctx.font = 'italic bolder ' + this.getFont() + ' Orbitron';
             this.ctx.fillStyle = 'black';
-            this.ctx.fillText('Alfa - alfa', 0, 250, 3000);
-            for (let i = 0; i < this.sceltaProiettile.length; i++) {
-                this.sceltaProiettile[i].terzoText = this.sceltaProiettile[i].typeOfProiettile;
-                this.sceltaProiettile[i].counterAnimation = counterAnimation;
-                this.sceltaProiettile[i].index = i;
-                this.sceltaProiettile[i].stand();
-            }
+            const nomeGioco = 'Alfa - alfa'
+            let metrics = this.ctx.measureText(nomeGioco);
+            let fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+            this.ctx.fillText(nomeGioco, 0, + fontHeight, 3000);
+            let i = 0;
+            this.sceltaProiettile.forEach((scelta)=>{
+                scelta.terzoText = this.sceltaProiettile[i].typeOfProiettile;
+                scelta.counterAnimation = counterAnimation;
+                scelta.index = i;
+                scelta.stand();
+                i++;
+            });
             if (this.classeProiettileScelto !== 'ABSTRACT') {
                 this.ctx.save();
                 this.ctx.font = 'italic bolder 45px Orbitron';
@@ -289,13 +298,14 @@ export class Gui {
                 this.ctx.fillText('Scegliere proiettile', 600, 550, 300);
                 this.ctx.restore();
             }
-
-            for (let i = 0; i < this.sceltaCharter.length; i++) {
-                this.sceltaCharter[i].terzoText = this.sceltaCharter[i].typeOfCharter;
-                this.sceltaCharter[i].counterAnimation = counterAnimation;
-                this.sceltaCharter[i].index = i;
-                this.sceltaCharter[i].stand();
-            }
+            let j = 0;
+            this.sceltaCharter.forEach((scelta)=>{
+                scelta.terzoText = this.sceltaCharter[j].typeOfCharter;
+                scelta.counterAnimation = counterAnimation;
+                scelta.index = i;
+                scelta.stand();
+                j++;
+            });
             if (this.classeCharterScelto !== 'ABSTRACT') {
                 this.ctx.save();
                 this.ctx.font = 'italic bolder 45px Orbitron';

@@ -3,47 +3,61 @@ import { Utilities } from "../utils/utilities";
 import { Square } from "./square";
 
 export class GestioneSfondi extends Square {
-    spriteSheetPath = 'assets/images/alberi.png';
-    spriteSheetPath5 = 'assets/images/skyline.png';
+    alberiPath = 'assets/images/alberi.png';
+    skylinePath = 'assets/images/skyline.png';
     tipoSfondo: tipoSfondo = 'GIORNO';
-    image = new Image();
-    image5 = new Image();
-    imageCloud1 = new Image();
-    imageSun = new Image();
-    imageGrass = new Image();
+    alberiImg = new Image();
+    skylineImg = new Image();
+    cloudImage = new Image();
+    sunImg = new Image();
+    grassImg = new Image();
     stelle: SquareParam[] = [];
-
+    nuvole: SquareParam[] = [];
     override config!: SquareConfig;
+    sunPosition = Utilities.getSecureRandom(this.config.ctx.canvas.width - 800) + 400;
+    
     constructor(configurazioneInziale: SquareConfig) {
         super(configurazioneInziale);
-        this.image.src = this.spriteSheetPath;
-        this.image5.src = this.spriteSheetPath5;
-        this.imageCloud1.src = 'assets/images/cloud.png';
-        this.imageSun.src = 'assets/images/sole.png';
-        this.imageGrass.src = 'assets/images/grassEr.png';
+        this.alberiImg.src = this.alberiPath;
+        this.skylineImg.src = this.skylinePath;
+        this.cloudImage.src = 'assets/images/cloud.png';
+        this.sunImg.src = 'assets/images/sole.png';
+        this.grassImg.src = 'assets/images/grassEr.png';
         this.config.h = this.config.w;
         this.config.ctx.fillStyle = 'yellow';
-        for (let i = 0; i < 250; i++) {
-            const a = Utilities.getSecureRandom(3);
-            this.stelle.push(
-                {
-                    x: Utilities.getSecureRandom(1100),
+
+        [...Array(10).keys()].forEach(
+            () => {
+                const a = Utilities.getSecureRandom(3);
+                this.stelle.push({
+                    x: Utilities.getSecureRandom(this.config.ctx.canvas.width),
                     y: Utilities.getSecureRandom(60),
                     h: a,
                     w: a
-                }
-            );
-        }
+                });
+            }
+        );
+
+        [...Array(29).keys()].forEach(
+            () => {
+                const a = Utilities.getSecureRandom(100);
+                const b = Utilities.getSecureRandom(30);
+                this.nuvole.push({
+                    x: Utilities.getSecureRandom(this.config.ctx.canvas.width),
+                    y: Utilities.getSecureRandom(40),
+                    h: a < b ? b : a,
+                    w: a < b ? a : b
+                });
+            }
+        );
     }
 
     override draw(): void {
-        
-        if (this.tipoSfondo === 'GIORNO') {
+        if (this.tipoSfondo !== 'GIORNO') {
             this.disegnaGiorno();
         } else {
             this.disegnaNotte();
         }
-       
     }
 
     private disegnaNotte() {
@@ -59,81 +73,56 @@ export class GestioneSfondi extends Square {
         this.stelle.forEach((stella) => {
             this.config.ctx.fillRect(stella.x, stella.y, stella.h, stella.w);
         });
-        for (let i = 0; i < 7; i++) {
-            this.config.ctx.drawImage(this.image5,
-                0, 0,
-                this.image5.width, this.image5.height,
-                this.config.x * this.config.w + 160 * i, this.config.y * this.config.h - 15,
-                200, 90);
-        }
+
+        [...Array(10).keys()].forEach(
+            (el) => {
+                this.config.ctx.drawImage(this.skylineImg,
+                    0, 0,
+                    this.skylineImg.width, this.skylineImg.height,
+                    this.config.x * this.config.w + 160 * el, this.config.y * this.config.h - 15,
+                    200, 90
+                );
+            }
+        );
     }
 
     private disegnaGiorno() {
-        this.config.ctx.fillStyle = 'rgb(164, 255, 149)';
-        this.config.ctx.fillRect(0, 90, this.config.ctx.canvas.width, 700);
         this.config.ctx.fillStyle = 'rgb(26, 233, 252)';
         this.config.ctx.fillRect(0, 0, this.config.ctx.canvas.width, 100);
-        this.config.ctx.drawImage(this.imageGrass,
+        this.config.ctx.drawImage(this.sunImg,
             0, 0,
-            this.image.width, this.image.height,
-            0, 690,
-            this.image.width / 2, this.image.height / 2);
-        this.config.ctx.drawImage(this.imageGrass,
-            0, 0,
-            this.image.width, this.image.height,
-            200, 690,
-            this.image.width / 2, this.image.height / 2);
+            this.sunImg.width, this.sunImg.height,
+            this.sunPosition, 3,
+            80, 70);
 
-        this.config.ctx.drawImage(this.imageGrass,
-            0, 0,
-            this.image.width, this.image.height,
-            500, 690,
-            this.image.width / 2, this.image.height / 2);
-        this.config.ctx.drawImage(this.imageGrass,
-            0, 0,
-            this.image.width, this.image.height,
-            630, 690,
-            this.image.width / 2, this.image.height / 2);
-
-
-        this.config.ctx.drawImage(this.imageSun,
-            0, 0,
-            this.image.width, this.image.height,
-            230, 3,
-            400, 80);
-        this.config.ctx.drawImage(this.imageCloud1,
-            0, 0,
-            this.image.width, this.image.height,
-            220, 20,
-            200, 50);
-        this.config.ctx.drawImage(this.imageCloud1,
-            0, 0,
-            this.image.width, this.image.height,
-            420, -10,
-            200, 50);
-
-        this.config.ctx.drawImage(this.imageCloud1,
-            0, 0,
-            this.image.width, this.image.height,
-            460, 14,
-            200, 50);
-        this.config.ctx.drawImage(this.imageCloud1,
-            0, 0,
-            this.image.width, this.image.height,
-            630, -20,
-            200, 50);
-        this.config.ctx.drawImage(this.imageCloud1,
-            0, 0,
-            this.image.width, this.image.height,
-            880, 10,
-            200, 50);
-
-        for (let i = 0; i < 11; i++) {
-            this.config.ctx.drawImage(this.image,
+        this.nuvole.forEach((nuvola) => {
+            this.config.ctx.drawImage(this.cloudImage,
                 0, 0,
-                this.image.width, this.image.height,
-                this.config.x * this.config.w + 100 * i, this.config.y * this.config.h,
-                160, 50);
-        }
+                this.cloudImage.width, this.cloudImage.height,
+                nuvola.x, nuvola.y, nuvola.h, nuvola.w);
+        });
+
+        [...Array(20).keys()].forEach(
+            (el) => {
+                this.config.ctx.drawImage(this.alberiImg,
+                    0, 0,
+                    this.alberiImg.width, this.alberiImg.height,
+                    this.config.x * this.config.w + 100 * el, this.config.y * this.config.h,
+                    160, 50);
+            }
+        );
+
+        this.config.ctx.fillStyle = 'rgb(164, 255, 149)';
+        this.config.ctx.fillRect(0, 90, this.config.ctx.canvas.width, 700);
+
+        [...Array(20).keys()].forEach(
+            (el) => {
+                this.config.ctx.drawImage(this.grassImg,
+                    0, 0,
+                    this.grassImg.width, this.grassImg.height,
+                    this.config.x * this.config.w + 100 * el, 550,
+                    this.grassImg.width / 2, this.grassImg.height / 2);
+            }
+        );
     }
 }

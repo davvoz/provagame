@@ -18,7 +18,7 @@ export class Collisions {
   counterAnimation = 0;
   constructor(public config: CollisionsParams) {
     this.counterAnimation = config.counterAnimation;
-    //rilevo collisione player vs enemies[]
+    //rilevo collisione enemies[] VS all
     this.collisionsEnemies(this.getMondo().enemies, config.player, config.proiettile);
     //rilevo collisione player vs camion
     this.collisionsPlayerVsCamion(config.player, this.getMondo().camion, config.mondoNumero);
@@ -36,8 +36,10 @@ export class Collisions {
 
   private collisionsEnemies(enemies: Charter[], player: Charter, proiettile: Proiettile) {
     for (const nemico of enemies) {
-      // rilevo solo se questo enemy non è morto
+      // rilevo solo se questo nemico non è morto
       if (!nemico.isMorto) {
+        //rilevo se il nemico vede il player e se lo vede setta la sua direzione di conseguenza
+        this.collisionsAuree(nemico, player);
         // 1)rilevo se questo enemy collide con altri enemies
         this.collisionsTraLoro(nemico);
         // 2) rilevo se questo enemy collide con il player
@@ -55,10 +57,6 @@ export class Collisions {
         if (proiettile && Utilities.rectCollisionRealCollision(nemico, proiettile.getSquareParam()).isColliding) {
           this.proiettileVs(nemico, proiettile, player);
         }
-
-        //rilevo se il nemico vede il player e se lo vede setta la sua direzione di conseguenza
-       // this.collisionsAuree(nemico, player);
-
       }
     }
   }
@@ -91,10 +89,11 @@ export class Collisions {
 
   private collisionsAuree(nemico: Charter, giocatore: Charter) {
     let cto = Utilities.rectsCollidingToDirection(nemico.getVisionAurea(), giocatore.getVisionAurea());
-    if (cto.isColliding) {
+    if (cto.isColliding && !nemico.haPresoUnaDirezioneCounter.isActive) {
       //se le auree si scontrano il nemico mi insegue
       nemico.setDirection(cto.getBetterDirection());
       nemico.haPresoUnaDirezioneCounter.attiva();
+
     }
   }
 
@@ -175,7 +174,7 @@ export class Collisions {
   private getMondo(): Mondo {
     return this.config.mondo;
   }
-  
+
   public setMondo(mondo: Mondo) {
     this.config.mondo = mondo;
   }

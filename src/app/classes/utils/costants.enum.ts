@@ -36,13 +36,14 @@ export interface Malefici {
     blooding: MaliciusEffect
 }
 export interface FinalState {
+    progressivo: number;
+    nomePersonaggio: string;
     money: number;
     livelloSchema: number;
     livelloPersonaggio: number;
     classe: classe;
     numeroSchivate: number;
     numeroAttacchi: number;
-    ratio: number
 }
 export interface MondoConfigurations {
     livelloNemici: number;
@@ -159,8 +160,8 @@ export interface UtenteOnline {
     registrered: Date,
     progressivo: number;
 }
-export interface UtenteParam{
-    utente:UtenteOnline;
+export interface UtenteParam {
+    utente: UtenteOnline;
 }
 export interface Player {
     name: string,
@@ -172,9 +173,9 @@ export interface PlayerParametri {
     parametriPlayer: Player
 }
 
-export type tipoProgressivi = 'utenti';
+export type tipoProgressivi = 'utenti' | 'final-states' | 'messaggi';
 export type datiPossibili = FinalState | TabellaPresenze | Chates | IMyGeolocation | IMyUint8Array | UtenteOnline;
-export type tabelleFirebase = 'raccolta' | 'tabella-presenze' | 'chates' | 'location' | 'byteArray' | 'utenti' | 'progressivi';
+export type tabelleFirebase = 'final-states' | 'tabella-presenze' | 'chates' | 'location' | 'byteArray' | 'utenti' | 'progressivi';
 
 export interface TuplaPossibile {
     dato: datiPossibili,

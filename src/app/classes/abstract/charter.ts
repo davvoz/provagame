@@ -99,7 +99,7 @@ export class Charter extends Square implements CharterParam, IOtherAnimations {
   scudoCounter = new CounterToTrashold(500, false);
   pozioneCounter = new CounterToTrashold(500, false);
   visualizzaDannoCounter = new CounterToTrashold(30, false);
-  haPresoUnaDirezioneCounter = new CounterToTrashold(25, false);
+  haPresoUnaDirezioneCounter = new CounterToTrashold(75, false);
 
   counterForCriticoTreshold = 100;
   counterForCritico = 0;
@@ -321,8 +321,8 @@ export class Charter extends Square implements CharterParam, IOtherAnimations {
     return {
       x: this.config.x * this.config.w - this.config.w ,
       y: this.config.y * this.config.h - this.config.h,
-      h: this.config.w * 3,
-      w: this.config.h * 3
+      h: this.config.w * 5,
+      w: this.config.h * 5
     }
   }
 
