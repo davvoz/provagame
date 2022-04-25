@@ -16,8 +16,13 @@ import { InfoComponent } from './components/info/info.component';
 import { MultiPlayerGameComponent } from './components/multi-player-game/multi-player-game.component';
 import { CommonModule } from '@angular/common';
 import { SignupComponent } from './components/signup/signup.component';
-import { AngularFireModule } from '@angular/fire/compat';
-import { ServiceWorkerModule } from '@angular/service-worker';
+import { provideMessaging, getMessaging } from '@angular/fire/messaging';
+import { MessagingComponent } from './components/messaging/messaging.component';
+import * as firebase from 'firebase/app';
+import { DoubleGameComponent } from './components/double-game/double-game.component';
+firebase.initializeApp(environment.firebase);
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,29 +33,18 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     InfoComponent,
     MultiPlayerGameComponent,
     SignupComponent,
+    MessagingComponent,
+    DoubleGameComponent,
   ],
   imports: [
     CommonModule,
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    AngularFireModule.initializeApp(environment.firebase),
+    AppRoutingModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideDatabase(() => getDatabase()), provideFirestore(() => getFirestore()),
-    AppRoutingModule,
-    ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: environment.production,
-      // Register the ServiceWorker as soon as the application is stable
-      // or after 30 seconds (whichever comes first).
-      registrationStrategy: 'registerWhenStable:30000'
-    }),
-    ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: environment.production,
-      // Register the ServiceWorker as soon as the app is stable
-      // or after 30 seconds (whichever comes first).
-      registrationStrategy: 'registerWhenStable:30000'
-    }),
-
+    provideMessaging(() => getMessaging())
   ],
   providers: [],
   bootstrap: [AppComponent]

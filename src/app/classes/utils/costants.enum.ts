@@ -172,14 +172,28 @@ export interface Player {
 export interface PlayerParametri {
     parametriPlayer: Player
 }
-
-export type tipoProgressivi = 'utenti' | 'final-states' | 'messaggi';
+export interface FirePlayer {
+    nome: string,
+    progressivo: number,
+    scelto: boolean,
+    pronto : boolean,
+    numeroAiDadi:number,
+    inizia:boolean,
+    giocando:boolean
+}
+export type tipoProgressivi = 'utenti' | 'final-states' | 'messaggi' | 'player-one' | 'player-two';
 export type datiPossibili = FinalState | TabellaPresenze | Chates | IMyGeolocation | IMyUint8Array | UtenteOnline;
-export type tabelleFirebase = 'final-states' | 'tabella-presenze' | 'chates' | 'location' | 'byteArray' | 'utenti' | 'progressivi';
+export type tabelleFirebase = 'players' | 'final-states' | 'tabella-presenze' | 'chates' | 'location' | 'byteArray' | 'utenti' | 'progressivi'| 'matrici';
 
 export interface TuplaPossibile {
     dato: datiPossibili,
     tabella: tabelleFirebase
+}
+
+export interface FireTris{
+    uno:string[],
+    due:string[],
+    tre:string[]
 }
 
 

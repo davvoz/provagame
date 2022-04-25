@@ -1,5 +1,5 @@
 import { Square } from "../elements/square";
-import { classeProiettile, Coordinate, direzione, Player, SquareConfig, SquareParam } from './costants.enum';
+import { classeProiettile, Coordinate, direzione, FirePlayer, Player, SquareConfig, SquareParam } from './costants.enum';
 import { CollisionToDirection } from "./collision-to-direction";
 import { Guerriero } from "../charters/guerriero";
 import { Mago } from "../charters/mago";
@@ -322,6 +322,17 @@ export class Utilities {
         };
     }
 
+    static getDefaultFirePlayer(playerNumer: number): FirePlayer {
+        return {
+            nome: 'Default_name_' + playerNumer,
+            progressivo: 0,
+            scelto: false,
+            pronto: false,
+            numeroAiDadi: 0,
+            inizia: false,
+            giocando: false
+        }
+    }
 }
 
 

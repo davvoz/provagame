@@ -52,3 +52,4 @@ src/environments/environment.prod.ts
 y/index.html
 firebase.json
 .firebaserc
+src/firebase-messaging-sw.js
