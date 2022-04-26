@@ -1,4 +1,3 @@
-import { ThisReceiver } from '@angular/compiler';
 import { AfterViewInit, Component } from '@angular/core';
 import { collectionData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
@@ -27,13 +26,15 @@ export class DoubleGameComponent implements AfterViewInit {
   isTuoTurno = false;
   matrice !: FireTris;
   playerScelto: FirePlayer = Utilities.getDefaultFirePlayer(1);
-  nemicoScelto: FirePlayer = Utilities.getDefaultFirePlayer(1);;
+  nemicoScelto: FirePlayer = Utilities.getDefaultFirePlayer(1);
   listaPlayers: FirePlayer[] = [];
 
   hannoTiratoTutti = false;
   haVintoIlPlayer = false;
   haVintoIlNemico = false;
   fatto = false;
+  isPartitaFinita = false;
+  risultato='ancora nessun risultato';
   constructor(public fservice: FirebaseService) { }
 
   ngAfterViewInit(): void {
@@ -54,6 +55,10 @@ export class DoubleGameComponent implements AfterViewInit {
     this.tris.subscribe(
       (res) => {
         this.matrice = res[0];
+        if (this.checkVittoria(this.getFirebaseSymbol(this.nemicoScelto))) {
+          this.isPartitaFinita = true;
+          this.risultato = 'Hai perso';
+        }
       }
     );
 
@@ -63,22 +68,8 @@ export class DoubleGameComponent implements AfterViewInit {
       (arr) => {
         arr.forEach(
           (el) => {
-            if (el.scelto && el.progressivo !== this.playerScelto.progressivo) {
-              this.haScelto = true;
-              if (this.haScelto && this.haiScelto) {
-                this.ciSonoTutti = true;
-                this.nemicoScelto = el;
-              }
-            }
-            if (this.playerScelto.numeroAiDadi > 0 && this.nemicoScelto.numeroAiDadi > 0) {
-              this.hannoTiratoTutti = true;
-              if (this.playerScelto.numeroAiDadi > this.nemicoScelto.numeroAiDadi) {
-                this.haVintoIlPlayer = true;
-              }
-              if (this.playerScelto.numeroAiDadi < this.nemicoScelto.numeroAiDadi) {
-                this.haVintoIlNemico = true;
-              }
-            }
+            this.setCiSonoTutti(el);
+            this.checkDadi();
           }
         );
         if (this.hannoTiratoTutti && !this.fatto) {
@@ -92,6 +83,28 @@ export class DoubleGameComponent implements AfterViewInit {
         }
       }
     );
+  }
+
+  private setCiSonoTutti(el: FirePlayer) {
+    if (el.scelto && el.progressivo !== this.playerScelto.progressivo) {
+      this.haScelto = true;
+      if (this.haScelto && this.haiScelto) {
+        this.ciSonoTutti = true;
+        this.nemicoScelto = el;
+      }
+    }
+  }
+
+  private checkDadi() {
+    if (this.playerScelto.numeroAiDadi > 0 && this.nemicoScelto.numeroAiDadi > 0) {
+      this.hannoTiratoTutti = true;
+      if (this.playerScelto.numeroAiDadi > this.nemicoScelto.numeroAiDadi) {
+        this.haVintoIlPlayer = true;
+      }
+      if (this.playerScelto.numeroAiDadi < this.nemicoScelto.numeroAiDadi) {
+        this.haVintoIlNemico = true;
+      }
+    }
   }
 
   registraPlayer(player: FirePlayer) {
@@ -119,7 +132,7 @@ export class DoubleGameComponent implements AfterViewInit {
     return player.progressivo === 1 ? 'player-one' : 'player-two';
   }
 
-  private getFirebaseSymbol(player: FirePlayer) {
+ getFirebaseSymbol(player: FirePlayer) {
     return player.progressivo === 1 ? 'X' : 'O';
 
   }
@@ -155,31 +168,78 @@ export class DoubleGameComponent implements AfterViewInit {
   }
 
   sceltoQuestoQuadrato(i: number, j: number) {
-    const simbolo = this.getFirebaseSymbol(this.playerScelto);
-    switch (i) {
-      case 0:
-        if (this.matrice.uno[j] !== simbolo) {
-          this.matrice.uno[j] = simbolo;
+    if (!this.isPartitaFinita) {
+      const simbolo = this.getFirebaseSymbol(this.playerScelto);
+      switch (i) {
+        case 0:
+          if (this.matrice.uno[j] !== simbolo) {
+            this.matrice.uno[j] = simbolo;
+          }
+          break;
+        case 1: if (this.matrice.due[j] !== simbolo) {
+          this.matrice.due[j] = simbolo;
         }
-        break;
-      case 1: if (this.matrice.due[j] !== simbolo) {
-        this.matrice.due[j] = simbolo;
+          break;
+        case 2: if (this.matrice.tre[j] !== simbolo) {
+          this.matrice.tre[j] = simbolo;
+        }
+          break;
       }
-        break;
-      case 2: if (this.matrice.tre[j] !== simbolo) {
-        this.matrice.tre[j] = simbolo;
-      }
-        break;
+      this.fservice.updateTris({
+        uno: this.matrice.uno,
+        due: this.matrice.due,
+        tre: this.matrice.tre,
+        giocaIlNumero: this.nemicoScelto.progressivo
+      }).then(
+        (res) => {
+          this.matrice = res;
+          if (this.checkVittoria(simbolo)) {
+            this.isPartitaFinita = true;
+            this.risultato = 'Hai vinto';
+          }
+        }
+      );
+    }
+  }
+
+  private checkVittoria(simbolo: string): boolean {
+    const condizioneOrizzontale = this.checkTrisOrizzontale(simbolo, this.matrice.uno) ||
+      this.checkTrisOrizzontale(simbolo, this.matrice.due) ||
+      this.checkTrisOrizzontale(simbolo, this.matrice.tre);
+    return this.checkTrisObliquo(simbolo) || this.checkTrisVerticale(simbolo) || condizioneOrizzontale;
+  }
+
+  private checkTrisObliquo(simbolo: string): boolean {
+    return (this.matrice.uno[2] === simbolo && this.matrice.due[1] === simbolo && this.matrice.tre[0] === simbolo) ||
+      (this.matrice.uno[0] === simbolo && this.matrice.due[1] === simbolo && this.matrice.tre[2] === simbolo);
+  }
+
+  private checkTrisVerticale(simbolo: string): boolean {
+    return (this.matrice.uno[0] === simbolo && this.matrice.due[0] === simbolo && this.matrice.tre[0] === simbolo) ||
+      (this.matrice.uno[1] === simbolo && this.matrice.due[1] === simbolo && this.matrice.tre[1] === simbolo) ||
+      (this.matrice.uno[2] === simbolo && this.matrice.due[2] === simbolo && this.matrice.tre[2] === simbolo)
+  }
+
+  private checkTrisOrizzontale(simbolo: string, array: any[]): boolean {
+    if (array[0] === simbolo && array[1] === simbolo && array[2] === simbolo) {
+      return true
+    }
+    return false;
+  }
+
+  resetGame() {
+    this.isPartitaFinita = false;
+    this.matrice = {
+      uno: [' ', ' ', ' '],
+      due: [' ', ' ', ' '],
+      tre: [' ', ' ', ' '],
+      giocaIlNumero: 0
     }
     this.fservice.updateTris({
       uno: this.matrice.uno,
       due: this.matrice.due,
       tre: this.matrice.tre,
       giocaIlNumero: this.nemicoScelto.progressivo
-    }).then(
-      (res) => {
-        this.matrice = res;
-      }
-    );
+    });
   }
 }
