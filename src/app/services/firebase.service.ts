@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, query, orderBy, limit, doc, docData, deleteDoc, setDoc, getDoc, updateDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { FirePlayer, FireTris,  tabelleFirebase, tipoProgressivi, TuplaPossibile, UtenteOnline } from '../classes/utils/costants.enum';
+import { FirePlayer, FireTris, tabelleFirebase, tipoProgressivi, TuplaPossibile, UtenteOnline } from '../classes/utils/costants.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -48,7 +48,8 @@ export class FirebaseService {
     return updateDoc(docRef, {
       uno: tris.uno,
       due: tris.due,
-      tre: tris.tre
+      tre: tris.tre,
+      giocaIlNumero: tris.giocaIlNumero
     }).then(
       async () => {
         const docSnapy = await getDoc(docRef);
@@ -65,7 +66,8 @@ export class FirebaseService {
       scelto: player.scelto,
       nome: player.nome,
       pronto: player.pronto,
-      numeroAiDadi: player.numeroAiDadi
+      numeroAiDadi: player.numeroAiDadi,
+      //color: player.color
     }).then(
       async () => {
         let docRef = doc(this.firestore, "players", tp);

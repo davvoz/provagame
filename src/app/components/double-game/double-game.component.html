@@ -2,7 +2,8 @@
     <div *ngIf="!(playerScelto.pronto && nemicoScelto.pronto)">
         <div *ngIf="!haiScelto">
             <div class="grid-container" style="display: grid;grid-template-columns: auto  auto;">
-                <div *ngFor="let item of (players |async) ;let i = index" class="gridElement" style="border:5px solid black">
+                <div *ngFor="let item of (players |async) ;let i = index" class="gridElement"
+                    style="border:5px solid black">
                     <div [ngClass]="item.scelto ? 'green' :'red'">
                         {{item.scelto ? 'qualcuno ha scelto player '+ item.progressivo:'si puo scegliere'}}
                         <h1>{{item.nome}}-{{item.progressivo}}</h1>
@@ -68,35 +69,38 @@
         </div>
     </div>
 </div>
-<div *ngIf="isStarted">
+<div *ngIf="isStarted" class="abi">
     <h2>{{playerScelto.nome}} Vs {{nemicoScelto.nome}}</h2>
     <h3>Tu sei {{playerScelto.nome}} </h3>
-    <h4>Turno di</h4>
+    <h4>Turno di {{matrice.giocaIlNumero === playerScelto.progressivo ? playerScelto.nome : nemicoScelto.nome}}</h4>
     <h1>TRIS</h1>
+    <h1>{{matrice.giocaIlNumero === playerScelto.progressivo ? 'Tocca a te' : 'Aspetta che giochi il tuo avversario'}}
+    </h1>
+    <h2>{{matrice.giocaIlNumero}}</h2>
     <div *ngFor="let matrix of (tris|async);let i = index"
         style="display: grid;width: 500px;max-width: 500px;grid-template-rows: auto auto auto;background-color: yellowgreen;">
         <div style="display: grid;grid-template-columns: auto auto auto;">
             <div *ngFor="let quadrato of matrix.uno;let j = index">
-                <span (click)="sceltoQuestoQuadrato(0,j)" class="quadrato"
-                    [ngStyle]="{'background-color': quadrato === 'X' ? 'red' :'white'}">
+                <button (click)="sceltoQuestoQuadrato(0,j)" class="quadrato"
+                    [disabled]="matrice.giocaIlNumero !==  playerScelto.progressivo || (quadrato === 'X' ||quadrato === 'O')">
                     {{quadrato}}
-                </span>
+                </button>
             </div>
         </div>
         <div style="display: grid;grid-template-columns: auto auto auto;">
             <div *ngFor="let quadrato of matrix.due;let j = index">
-                <span (click)="sceltoQuestoQuadrato(1,j)" class="quadrato"
-                    [ngStyle]="{'background-color': quadrato === 'X' ? 'red' :'white'}">
+                <button (click)="sceltoQuestoQuadrato(1,j)" class="quadrato"
+                    [disabled]="matrice.giocaIlNumero !==  playerScelto.progressivo || (quadrato === 'X' ||quadrato === 'O')">
                     {{quadrato}}
-                </span>
+                </button>
             </div>
         </div>
         <div style="display: grid;grid-template-columns: auto auto auto;">
             <div *ngFor="let quadrato of matrix.tre;let j = index">
-                <span (click)="sceltoQuestoQuadrato(2,j)" class="quadrato"
-                    [ngStyle]="{'background-color': quadrato === 'X' ? 'red' :'white'}">
+                <button (click)="sceltoQuestoQuadrato(2,j)" class="quadrato"
+                    [disabled]="matrice.giocaIlNumero !==  playerScelto.progressivo || (quadrato === 'X' ||quadrato === 'O')">
                     {{quadrato}}
-                </span>
+                </button>
             </div>
         </div>
     </div>

@@ -330,7 +330,7 @@ export class Utilities {
             pronto: false,
             numeroAiDadi: 0,
             inizia: false,
-            giocando: false
+            color: 'white'
         }
     }
 }

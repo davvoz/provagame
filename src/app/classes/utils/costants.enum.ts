@@ -179,7 +179,7 @@ export interface FirePlayer {
     pronto : boolean,
     numeroAiDadi:number,
     inizia:boolean,
-    giocando:boolean
+    color:string
 }
 export type tipoProgressivi = 'utenti' | 'final-states' | 'messaggi' | 'player-one' | 'player-two';
 export type datiPossibili = FinalState | TabellaPresenze | Chates | IMyGeolocation | IMyUint8Array | UtenteOnline;
@@ -193,7 +193,8 @@ export interface TuplaPossibile {
 export interface FireTris{
     uno:string[],
     due:string[],
-    tre:string[]
+    tre:string[],
+    giocaIlNumero:number;
 }
 
 

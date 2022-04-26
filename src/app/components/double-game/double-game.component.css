@@ -4,27 +4,39 @@
 .red {
     background-color: rgb(142, 23, 179);
 }
-p,div,input{
-    font-family: 'Lexend','Orbitron', 'Courier New', Courier, monospace;
-
+p,
+div,
+input {
+    font-family: "Lexend", "Orbitron", "Courier New", Courier, monospace;
 }
-h1,h2,button{
+h1,
+h2,
+button {
     font-family: Orbitron, Helvetica, Arial, Verdana, Tahoma, sans-serif;
 }
-.grid-container{
+.grid-container {
     display: grid;
     gap: 50px 100px;
 }
-.quadrato{
-    float: left; 
+.quadrato {
+    float: left;
     height: 150px;
     width: 150px;
     border: 2px solid black;
     font-size: xx-large;
     text-align: center;
+    text-align: line-;
     cursor: pointer;
+    display: table-cell;
+    vertical-align: middle;
 }
 
-.linea{
+.linea {
     display: inline-grid;
+}
+.abi {
+    color:gold;
+    background-image: url("/assets/images/Brutalo.png");
+    background-repeat: round;
+    background-color: rgb(39, 37, 23);
 }

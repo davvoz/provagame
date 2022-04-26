@@ -1,3 +1,4 @@
+import { ThisReceiver } from '@angular/compiler';
 import { AfterViewInit, Component } from '@angular/core';
 import { collectionData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
@@ -23,20 +24,31 @@ export class DoubleGameComponent implements AfterViewInit {
   tuttiHannoScelto = false;
   isNumeropGenerato = false;
   isStarted = false;
+  isTuoTurno = false;
   matrice !: FireTris;
   playerScelto: FirePlayer = Utilities.getDefaultFirePlayer(1);
   nemicoScelto: FirePlayer = Utilities.getDefaultFirePlayer(1);;
   listaPlayers: FirePlayer[] = [];
-  winPLayer!: FirePlayer;
 
+  hannoTiratoTutti = false;
+  haVintoIlPlayer = false;
+  haVintoIlNemico = false;
+  fatto = false;
   constructor(public fservice: FirebaseService) { }
 
   ngAfterViewInit(): void {
     this.matrice = {
-      uno: ['0', '0', '0'],
-      due: ['0', '0', '0'],
-      tre: ['0', '0', '0'],
+      uno: [' ', ' ', ' '],
+      due: [' ', ' ', ' '],
+      tre: [' ', ' ', ' '],
+      giocaIlNumero: 0
     }
+    this.fservice.updateTris({
+      uno: this.matrice.uno,
+      due: this.matrice.due,
+      tre: this.matrice.tre,
+      giocaIlNumero: 0
+    });
     // @ts-ignore
     this.tris = collectionData(this.fservice.getLista('matrici'));
     this.tris.subscribe(
@@ -58,21 +70,39 @@ export class DoubleGameComponent implements AfterViewInit {
                 this.nemicoScelto = el;
               }
             }
+            if (this.playerScelto.numeroAiDadi > 0 && this.nemicoScelto.numeroAiDadi > 0) {
+              this.hannoTiratoTutti = true;
+              if (this.playerScelto.numeroAiDadi > this.nemicoScelto.numeroAiDadi) {
+                this.haVintoIlPlayer = true;
+              }
+              if (this.playerScelto.numeroAiDadi < this.nemicoScelto.numeroAiDadi) {
+                this.haVintoIlNemico = true;
+              }
+            }
           }
-        )
+        );
+        if (this.hannoTiratoTutti && !this.fatto) {
+          this.fservice.updateTris({
+            uno: this.matrice.uno,
+            due: this.matrice.due,
+            tre: this.matrice.tre,
+            giocaIlNumero: this.haVintoIlPlayer ? this.playerScelto.progressivo : this.nemicoScelto.progressivo
+          });
+          this.fatto = true;
+        }
       }
     );
   }
 
   registraPlayer(player: FirePlayer) {
     if (this.nome.startsWith('Default_name')) {
-      this.nome = Utilities.nomeRandomico() + '0' + Utilities.conomeRandomico();
+      this.nome = Utilities.nomeRandomico() + ' ' + Utilities.conomeRandomico();
     }
     player.nome = this.nome;
     player.scelto = true;
     player.pronto = false;
     this.fservice.updatePlayers(this.getFirebaseName(player), player);
-    this.fservice.getPlayer(player.progressivo === 1 ? 'player-one' : 'player-two').then(
+    this.fservice.getPlayer(this.getFirebaseName(player)).then(
       (res) => {
         this.playerScelto = res;
         this.haiScelto = true;
@@ -87,6 +117,11 @@ export class DoubleGameComponent implements AfterViewInit {
 
   private getFirebaseName(player: FirePlayer): tipoProgressivi {
     return player.progressivo === 1 ? 'player-one' : 'player-two';
+  }
+
+  private getFirebaseSymbol(player: FirePlayer) {
+    return player.progressivo === 1 ? 'X' : 'O';
+
   }
 
   resetPlayers() {
@@ -110,11 +145,7 @@ export class DoubleGameComponent implements AfterViewInit {
     this.fservice.updatePlayers(this.getFirebaseName(this.playerScelto), this.playerScelto).then(
       (res) => {
         this.playerScelto = res;
-        if (this.nemicoScelto.numeroAiDadi !== 0) {
-          if (this.nemicoScelto.numeroAiDadi < this.playerScelto.numeroAiDadi) {
-            this.winPLayer = this.playerScelto
-          }
-        }
+
       }
     );
   }
@@ -124,31 +155,27 @@ export class DoubleGameComponent implements AfterViewInit {
   }
 
   sceltoQuestoQuadrato(i: number, j: number) {
+    const simbolo = this.getFirebaseSymbol(this.playerScelto);
     switch (i) {
       case 0:
-        if (this.matrice.uno[j] === 'X') {
-          this.matrice.uno[j] = '0'
-        } else {
-          this.matrice.uno[j] = 'X';
+        if (this.matrice.uno[j] !== simbolo) {
+          this.matrice.uno[j] = simbolo;
         }
         break;
-      case 1: if (this.matrice.due[j] === 'X') {
-        this.matrice.due[j] = '0'
-      } else {
-        this.matrice.due[j] = 'X';
+      case 1: if (this.matrice.due[j] !== simbolo) {
+        this.matrice.due[j] = simbolo;
       }
         break;
-      case 2: if (this.matrice.tre[j] === 'X') {
-        this.matrice.tre[j] = '0'
-      } else {
-        this.matrice.tre[j] = 'X';
+      case 2: if (this.matrice.tre[j] !== simbolo) {
+        this.matrice.tre[j] = simbolo;
       }
         break;
     }
     this.fservice.updateTris({
       uno: this.matrice.uno,
       due: this.matrice.due,
-      tre: this.matrice.tre
+      tre: this.matrice.tre,
+      giocaIlNumero: this.nemicoScelto.progressivo
     }).then(
       (res) => {
         this.matrice = res;
