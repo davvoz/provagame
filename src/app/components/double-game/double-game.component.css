@@ -1,8 +1,9 @@
 .green {
-    background-color: rgb(190, 255, 40);
+    background-color: rgb(4, 174, 226);
 }
 .red {
-    background-color: rgb(142, 23, 179);
+   background-color: crimson;
+    
 }
 p,
 div,
@@ -39,4 +40,19 @@ button {
     background-image: url("/assets/images/Brutalo.png");
     background-repeat: round;
     background-color: rgb(39, 37, 23);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.but,.numero{
+    border-radius: 30%;
+    border: 7px solid gold;
+    background-color: crimson;
+    font-size: 200%;
+    color: gold;
+    text-align: center;
+}
+.ebi{
+    background-image: url("/assets/images/Brutalo.png");
+    background-color: rgb(48, 56, 0);
+    color: gold;
 }

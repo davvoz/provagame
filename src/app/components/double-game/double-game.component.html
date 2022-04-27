@@ -1,12 +1,12 @@
-<div *ngIf="!isStarted">
+<div *ngIf="!isStarted" class="ebi">
     <div *ngIf="!(playerScelto.pronto && nemicoScelto.pronto)">
         <div *ngIf="!haiScelto">
-            <div class="grid-container" style="display: grid;grid-template-columns: auto  auto;">
+            <div class="grid-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
                 <div *ngFor="let item of (players |async) ;let i = index" class="gridElement">
-                    <div [ngClass]="item.scelto ? 'green' :'red'">
+                    <div [ngClass]="item.scelto ? 'red' :'green'">
                         {{item.scelto ? 'qualcuno ha scelto player '+ item.progressivo:'si puo scegliere'}}
                         <h1>{{item.nome}}-{{item.progressivo}}</h1>
-                        <button *ngIf="!item.scelto" (click)="registraPlayer(item)">click me</button>
+                        <button style="cursor: pointer;" class="but" *ngIf="!item.scelto" (click)="registraPlayer(item)">GENERA UN GIOCATORE</button>
                     </div>
                 </div>
             </div>
@@ -15,7 +15,7 @@
             <h1>{{playerScelto.nome}}</h1>
             <p>Ti sei registrato come player {{playerScelto.progressivo}}
             </p><br>
-            <button *ngIf="!nemicoScelto.scelto" (click)="resetPlayer(playerScelto)">Reset player</button>
+            <button class="but" *ngIf="!nemicoScelto.scelto" (click)="resetPlayer(playerScelto)">Reset player</button>
             <div>
                 Stato nemico ( se verde ha scelto ) :
                 <div [ngClass]="nemicoScelto.scelto ? 'green' : 'red'"
@@ -28,7 +28,7 @@
                     Ti scontrerai con il player {{nemicoScelto.progressivo}} {{nemicoScelto.nome}}
                 </h3>
                 Tu come sei messo ? <br>
-                <button *ngIf="!playerScelto.pronto" (click)="sonoPronto()">sono pronto</button> <br>
+                <button class="but" *ngIf="!playerScelto.pronto" (click)="sonoPronto()">sono pronto</button> <br>
                 Sei pronto ? se rosso no
                 <div [ngClass]="playerScelto.pronto ? 'green' : 'red'"
                     style="width:30px;max-width:30px;border-radius:100%; display: inline-block;min-height: 30px;">
@@ -40,44 +40,45 @@
                 </div>
             </div>
         </div><br>
-        <button *ngIf="!haiScelto" (click)="resetPlayers()">reset</button>
+        <button style="cursor: pointer;" class="but" *ngIf="!haiScelto" (click)="resetPlayers()">reset</button>
     </div>
     <div *ngIf="(playerScelto.pronto && nemicoScelto.pronto)">
-        <h2>{{playerScelto.nome}} Vs {{nemicoScelto.nome}}</h2>
+        <h2><span class="red">{{playerScelto.nome}}</span><span style="border-radius: 100%;background-color: red;">Vs</span> <span class="green">{{nemicoScelto.nome}}</span> </h2>
         <h3>Tu sei {{playerScelto.nome}} </h3>
         <h1>Il numero piu alto inzia , clicca per generarlo</h1>
-        <button *ngIf="!isNumeropGenerato" (click)="updateNumeroAiDadi()">genera</button>
+        <button class="but" *ngIf="!isNumeropGenerato" (click)="updateNumeroAiDadi()">genera</button>
         <h3>
-            Numero tuo {{playerScelto.numeroAiDadi}}
+            Numero tuo <span class="numero">{{playerScelto.numeroAiDadi}}</span> 
         </h3>
         <h3>
-            Numero nemico {{nemicoScelto.numeroAiDadi}}
+            Numero nemico <span class="numero">{{nemicoScelto.numeroAiDadi}}</span> 
         </h3>
         <div *ngIf="nemicoScelto.numeroAiDadi !== 0 && playerScelto.numeroAiDadi !== 0">
             <div *ngIf=" playerScelto.numeroAiDadi > nemicoScelto.numeroAiDadi">
-                <h1>Molto bene eroe {{playerScelto.nome}} , sono fiero di te</h1>
-                <h2>Il tuo acume è solo inferiore alla tua infinta saggezza 💯</h2>
+                <h1>{{playerScelto.nome}} numero piu alto , giochi per primo , clicca -> <button style="cursor: pointer;" class="but" (click)="readyGo()">ok andiamo !</button></h1>
             </div>
             <div *ngIf=" playerScelto.numeroAiDadi < nemicoScelto.numeroAiDadi">
-                <h1>Porca puttana amico ! {{playerScelto.nome}} sei proprio una merda</h1>
-                <h2>Il tuo acume è solo inferiore alla tua infinta idiozia 👎</h2>
-            </div>
-            <div>
-                <button (click)="readyGo()">ok andiamo !</button>
+                <h1>{{playerScelto.nome}} numero piu basso , giochi per secondo ,clicca -> <button style="cursor: pointer;" class="but" (click)="readyGo()">ok andiamo !</button></h1>
             </div>
         </div>
     </div>
 </div>
-<div *ngIf="isStarted" class="abi">
-    <h2>{{playerScelto.nome}} Vs {{nemicoScelto.nome}}</h2>
-    <h3>Tu sei {{playerScelto.nome}} </h3>
-    <h4>Turno di {{matrice.giocaIlNumero === playerScelto.progressivo ? playerScelto.nome : nemicoScelto.nome}}</h4>
-    <h1>TRIS</h1>
-    <h1 *ngIf="isPartitaFinita" style="color: red;">{{risultato}}</h1>
-    <h1 *ngIf="!isPartitaFinita" [ngStyle]="{'color': matrice.giocaIlNumero === playerScelto.progressivo ? 'red' : 'gold'}">
-        {{matrice.giocaIlNumero === playerScelto.progressivo ? 'Tocca a te ' + getFirebaseSymbol(playerScelto) : 'Aspetta che giochi il tuo avversario' +  getFirebaseSymbol(nemicoScelto)}}
-    </h1>
-    <div *ngFor="let matrix of (tris|async);let i = index"
+<div *ngIf="isStarted" class="abi" >
+    <div>
+        <h2><span class="red">{{playerScelto.nome}}</span><span style="border-radius: 100%;background-color: red;">Vs</span> <span class="green">{{nemicoScelto.nome}}</span> </h2>
+        <h3>Tu sei {{playerScelto.nome}} </h3>
+        <h4>Turno di {{matrice.giocaIlNumero === playerScelto.progressivo ? playerScelto.nome : nemicoScelto.nome}}</h4>
+        <h1 *ngIf="isPartitaFinita" class="but" style="background-color: rgb(4, 174, 226);">{{risultato}}</h1>
+        <h2 *ngIf="isPartitaFinita">Per rigiocare resetta dal bottone in basso</h2>
+        <h1 *ngIf="!isPartitaFinita" [ngStyle]="{'color': matrice.giocaIlNumero === playerScelto.progressivo ? 'red' : 'gold'}">
+            {{matrice.giocaIlNumero === playerScelto.progressivo ? 'Tocca a te ' + getFirebaseSymbol(playerScelto) : 'Aspetta che giochi il tuo avversario ' +  getFirebaseSymbol(nemicoScelto)}}
+        </h1>
+        <div *ngIf="isPartitaFinita">
+            <button style="cursor: pointer;" class="but" (click)="resetGame()">resetta game</button>
+        </div>
+    </div>
+    <div>
+        <div *ngFor="let matrix of (tris|async);let i = index"
         style="display: grid;width: 450px;max-width: 450px;grid-template-rows: auto auto auto;background-color: rgb(255, 255, 255);">
         <div style="display: grid;grid-template-columns: auto auto auto;">
             <div *ngFor="let quadrato of matrix.uno;let j = index">
@@ -104,7 +105,7 @@
             </div>
         </div>
     </div>
-    <div>
-        <button (click)="resetGame()">resetta game il primo turno è del tuo nemico</button>
     </div>
+   
+    
 </div>

@@ -34,30 +34,39 @@ export class DoubleGameComponent implements AfterViewInit {
   haVintoIlNemico = false;
   fatto = false;
   isPartitaFinita = false;
-  risultato='ancora nessun risultato';
+  risultato = 'ancora nessun risultato';
   constructor(public fservice: FirebaseService) { }
-
-  ngAfterViewInit(): void {
-    this.matrice = {
-      uno: [' ', ' ', ' '],
-      due: [' ', ' ', ' '],
-      tre: [' ', ' ', ' '],
-      giocaIlNumero: 0
+  private checkVouta(array: string[]): boolean {
+    let almenoUnaVuota = false;
+    for (const el of array) {
+      if (el === ' ') {
+        almenoUnaVuota = true;
+        break;
+      }
     }
-    this.fservice.updateTris({
-      uno: this.matrice.uno,
-      due: this.matrice.due,
-      tre: this.matrice.tre,
-      giocaIlNumero: 0
-    });
+    return almenoUnaVuota;
+  }
+  ngAfterViewInit(): void {
+    this.resettaMAtrice();
     // @ts-ignore
     this.tris = collectionData(this.fservice.getLista('matrici'));
     this.tris.subscribe(
       (res) => {
         this.matrice = res[0];
-        if (this.checkVittoria(this.getFirebaseSymbol(this.nemicoScelto))) {
+        const check = this.checkVittoria(this.getFirebaseSymbol(this.nemicoScelto));
+        if (check) {
           this.isPartitaFinita = true;
-          this.risultato = 'Hai perso';
+          this.risultato = 'Hai perso ';
+          this.haVintoIlNemico = true;
+          this.fatto = false;
+        } else {
+          let almenoUnaVuota = this.checkVouta(this.matrice.uno) || this.checkVouta(this.matrice.due) || this.checkVouta(this.matrice.tre);
+          if (!almenoUnaVuota) {
+            this.isPartitaFinita = true;
+            this.risultato = 'Hai pareggiato';
+            this.haVintoIlNemico = false;
+            this.fatto = false;
+          }
         }
       }
     );
@@ -83,6 +92,21 @@ export class DoubleGameComponent implements AfterViewInit {
         }
       }
     );
+  }
+
+  private resettaMAtrice() {
+    this.matrice = {
+      uno: [' ', ' ', ' '],
+      due: [' ', ' ', ' '],
+      tre: [' ', ' ', ' '],
+      giocaIlNumero: 0
+    };
+    this.fservice.updateTris({
+      uno: this.matrice.uno,
+      due: this.matrice.due,
+      tre: this.matrice.tre,
+      giocaIlNumero: 0
+    });
   }
 
   private setCiSonoTutti(el: FirePlayer) {
@@ -132,7 +156,7 @@ export class DoubleGameComponent implements AfterViewInit {
     return player.progressivo === 1 ? 'player-one' : 'player-two';
   }
 
- getFirebaseSymbol(player: FirePlayer) {
+  getFirebaseSymbol(player: FirePlayer) {
     return player.progressivo === 1 ? 'X' : 'O';
 
   }
@@ -196,6 +220,15 @@ export class DoubleGameComponent implements AfterViewInit {
           if (this.checkVittoria(simbolo)) {
             this.isPartitaFinita = true;
             this.risultato = 'Hai vinto';
+            this.haVintoIlPlayer = true;
+          } else {
+            let almenoUnaVuota = this.checkVouta(this.matrice.uno) || this.checkVouta(this.matrice.due) || this.checkVouta(this.matrice.tre);
+            if (!almenoUnaVuota && this.risultato !== 'Hai vinto') {
+              this.isPartitaFinita = true;
+              this.risultato = 'Hai pareggiato';
+              this.haVintoIlNemico = false;
+              this.fatto = false;
+            }
           }
         }
       );
