@@ -218,22 +218,26 @@ export class DoubleGameComponent implements AfterViewInit {
         giocaIlNumero: this.nemicoScelto.progressivo
       }).then(
         (res) => {
-          this.matrice = res;
-          if (this.checkVittoria(simbolo)) {
-            this.isPartitaFinita = true;
-            this.risultato = 'Hai vinto';
-            this.haVintoIlPlayer = true;
-          } else {
-            let almenoUnaVuota = this.checkVouta(this.matrice.uno) || this.checkVouta(this.matrice.due) || this.checkVouta(this.matrice.tre);
-            if (!almenoUnaVuota && this.risultato !== 'Hai vinto') {
-              this.isPartitaFinita = true;
-              this.risultato = 'Hai pareggiato';
-              this.haVintoIlNemico = false;
-              this.fatto = false;
-            }
-          }
+          this.setAndCeckVittoria(res, simbolo);
         }
       );
+    }
+  }
+
+  private setAndCeckVittoria(res: any, simbolo: string) {
+    this.matrice = res;
+    if (this.checkVittoria(simbolo)) {
+      this.isPartitaFinita = true;
+      this.risultato = 'Hai vinto';
+      this.haVintoIlPlayer = true;
+    } else {
+      let almenoUnaVuota = this.checkVouta(this.matrice.uno) || this.checkVouta(this.matrice.due) || this.checkVouta(this.matrice.tre);
+      if (!almenoUnaVuota && this.risultato !== 'Hai vinto') {
+        this.isPartitaFinita = true;
+        this.risultato = 'Hai pareggiato';
+        this.haVintoIlNemico = false;
+        this.fatto = false;
+      }
     }
   }
 

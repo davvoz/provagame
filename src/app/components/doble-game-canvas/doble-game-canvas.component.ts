@@ -40,7 +40,6 @@ export class DobleGameCanvasComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.inizializzaPlayers();
-    //this.inizializzaPletora();
     const res = this.canvasGui.nativeElement.getContext('2d');
     if (!res || !(res instanceof CanvasRenderingContext2D)) {
       throw new Error('Failed to get 2d context.');
@@ -83,57 +82,10 @@ export class DobleGameCanvasComponent implements AfterViewInit {
       sc.stand();
       this.sceltaCharter.push(sc);
 
-
-      // collectionData(this.fservice.getPletoraPersonaggiOrdinata()).subscribe(
-      //   (resu) => {
-      //     // @ts-ignore
-      //     this.pletora.personaggi = resu.filter((el) => {
-      //       return !el['scelto']
-      //     });
-      //   }
-      // );
-
       this.players.subscribe((reso) => {
         this.listaPlayers = reso;
         let conterScvelti = 0;
-        this.listaPlayers.forEach(
-          (el) => {
-            if (el !== this.playerScelto && !this.haiScelto) {
-
-              if (
-                el.progressivo !== 0 &&
-                (el.progressivo !== this.playerScelto.progressivo && this.playerScelto.progressivo !== 0) &&
-                !this.isNemicoScelto &&
-                el.scelto && !this.enemyCharter) {
-                this.inizializzaNemico(el);
-              }
-              if (el.progressivo !== 0 &&
-                (el.progressivo !== this.playerScelto.progressivo && this.playerScelto.progressivo !== 0) &&
-                el.scelto &&
-                !el.nome.startsWith('Default_name_') && !this.enemyCharter) {
-                this.inizializzaNemico(el);
-              }
-
-              if (!el.nome.startsWith('Default_name_') && !this.enemyCharter) {
-                this.inizializzaNemico(el);
-              }
-
-              if (this.enemyCharter && !this.playerCharter) {
-                this.haScelto = true;
-              }
-
-            }
-            if (el.progressivo !== this.playerScelto.progressivo && !this.enemyCharter && el.classeCharter !== 'ABSTRACT' && el.scelto && this.playerScelto.classeCharter !== 'ABSTRACT') {
-              this.inizializzaNemico(el);
-            }
-            if (el.scelto) {
-              conterScvelti++;
-            }
-            if (conterScvelti === 2) {
-              this.isFaseScelta = false;
-            }
-          }
-        );
+        this.catchEnemy(conterScvelti);
       })
     }
     this.ctx.canvas.addEventListener(
@@ -145,6 +97,45 @@ export class DobleGameCanvasComponent implements AfterViewInit {
       });
 
     this.ngZone.runOutsideAngular(() => this.animate());
+  }
+
+  private catchEnemy(conterScvelti: number) {
+    this.listaPlayers.forEach(
+      (el) => {
+        if (el.progressivo !== this.playerScelto.progressivo && !this.haiScelto) {
+
+          this.inizializzaNemicoDaCatch(el);
+
+          if (this.enemyCharter && !this.playerCharter) {
+            this.haScelto = true;
+          }
+
+        }
+        if (el.progressivo !== this.playerScelto.progressivo && !this.enemyCharter && el.classeCharter !== 'ABSTRACT' && el.scelto && this.playerScelto.classeCharter !== 'ABSTRACT') {
+          this.inizializzaNemico(el);
+        }
+        if (el.scelto) {
+          conterScvelti++;
+        }
+        if (conterScvelti === 2) {
+          this.isFaseScelta = false;
+        }
+      }
+    );
+  }
+
+  private inizializzaNemicoDaCatch(el: FirePlayer) {
+    if (el.progressivo !== 0 &&
+      (el.progressivo !== this.playerScelto.progressivo && this.playerScelto.progressivo !== 0) &&
+      !this.isNemicoScelto &&
+      el.scelto && !this.enemyCharter) {
+      this.inizializzaNemico(el);
+    }
+
+
+    if (!el.nome.startsWith('Default_name_') && !this.enemyCharter) {
+      this.inizializzaNemico(el);
+    }
   }
 
   private inizializzaNemico(el: FirePlayer) {
@@ -164,37 +155,44 @@ export class DobleGameCanvasComponent implements AfterViewInit {
   private scegliPersonaggioButton(evt: MouseEvent) {
     for (const charter of this.sceltaCharter) {
       if (!this.haiScelto) {
-        const scegliCharterButtonTouched = Utilities.changeButtonState(evt, charter, this.ctx);
-        if (scegliCharterButtonTouched) {
-          this.haiScelto = true;
-          for (const player of this.listaPlayers) {
-            if (!player.scelto && player !== this.playerScelto) {
-              player.nome = Utilities.nomeRandomico() + ' ' + Utilities.conomeRandomico() + ' : ' + charter.typeOfCharter;
-              const x = Utilities.getSecureRandom(4) + 1;
-              const y = Utilities.getSecureRandom(4) + 1;
-              player.scelto = true;
-              player.classeCharter = charter.typeOfCharter;
-              player.x = x;
-              player.y = y;
-              this.fservice.updatePlayers(this.getFirebaseName(player), player).then(
-                (res) => {
-                  this.playerScelto = res;
-                  this.isFasePreparazione = true;
-                  this.classeCharterScelto = charter.typeOfCharter;
-                  this.playerCharter = this.initializeCharter(charter.typeOfCharter);
-                  this.playerCharter.config.x = res.x;
-                  this.playerCharter.config.y = res.y;
-                  this.playerCharter.name = player.nome;
-                  // this.fservice.updatePletora({ player: this.getFirebaseName(player), scelto: true, tipo: charter.typeOfCharter.toLowerCase() });
-                }
-              );
-              break;
-            }
-          }
-        }
+        this.haiSceltoProcedure(evt, charter);
       }
 
     }
+  }
+
+  private haiSceltoProcedure(evt: MouseEvent, charter: BottoneSceltaCharter) {
+    if (Utilities.changeButtonState(evt, charter, this.ctx)) {
+      this.haiScelto = true;
+      let brk = false;
+      for (const player of this.listaPlayers) {
+        if ((!player.scelto && player !== this.playerScelto) && !brk) {
+          this.setPlayer(player, charter);
+          brk = true;
+        }
+      }
+    }
+  }
+
+  private setPlayer(player: FirePlayer, charter: BottoneSceltaCharter) {
+    player.nome = Utilities.nomeRandomico() + ' ' + Utilities.conomeRandomico() + ' : ' + charter.typeOfCharter;
+    const x = Utilities.getSecureRandom(4) + 1;
+    const y = Utilities.getSecureRandom(4) + 1;
+    player.scelto = true;
+    player.classeCharter = charter.typeOfCharter;
+    player.x = x;
+    player.y = y;
+    this.fservice.updatePlayers(this.getFirebaseName(player), player).then(
+      (res) => {
+        this.playerScelto = res;
+        this.isFasePreparazione = true;
+        this.classeCharterScelto = charter.typeOfCharter;
+        this.playerCharter = this.initializeCharter(charter.typeOfCharter);
+        this.playerCharter.config.x = res.x;
+        this.playerCharter.config.y = res.y;
+        this.playerCharter.name = player.nome;
+      }
+    );
   }
 
   private initializeCharter(cl: classe): Charter {
@@ -215,26 +213,6 @@ export class DobleGameCanvasComponent implements AfterViewInit {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.fillStyle = 'grey';
     this.ctx.fillRect(0, this.ctx.canvas.height - 100, this.ctx.canvas.width, 100);
-    // if (!this.stopThis) {
-    //   let countScelto = 0;
-    //   this.listaPlayers.forEach(
-    //     (el) => {
-    //       if (el.scelto) {
-    //         countScelto++;
-    //         if (countScelto === 2 && this.enemyCharter) {
-    //           if (el.progressivo !== this.playerScelto.progressivo) {
-    //             this.nemicoScelto = el;
-    //             this.enemyCharter = this.initializeCharter(el.classeCharter);
-    //             this.enemyCharter.name = el.nome;
-    //             this.stopThis = true;
-    //           }
-    //         }
-    //       }
-    //     }
-    //   );
-    // }
-
-
     if (this.isFaseScelta) {
       this.faseScelta();
     }
