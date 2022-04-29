@@ -20,6 +20,7 @@ import { provideMessaging, getMessaging } from '@angular/fire/messaging';
 import { MessagingComponent } from './components/messaging/messaging.component';
 import * as firebase from 'firebase/app';
 import { DoubleGameComponent } from './components/double-game/double-game.component';
+import { DobleGameCanvasComponent } from './components/doble-game-canvas/doble-game-canvas.component';
 firebase.initializeApp(environment.firebase);
 
 
@@ -35,6 +36,7 @@ firebase.initializeApp(environment.firebase);
     SignupComponent,
     MessagingComponent,
     DoubleGameComponent,
+    DobleGameCanvasComponent,
   ],
   imports: [
     CommonModule,

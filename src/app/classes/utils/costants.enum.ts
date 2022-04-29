@@ -176,25 +176,38 @@ export interface FirePlayer {
     nome: string,
     progressivo: number,
     scelto: boolean,
-    pronto : boolean,
-    numeroAiDadi:number,
-    inizia:boolean,
-    color:string
+    pronto: boolean,
+    numeroAiDadi: number,
+    inizia: boolean,
+    color: string,
+    classeCharter:classe,
+    x:number,
+    y:number
 }
 export type tipoProgressivi = 'utenti' | 'final-states' | 'messaggi' | 'player-one' | 'player-two';
 export type datiPossibili = FinalState | TabellaPresenze | Chates | IMyGeolocation | IMyUint8Array | UtenteOnline;
-export type tabelleFirebase = 'players' | 'final-states' | 'tabella-presenze' | 'chates' | 'location' | 'byteArray' | 'utenti' | 'progressivi'| 'matrici';
+export type tabelleFirebase = 'players' | 'final-states' | 'tabella-presenze' | 'chates' | 'location' | 'byteArray' | 'utenti' | 'progressivi' | 'matrici' | 'pletora';
 
 export interface TuplaPossibile {
     dato: datiPossibili,
     tabella: tabelleFirebase
 }
 
-export interface FireTris{
-    uno:string[],
-    due:string[],
-    tre:string[],
-    giocaIlNumero:number;
+export interface FireTris {
+    uno: string[],
+    due: string[],
+    tre: string[],
+    giocaIlNumero: number;
+}
+
+export interface Pletora {
+    personaggi: PletoraElement[],
+}
+
+export interface PletoraElement {
+    scelto: boolean,
+    player: string,
+    tipo:string
 }
 
 

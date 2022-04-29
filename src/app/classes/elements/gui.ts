@@ -135,6 +135,7 @@ export class Gui {
             sc.stand();
             this.sceltaCharter.push(sc);
         }
+        
         for (let i = 0; i <= 3; i++) {
             let sc = new BottoneSceltaProiettile(Utilities.getSquareConfig(this.ctx, ''), '', false);
             switch (i) {

@@ -6,8 +6,10 @@ import { InfoComponent } from './components/info/info.component';
 import { MultiPlayerGameComponent } from './components/multi-player-game/multi-player-game.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { DoubleGameComponent } from './components/double-game/double-game.component';
+import { DobleGameCanvasComponent } from './components/doble-game-canvas/doble-game-canvas.component';
 
 const routes: Routes = [
+  { path: 'double-game-canvas', component: DobleGameCanvasComponent },
   { path: 'double-game', component: DoubleGameComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'game', component: GameComponent },

@@ -6,6 +6,7 @@ export class BottoneSceltaCharter extends Bottone {
     image = new Image();
     index = 0;
     counterAnimation = 0;
+    abilitato = true;
 
     constructor(configurazioneInziale: SquareConfig, path: string, isToggle: boolean) {
         super(configurazioneInziale, isToggle);
@@ -17,12 +18,16 @@ export class BottoneSceltaCharter extends Bottone {
     override disegnaMe(): void {
         this.config.ctx.save()
         this.config.ctx.strokeStyle = 'red';
-        this.config.ctx.lineWidth = 3;
-        this.config.ctx.strokeRect(
-            this.config.x * this.config.w,
-            this.config.y * this.config.h - 30,
-            this.config.w,
-            this.config.h);
+
+
+        [...Array(15).keys()].forEach(
+            (el) => {
+                this.config.ctx.strokeRect(
+                    this.config.x * this.config.w + el * 10,
+                    this.config.y * this.config.h - 60 + el * 10,
+                    this.config.w - el * 20,
+                    this.config.h - el * 20)
+            });
         this.config.ctx.drawImage(this.image,
             this.image.width / 4 * this.counterAnimation,//colonna ws
             0,//riga hs
@@ -33,17 +38,28 @@ export class BottoneSceltaCharter extends Bottone {
             this.config.w,
             this.config.h);
 
-        this.config.ctx.restore()
+        this.config.ctx.restore();
+        this.scriviAltriTesti();
     }
 
     override scriviAltriTesti() {
         this.config.ctx.save();
-        this.config.ctx.font = "13px Impact";
+
+        this.config.ctx.font = "23px Orbitron";
+        this.config.ctx.fillStyle='black';    
+            if (this.isToggle && this.isShowState) {
+            this.config.ctx.fillText(
+                this.state,
+                this.config.x * this.config.w,
+                this.config.y * this.config.y + 60,
+                3000
+            );
+        }
         this.config.ctx.fillText(
             this.terzoText,
             this.config.x * this.config.w,
-            this.config.y * this.config.h + this.config.h / 2 - 50,
-            60
+            this.config.y * this.config.h + this.config.h / 2 +50,
+            3000
         );
         this.config.ctx.restore();
     }

@@ -330,7 +330,10 @@ export class Utilities {
             pronto: false,
             numeroAiDadi: 0,
             inizia: false,
-            color: 'white'
+            color: 'white',
+            classeCharter:'ABSTRACT',
+            x:0,
+            y:0
         }
     }
 }

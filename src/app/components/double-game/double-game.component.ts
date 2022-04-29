@@ -17,6 +17,7 @@ export class DoubleGameComponent implements AfterViewInit {
   nomeDafireBase = '';
   numeroAiDadiPlayer = 0;
   numeroAiDadiAvversario = 0;
+
   haiScelto = false;
   haScelto = false;
   ciSonoTutti = false;
@@ -24,17 +25,18 @@ export class DoubleGameComponent implements AfterViewInit {
   isNumeropGenerato = false;
   isStarted = false;
   isTuoTurno = false;
-  matrice !: FireTris;
-  playerScelto: FirePlayer = Utilities.getDefaultFirePlayer(1);
-  nemicoScelto: FirePlayer = Utilities.getDefaultFirePlayer(1);
-  listaPlayers: FirePlayer[] = [];
-
   hannoTiratoTutti = false;
   haVintoIlPlayer = false;
   haVintoIlNemico = false;
   fatto = false;
   isPartitaFinita = false;
+
+  matrice !: FireTris;
+  playerScelto: FirePlayer = Utilities.getDefaultFirePlayer(1);
+  nemicoScelto: FirePlayer = Utilities.getDefaultFirePlayer(1);
+  listaPlayers: FirePlayer[] = [];
   risultato = 'ancora nessun risultato';
+  
   constructor(public fservice: FirebaseService) { }
   private checkVouta(array: string[]): boolean {
     let almenoUnaVuota = false;

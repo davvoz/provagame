@@ -1,0 +1,9 @@
+{{playerScelto.nome}} VS {{nemicoScelto.nome}}
+<div *ngFor="let item of (players|async)">
+{{item.nome}}
+</div>
+<h1>{{haScelto}}</h1>
+<br>
+<div id="container" >
+    <canvas #canvasGui style="background-color: green;" ></canvas>
+</div>
